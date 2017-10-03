@@ -1,0 +1,815 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */; };
+		5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */; };
+		5E1403621F2FE7960024EBFF /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */; };
+		5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403661F3101370024EBFF /* RequestTableViewCell.swift */; };
+		5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403681F3101500024EBFF /* InboxTableViewCell.swift */; };
+		5E2032251EFB17740006D2CE /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2032241EFB17740006D2CE /* UsernameViewController.swift */; };
+		5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */; };
+		5E23089D1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E23089B1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift */; };
+		5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E23089C1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib */; };
+		5E24BD7E1EB275800047ED50 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E24BD7D1EB275800047ED50 /* AppDelegate.swift */; };
+		5E24BD831EB275800047ED50 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E24BD811EB275800047ED50 /* Main.storyboard */; };
+		5E24BD881EB275800047ED50 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E24BD861EB275800047ED50 /* LaunchScreen.storyboard */; };
+		5E24BDAA1EB27CBA0047ED50 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E24BDA91EB27CBA0047ED50 /* FeedViewController.swift */; };
+		5E24BDAC1EB27EB10047ED50 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E24BDAB1EB27EB10047ED50 /* FeedTableViewCell.swift */; };
+		5E24BDB01EB280C90047ED50 /* PostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E24BDAF1EB280C90047ED50 /* PostData.swift */; };
+		5E254C551ECB775800CFBFCE /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E254C541ECB775800CFBFCE /* ProfileTableViewCell.swift */; };
+		5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E254C571ECCC30900CFBFCE /* LoginViewController.swift */; };
+		5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */; };
+		5E254C5C1ECCC36B00CFBFCE /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */; };
+		5E270D561EF748980085D5D3 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E270D551EF748980085D5D3 /* DataManager.swift */; };
+		5E270D581EF74F280085D5D3 /* EditProfilePicturesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E270D571EF74F280085D5D3 /* EditProfilePicturesViewController.swift */; };
+		5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E28BF3A1ED79219006E653B /* AddPostViewController.swift */; };
+		5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E28F4C51EECAAE400E74B01 /* MenuView.swift */; };
+		5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E29FD841EDFA0D100555CCB /* ImageCache.swift */; };
+		5E2A89671F44FCF6002AD645 /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2A89661F44FCF6002AD645 /* PostViewController.swift */; };
+		5E2B0B271EBFB21200F8DEF3 /* BlockedAccountsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B0B261EBFB21200F8DEF3 /* BlockedAccountsViewController.swift */; };
+		5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B8CAB1EC8EAEC00119A6D /* AccountViewController.swift */; };
+		5E2DCFD81F660A6E00211001 /* MessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DCFD71F660A6E00211001 /* MessageCollectionViewCell.swift */; };
+		5E3098151EBC3457001AC1A6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3098141EBC3457001AC1A6 /* SettingsViewController.swift */; };
+		5E3214BD1EC3AB24004ACBB1 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3214BC1EC3AB24004ACBB1 /* Colors.swift */; };
+		5E32A8561ED4703300AEF9DA /* AllPostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32A8551ED4703300AEF9DA /* AllPostsViewController.swift */; };
+		5E32A8581ED4705000AEF9DA /* AllPostsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32A8571ED4705000AEF9DA /* AllPostsCollectionViewCell.swift */; };
+		5E32A85A1ED4F19800AEF9DA /* ChangePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32A8591ED4F19800AEF9DA /* ChangePasswordViewController.swift */; };
+		5E32DCB51F5365F4004E6AA1 /* SongQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32DCB41F5365F4004E6AA1 /* SongQuery.swift */; };
+		5E32DCB81F53664A004E6AA1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E32DCB61F53664A004E6AA1 /* MediaPlayer.framework */; };
+		5E32DCB91F53664A004E6AA1 /* MediaToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E32DCB71F53664A004E6AA1 /* MediaToolbox.framework */; };
+		5E32DCBB1F536656004E6AA1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E32DCBA1F536656004E6AA1 /* AudioToolbox.framework */; };
+		5E32DCBD1F549B06004E6AA1 /* TrimViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32DCBC1F549B06004E6AA1 /* TrimViewController.swift */; };
+		5E32DCBF1F560C78004E6AA1 /* SelectThumbnailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */; };
+		5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34053F1F5F32B900BAA06F /* ProgressView.swift */; };
+		5E3537FC1F2034AA009D121B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3537FA1F2034AA009D121B /* AVFoundation.framework */; };
+		5E3537FD1F2034AA009D121B /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3537FB1F2034AA009D121B /* AVKit.framework */; };
+		5E3537FF1F204F99009D121B /* VideoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3537FE1F204F99009D121B /* VideoStore.swift */; };
+		5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35D7571EC508AF00A41633 /* ProfileViewController.swift */; };
+		5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */; };
+		5E375C0B1F4A19BB009AC14E /* CropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E375C0A1F4A19BB009AC14E /* CropViewController.swift */; };
+		5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */; };
+		5E3BAC451F00282E0007197A /* SubmitPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */; };
+		5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC471F0042420007197A /* DiscoverViewController.swift */; };
+		5E3BAC4A1F00450B0007197A /* DiscoverTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC491F00450B0007197A /* DiscoverTableViewCell.swift */; };
+		5E3CBC791F76D6450073322B /* AddSecondaryPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC781F76D6450073322B /* AddSecondaryPostViewController.swift */; };
+		5E3CBC7D1F78104A0073322B /* SpotifyAudioPlayback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CBC7A1F78104A0073322B /* SpotifyAudioPlayback.framework */; };
+		5E3CBC7E1F78104A0073322B /* SpotifyAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CBC7B1F78104A0073322B /* SpotifyAuthentication.framework */; };
+		5E3CBC7F1F78104A0073322B /* SpotifyMetadata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CBC7C1F78104A0073322B /* SpotifyMetadata.framework */; };
+		5E3CBC8B1F7817230073322B /* SpotifyLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC861F7817230073322B /* SpotifyLoginController.m */; };
+		5E3CBC8C1F7817230073322B /* SpotifyStreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC881F7817230073322B /* SpotifyStreamViewController.m */; };
+		5E3CBC8D1F7817230073322B /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC8A1F7817230073322B /* WebViewController.m */; };
+		5E3CBC8F1F7AD6870073322B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */; };
+		5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC921F7AE91D0073322B /* RKNotificationHub.swift */; };
+		5E3CBC951F7AF3080073322B /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */; };
+		5E4190571F7EFB9300BF2955 /* CLImageEditor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E4190561F7EFB9300BF2955 /* CLImageEditor.framework */; };
+		5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E60F5371F42270900569F74 /* ColorSlider.swift */; };
+		5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */; };
+		5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7197AD1F1D502900411A08 /* AWSManager.swift */; };
+		5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E74F1EE1F4626A300B40293 /* Images.xcassets */; };
+		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
+		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
+		9FBA73AE948A184FB49720E9 /* Pods_hrglass.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63FA8C6AF0BD1C54CE32FE70 /* Pods_hrglass.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
+		5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
+		5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
+		5E1403661F3101370024EBFF /* RequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTableViewCell.swift; sourceTree = "<group>"; };
+		5E1403681F3101500024EBFF /* InboxTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxTableViewCell.swift; sourceTree = "<group>"; };
+		5E2032231EFB07BD0006D2CE /* hrglass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = hrglass.entitlements; sourceTree = "<group>"; };
+		5E2032241EFB17740006D2CE /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
+		5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateCustomPostViewController.swift; sourceTree = "<group>"; };
+		5E23089B1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostCollectionViewCell.swift; sourceTree = "<group>"; };
+		5E23089C1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddPostCollectionViewCell.xib; sourceTree = "<group>"; };
+		5E24BD7A1EB275800047ED50 /* hrglass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hrglass.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E24BD7D1EB275800047ED50 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5E24BD821EB275800047ED50 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5E24BD871EB275800047ED50 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5E24BD891EB275800047ED50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E24BDA91EB27CBA0047ED50 /* FeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedViewController.swift; path = ../FeedViewController.swift; sourceTree = "<group>"; };
+		5E24BDAB1EB27EB10047ED50 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
+		5E24BDAF1EB280C90047ED50 /* PostData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostData.swift; sourceTree = "<group>"; };
+		5E254C541ECB775800CFBFCE /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
+		5E254C571ECCC30900CFBFCE /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
+		5E270D551EF748980085D5D3 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		5E270D571EF74F280085D5D3 /* EditProfilePicturesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfilePicturesViewController.swift; sourceTree = "<group>"; };
+		5E28BF3A1ED79219006E653B /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
+		5E28F4B71EEC78DD00E74B01 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/FBSDKLoginKit/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
+		5E28F4B91EEC78E300E74B01 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/FBSDKCoreKit/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
+		5E28F4C51EECAAE400E74B01 /* MenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		5E29FD841EDFA0D100555CCB /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		5E2A89661F44FCF6002AD645 /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		5E2B0B261EBFB21200F8DEF3 /* BlockedAccountsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedAccountsViewController.swift; sourceTree = "<group>"; };
+		5E2B8CAB1EC8EAEC00119A6D /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		5E2DCFD71F660A6E00211001 /* MessageCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCollectionViewCell.swift; sourceTree = "<group>"; };
+		5E3098141EBC3457001AC1A6 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		5E3214BC1EC3AB24004ACBB1 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		5E32A8551ED4703300AEF9DA /* AllPostsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllPostsViewController.swift; sourceTree = "<group>"; };
+		5E32A8571ED4705000AEF9DA /* AllPostsCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllPostsCollectionViewCell.swift; sourceTree = "<group>"; };
+		5E32A8591ED4F19800AEF9DA /* ChangePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewController.swift; sourceTree = "<group>"; };
+		5E32DCB41F5365F4004E6AA1 /* SongQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongQuery.swift; sourceTree = "<group>"; };
+		5E32DCB61F53664A004E6AA1 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		5E32DCB71F53664A004E6AA1 /* MediaToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaToolbox.framework; path = System/Library/Frameworks/MediaToolbox.framework; sourceTree = SDKROOT; };
+		5E32DCBA1F536656004E6AA1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		5E32DCBC1F549B06004E6AA1 /* TrimViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrimViewController.swift; sourceTree = "<group>"; };
+		5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectThumbnailViewController.swift; sourceTree = "<group>"; };
+		5E34053F1F5F32B900BAA06F /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		5E3537FA1F2034AA009D121B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		5E3537FB1F2034AA009D121B /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		5E3537FE1F204F99009D121B /* VideoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoStore.swift; sourceTree = "<group>"; };
+		5E35D7571EC508AF00A41633 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5E375C0A1F4A19BB009AC14E /* CropViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CropViewController.swift; sourceTree = "<group>"; };
+		5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewCell.swift; sourceTree = "<group>"; };
+		5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitPostViewController.swift; sourceTree = "<group>"; };
+		5E3BAC471F0042420007197A /* DiscoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverViewController.swift; sourceTree = "<group>"; };
+		5E3BAC491F00450B0007197A /* DiscoverTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverTableViewCell.swift; sourceTree = "<group>"; };
+		5E3CBC781F76D6450073322B /* AddSecondaryPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddSecondaryPostViewController.swift; sourceTree = "<group>"; };
+		5E3CBC7A1F78104A0073322B /* SpotifyAudioPlayback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyAudioPlayback.framework; sourceTree = "<group>"; };
+		5E3CBC7B1F78104A0073322B /* SpotifyAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyAuthentication.framework; sourceTree = "<group>"; };
+		5E3CBC7C1F78104A0073322B /* SpotifyMetadata.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyMetadata.framework; sourceTree = "<group>"; };
+		5E3CBC831F7817220073322B /* hrglass-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hrglass-Bridging-Header.h"; sourceTree = "<group>"; };
+		5E3CBC841F7817230073322B /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		5E3CBC851F7817230073322B /* SpotifyLoginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyLoginController.h; sourceTree = "<group>"; };
+		5E3CBC861F7817230073322B /* SpotifyLoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotifyLoginController.m; sourceTree = "<group>"; };
+		5E3CBC871F7817230073322B /* SpotifyStreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyStreamViewController.h; sourceTree = "<group>"; };
+		5E3CBC881F7817230073322B /* SpotifyStreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotifyStreamViewController.m; sourceTree = "<group>"; };
+		5E3CBC891F7817230073322B /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		5E3CBC8A1F7817230073322B /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
+		5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
+		5E3CBC921F7AE91D0073322B /* RKNotificationHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RKNotificationHub.swift; sourceTree = "<group>"; };
+		5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
+		5E3DE4671EEC71AD00AAA79D /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "Pods/../build/Debug-iphoneos/FBSDKCoreKit/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
+		5E3DE4691EEC71CA00AAA79D /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "Pods/../build/Debug-iphoneos/FBSDKLoginKit/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
+		5E3DE46B1EEC720D00AAA79D /* FacebookCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookCore.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/FacebookCore/FacebookCore.framework"; sourceTree = "<group>"; };
+		5E3DE46D1EEC721200AAA79D /* FacebookLogin.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookLogin.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/FacebookLogin/FacebookLogin.framework"; sourceTree = "<group>"; };
+		5E4190541F7EF9CF00BF2955 /* CLImageEditor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CLImageEditor.framework; path = "Pods/../build/Debug-iphoneos/CLImageEditor/CLImageEditor.framework"; sourceTree = "<group>"; };
+		5E4190561F7EFB9300BF2955 /* CLImageEditor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CLImageEditor.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/CLImageEditor/CLImageEditor.framework"; sourceTree = "<group>"; };
+		5E60F5371F42270900569F74 /* ColorSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSlider.swift; sourceTree = "<group>"; };
+		5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedUserCell.swift; sourceTree = "<group>"; };
+		5E7197AD1F1D502900411A08 /* AWSManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
+		5E74F1EE1F4626A300B40293 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
+		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		63FA8C6AF0BD1C54CE32FE70 /* Pods_hrglass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_hrglass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		679F2954E6A921045974D60D /* Pods-hrglass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hrglass.debug.xcconfig"; path = "Pods/Target Support Files/Pods-hrglass/Pods-hrglass.debug.xcconfig"; sourceTree = "<group>"; };
+		B1056FFAE72262910DAB591F /* Pods-hrglass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hrglass.release.xcconfig"; path = "Pods/Target Support Files/Pods-hrglass/Pods-hrglass.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5E24BD771EB275800047ED50 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E4190571F7EFB9300BF2955 /* CLImageEditor.framework in Frameworks */,
+				5E32DCBB1F536656004E6AA1 /* AudioToolbox.framework in Frameworks */,
+				5E3CBC7E1F78104A0073322B /* SpotifyAuthentication.framework in Frameworks */,
+				5E32DCB81F53664A004E6AA1 /* MediaPlayer.framework in Frameworks */,
+				5E3CBC7D1F78104A0073322B /* SpotifyAudioPlayback.framework in Frameworks */,
+				5E32DCB91F53664A004E6AA1 /* MediaToolbox.framework in Frameworks */,
+				5E3537FC1F2034AA009D121B /* AVFoundation.framework in Frameworks */,
+				5E3537FD1F2034AA009D121B /* AVKit.framework in Frameworks */,
+				5E3CBC7F1F78104A0073322B /* SpotifyMetadata.framework in Frameworks */,
+				9FBA73AE948A184FB49720E9 /* Pods_hrglass.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4AD7672E33FE95F97E22C1D4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				679F2954E6A921045974D60D /* Pods-hrglass.debug.xcconfig */,
+				B1056FFAE72262910DAB591F /* Pods-hrglass.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		5E14035C1F2FCDD20024EBFF /* MessagesViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */,
+				5E2DCFD71F660A6E00211001 /* MessageCollectionViewCell.swift */,
+			);
+			name = MessagesViewController;
+			sourceTree = "<group>";
+		};
+		5E1403651F2FF1FE0024EBFF /* Segues */ = {
+			isa = PBXGroup;
+			children = (
+				5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */,
+			);
+			name = Segues;
+			sourceTree = "<group>";
+		};
+		5E24BD711EB275800047ED50 = {
+			isa = PBXGroup;
+			children = (
+				5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */,
+				5E74F1EE1F4626A300B40293 /* Images.xcassets */,
+				5E24BD7C1EB275800047ED50 /* hrglass */,
+				5E24BD7B1EB275800047ED50 /* Products */,
+				4AD7672E33FE95F97E22C1D4 /* Pods */,
+				9559B4032DC5E89518972C79 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		5E24BD7B1EB275800047ED50 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5E24BD7A1EB275800047ED50 /* hrglass.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5E24BD7C1EB275800047ED50 /* hrglass */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CBC911F7AE8FE0073322B /* NotificationHub */,
+				5E3CBC801F7814750073322B /* Spotify */,
+				5E2DCFD91F660AC600211001 /* InboxViewController */,
+				5E34053E1F5F327000BAA06F /* ProgressView */,
+				5E74F1F21F464A9700B40293 /* PostPopupView */,
+				5E14035C1F2FCDD20024EBFF /* MessagesViewController */,
+				5E3BAC461F0041FA0007197A /* DiscoverViewController */,
+				5E2032231EFB07BD0006D2CE /* hrglass.entitlements */,
+				5E28BF371ED78D9F006E653B /* AddPostView */,
+				5E254C561ECCC2DC00CFBFCE /* LoginViews */,
+				5E35D7561EC5089E00A41633 /* ProfileView */,
+				5E2B0B1E1EBFA98900F8DEF3 /* SettingsView */,
+				5E1403651F2FF1FE0024EBFF /* Segues */,
+				5E24BDAE1EB280A30047ED50 /* DataManagers */,
+				5E24BDAD1EB27EB70047ED50 /* FeedViewController */,
+				5E24BD7D1EB275800047ED50 /* AppDelegate.swift */,
+				5E24BD811EB275800047ED50 /* Main.storyboard */,
+				5E24BD861EB275800047ED50 /* LaunchScreen.storyboard */,
+				5E24BD891EB275800047ED50 /* Info.plist */,
+			);
+			path = hrglass;
+			sourceTree = "<group>";
+		};
+		5E24BDAD1EB27EB70047ED50 /* FeedViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5E28F4C51EECAAE400E74B01 /* MenuView.swift */,
+				5E24BDA91EB27CBA0047ED50 /* FeedViewController.swift */,
+				5E24BDAB1EB27EB10047ED50 /* FeedTableViewCell.swift */,
+			);
+			name = FeedViewController;
+			sourceTree = "<group>";
+		};
+		5E24BDAE1EB280A30047ED50 /* DataManagers */ = {
+			isa = PBXGroup;
+			children = (
+				5E24BDAF1EB280C90047ED50 /* PostData.swift */,
+				5E3214BC1EC3AB24004ACBB1 /* Colors.swift */,
+				5ECF6B911EC5F99D00D2A00B /* User.swift */,
+				5E29FD841EDFA0D100555CCB /* ImageCache.swift */,
+				5E270D551EF748980085D5D3 /* DataManager.swift */,
+				5E7197AD1F1D502900411A08 /* AWSManager.swift */,
+				5E3537FE1F204F99009D121B /* VideoStore.swift */,
+				5E32DCB41F5365F4004E6AA1 /* SongQuery.swift */,
+			);
+			name = DataManagers;
+			sourceTree = "<group>";
+		};
+		5E254C561ECCC2DC00CFBFCE /* LoginViews */ = {
+			isa = PBXGroup;
+			children = (
+				5E254C571ECCC30900CFBFCE /* LoginViewController.swift */,
+				5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */,
+				5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */,
+				5E2032241EFB17740006D2CE /* UsernameViewController.swift */,
+			);
+			name = LoginViews;
+			sourceTree = "<group>";
+		};
+		5E28BF371ED78D9F006E653B /* AddPostView */ = {
+			isa = PBXGroup;
+			children = (
+				5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */,
+				5E32DCBC1F549B06004E6AA1 /* TrimViewController.swift */,
+				5E375C0A1F4A19BB009AC14E /* CropViewController.swift */,
+				5E375C091F4A11DD009AC14E /* AddPostCollectionCell */,
+				5E28BF3A1ED79219006E653B /* AddPostViewController.swift */,
+				5E270D571EF74F280085D5D3 /* EditProfilePicturesViewController.swift */,
+				5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */,
+				5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */,
+				5E60F5371F42270900569F74 /* ColorSlider.swift */,
+				5E3CBC781F76D6450073322B /* AddSecondaryPostViewController.swift */,
+			);
+			name = AddPostView;
+			sourceTree = "<group>";
+		};
+		5E2B0B1E1EBFA98900F8DEF3 /* SettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				5E3098141EBC3457001AC1A6 /* SettingsViewController.swift */,
+				5E2B8CAB1EC8EAEC00119A6D /* AccountViewController.swift */,
+				5E2B0B261EBFB21200F8DEF3 /* BlockedAccountsViewController.swift */,
+				5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */,
+				5E32A8591ED4F19800AEF9DA /* ChangePasswordViewController.swift */,
+			);
+			name = SettingsView;
+			sourceTree = "<group>";
+		};
+		5E2DCFD91F660AC600211001 /* InboxViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */,
+				5E1403681F3101500024EBFF /* InboxTableViewCell.swift */,
+				5E1403661F3101370024EBFF /* RequestTableViewCell.swift */,
+			);
+			name = InboxViewController;
+			sourceTree = "<group>";
+		};
+		5E34053E1F5F327000BAA06F /* ProgressView */ = {
+			isa = PBXGroup;
+			children = (
+				5E34053F1F5F32B900BAA06F /* ProgressView.swift */,
+			);
+			name = ProgressView;
+			sourceTree = "<group>";
+		};
+		5E35D7561EC5089E00A41633 /* ProfileView */ = {
+			isa = PBXGroup;
+			children = (
+				5E35D7571EC508AF00A41633 /* ProfileViewController.swift */,
+				5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */,
+				5E254C541ECB775800CFBFCE /* ProfileTableViewCell.swift */,
+				5E32A8551ED4703300AEF9DA /* AllPostsViewController.swift */,
+				5E32A8571ED4705000AEF9DA /* AllPostsCollectionViewCell.swift */,
+			);
+			name = ProfileView;
+			sourceTree = "<group>";
+		};
+		5E375C091F4A11DD009AC14E /* AddPostCollectionCell */ = {
+			isa = PBXGroup;
+			children = (
+				5E23089B1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift */,
+				5E23089C1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib */,
+			);
+			name = AddPostCollectionCell;
+			sourceTree = "<group>";
+		};
+		5E3BAC461F0041FA0007197A /* DiscoverViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5E3BAC471F0042420007197A /* DiscoverViewController.swift */,
+				5E3BAC491F00450B0007197A /* DiscoverTableViewCell.swift */,
+			);
+			name = DiscoverViewController;
+			sourceTree = "<group>";
+		};
+		5E3CBC801F7814750073322B /* Spotify */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CBC841F7817230073322B /* Config.h */,
+				5E3CBC851F7817230073322B /* SpotifyLoginController.h */,
+				5E3CBC861F7817230073322B /* SpotifyLoginController.m */,
+				5E3CBC871F7817230073322B /* SpotifyStreamViewController.h */,
+				5E3CBC881F7817230073322B /* SpotifyStreamViewController.m */,
+				5E3CBC891F7817230073322B /* WebViewController.h */,
+				5E3CBC8A1F7817230073322B /* WebViewController.m */,
+				5E3CBC831F7817220073322B /* hrglass-Bridging-Header.h */,
+			);
+			name = Spotify;
+			sourceTree = "<group>";
+		};
+		5E3CBC911F7AE8FE0073322B /* NotificationHub */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CBC921F7AE91D0073322B /* RKNotificationHub.swift */,
+			);
+			name = NotificationHub;
+			sourceTree = "<group>";
+		};
+		5E74F1F21F464A9700B40293 /* PostPopupView */ = {
+			isa = PBXGroup;
+			children = (
+				5E815E6E1F2A97C800F7A975 /* PhotoView.swift */,
+				5E2A89661F44FCF6002AD645 /* PostViewController.swift */,
+				5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */,
+				5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */,
+			);
+			name = PostPopupView;
+			sourceTree = "<group>";
+		};
+		9559B4032DC5E89518972C79 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5E4190561F7EFB9300BF2955 /* CLImageEditor.framework */,
+				5E4190541F7EF9CF00BF2955 /* CLImageEditor.framework */,
+				5E3CBC7A1F78104A0073322B /* SpotifyAudioPlayback.framework */,
+				5E3CBC7B1F78104A0073322B /* SpotifyAuthentication.framework */,
+				5E3CBC7C1F78104A0073322B /* SpotifyMetadata.framework */,
+				5E32DCBA1F536656004E6AA1 /* AudioToolbox.framework */,
+				5E32DCB61F53664A004E6AA1 /* MediaPlayer.framework */,
+				5E32DCB71F53664A004E6AA1 /* MediaToolbox.framework */,
+				5E3537FA1F2034AA009D121B /* AVFoundation.framework */,
+				5E3537FB1F2034AA009D121B /* AVKit.framework */,
+				5E28F4B91EEC78E300E74B01 /* FBSDKCoreKit.framework */,
+				5E28F4B71EEC78DD00E74B01 /* FBSDKLoginKit.framework */,
+				5E3DE46D1EEC721200AAA79D /* FacebookLogin.framework */,
+				5E3DE46B1EEC720D00AAA79D /* FacebookCore.framework */,
+				5E3DE4691EEC71CA00AAA79D /* FBSDKLoginKit.framework */,
+				5E3DE4671EEC71AD00AAA79D /* FBSDKCoreKit.framework */,
+				63FA8C6AF0BD1C54CE32FE70 /* Pods_hrglass.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5E24BD791EB275800047ED50 /* hrglass */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E24BD8C1EB275800047ED50 /* Build configuration list for PBXNativeTarget "hrglass" */;
+			buildPhases = (
+				8545D3C4B285FBD7B5BE5579 /* [CP] Check Pods Manifest.lock */,
+				5E24BD761EB275800047ED50 /* Sources */,
+				5E24BD771EB275800047ED50 /* Frameworks */,
+				5E24BD781EB275800047ED50 /* Resources */,
+				0CA942712D98CDCDE3F2D560 /* [CP] Embed Pods Frameworks */,
+				22221F5CB54E99E098C3CF09 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = hrglass;
+			productName = hrglass;
+			productReference = 5E24BD7A1EB275800047ED50 /* hrglass.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5E24BD721EB275800047ED50 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				TargetAttributes = {
+					5E24BD791EB275800047ED50 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = YKN8DC38G3;
+						LastSwiftMigration = 0830;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 5E24BD751EB275800047ED50 /* Build configuration list for PBXProject "hrglass" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5E24BD711EB275800047ED50;
+			productRefGroup = 5E24BD7B1EB275800047ED50 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5E24BD791EB275800047ED50 /* hrglass */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5E24BD781EB275800047ED50 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E24BD881EB275800047ED50 /* LaunchScreen.storyboard in Resources */,
+				5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */,
+				5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */,
+				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
+				5E24BD831EB275800047ED50 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0CA942712D98CDCDE3F2D560 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-hrglass/Pods-hrglass-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		22221F5CB54E99E098C3CF09 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-hrglass/Pods-hrglass-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8545D3C4B285FBD7B5BE5579 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5E24BD761EB275800047ED50 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E3BAC451F00282E0007197A /* SubmitPostViewController.swift in Sources */,
+				5E32DCBD1F549B06004E6AA1 /* TrimViewController.swift in Sources */,
+				5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */,
+				5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */,
+				5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */,
+				5E3CBC8F1F7AD6870073322B /* CommentViewController.swift in Sources */,
+				5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */,
+				5E24BDAA1EB27CBA0047ED50 /* FeedViewController.swift in Sources */,
+				5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */,
+				5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */,
+				5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */,
+				5E254C551ECB775800CFBFCE /* ProfileTableViewCell.swift in Sources */,
+				5E270D581EF74F280085D5D3 /* EditProfilePicturesViewController.swift in Sources */,
+				5E24BDB01EB280C90047ED50 /* PostData.swift in Sources */,
+				5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */,
+				5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */,
+				5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */,
+				5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */,
+				5E32A8561ED4703300AEF9DA /* AllPostsViewController.swift in Sources */,
+				5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */,
+				5E24BD7E1EB275800047ED50 /* AppDelegate.swift in Sources */,
+				5E3CBC951F7AF3080073322B /* CommentTableViewCell.swift in Sources */,
+				5E375C0B1F4A19BB009AC14E /* CropViewController.swift in Sources */,
+				5E2DCFD81F660A6E00211001 /* MessageCollectionViewCell.swift in Sources */,
+				5E3CBC8D1F7817230073322B /* WebViewController.m in Sources */,
+				5E254C5C1ECCC36B00CFBFCE /* CreateAccountViewController.swift in Sources */,
+				5E24BDAC1EB27EB10047ED50 /* FeedTableViewCell.swift in Sources */,
+				5E32A8581ED4705000AEF9DA /* AllPostsCollectionViewCell.swift in Sources */,
+				5E3537FF1F204F99009D121B /* VideoStore.swift in Sources */,
+				5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */,
+				5E3098151EBC3457001AC1A6 /* SettingsViewController.swift in Sources */,
+				5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */,
+				5E3CBC8C1F7817230073322B /* SpotifyStreamViewController.m in Sources */,
+				5E3CBC791F76D6450073322B /* AddSecondaryPostViewController.swift in Sources */,
+				5E2A89671F44FCF6002AD645 /* PostViewController.swift in Sources */,
+				5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */,
+				5E32DCB51F5365F4004E6AA1 /* SongQuery.swift in Sources */,
+				5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */,
+				5E32A85A1ED4F19800AEF9DA /* ChangePasswordViewController.swift in Sources */,
+				5E1403621F2FE7960024EBFF /* SegueFromLeft.swift in Sources */,
+				5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */,
+				5E32DCBF1F560C78004E6AA1 /* SelectThumbnailViewController.swift in Sources */,
+				5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */,
+				5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */,
+				5E2B0B271EBFB21200F8DEF3 /* BlockedAccountsViewController.swift in Sources */,
+				5E270D561EF748980085D5D3 /* DataManager.swift in Sources */,
+				5E3CBC8B1F7817230073322B /* SpotifyLoginController.m in Sources */,
+				5E3214BD1EC3AB24004ACBB1 /* Colors.swift in Sources */,
+				5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */,
+				5E2032251EFB17740006D2CE /* UsernameViewController.swift in Sources */,
+				5E23089D1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift in Sources */,
+				5E3BAC4A1F00450B0007197A /* DiscoverTableViewCell.swift in Sources */,
+				5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		5E24BD811EB275800047ED50 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5E24BD821EB275800047ED50 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		5E24BD861EB275800047ED50 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5E24BD871EB275800047ED50 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5E24BD8A1EB275800047ED50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E24BD8B1EB275800047ED50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5E24BD8D1EB275800047ED50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 679F2954E6A921045974D60D /* Pods-hrglass.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = hrglass/hrglass.entitlements;
+				DEVELOPMENT_TEAM = YKN8DC38G3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/CLImageEditor",
+				);
+				INFOPLIST_FILE = hrglass/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "hrglass/hrglass-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E24BD8E1EB275800047ED50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B1056FFAE72262910DAB591F /* Pods-hrglass.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = hrglass/hrglass.entitlements;
+				DEVELOPMENT_TEAM = YKN8DC38G3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/CLImageEditor",
+				);
+				INFOPLIST_FILE = hrglass/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "hrglass/hrglass-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5E24BD751EB275800047ED50 /* Build configuration list for PBXProject "hrglass" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E24BD8A1EB275800047ED50 /* Debug */,
+				5E24BD8B1EB275800047ED50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E24BD8C1EB275800047ED50 /* Build configuration list for PBXNativeTarget "hrglass" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E24BD8D1EB275800047ED50 /* Debug */,
+				5E24BD8E1EB275800047ED50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5E24BD721EB275800047ED50 /* Project object */;
+}
