@@ -78,15 +78,15 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var selectedThumbnail: UIImage!
     
     //secondary post
-    var secondarySelectedObject: AnyObject!
-    var secondarySelectedCategory: Category = .None
-    var secondarySelectedMood: Mood = .None
-    var secondaryTrimmedVideoPath: String = ""
-    var secondarySelectedThumbnail: UIImage!
-    var hasSecondarySavedPost: Bool = false
-
-    var selectedTextColor: UIColor!
-    var selectedTextBackroungColor: UIColor!
+//    var secondarySelectedObject: AnyObject!
+//    var secondarySelectedCategory: Category = .None
+//    var secondarySelectedMood: Mood = .None
+//    var secondaryTrimmedVideoPath: String = ""
+//    var secondarySelectedThumbnail: UIImage!
+//    var hasSecondarySavedPost: Bool = false
+//
+//    var selectedTextColor: UIColor!
+//    var selectedTextBackroungColor: UIColor!
     
     //ContentPreview Views
     var postPhotoView: UIImageView!
@@ -212,7 +212,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             case .Photo:
                 
                 self.setPhotoView(image: (self.selectedObject as? UIImage)!)
-                
+                self.playBtn.setImage(UIImage(named:"cropClear"), for: .normal)
                 self.playBtn.isHidden = false
                 self.postPhotoView.layer.borderColor = ourColors.getMenuColor().cgColor
                 
@@ -1988,12 +1988,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             vc.selectedThumbnail = self.selectedThumbnail
             vc.postWasSaved = self.postWasSaved
             
-            if self.hasSecondarySavedPost{
-                
-                vc.secondarySelectedCategory = self.secondarySelectedCategory
-                vc.secondarySelectedObject = self.secondarySelectedObject
-                vc.hasSecondaryPost = true
-            }
+//            if self.hasSecondarySavedPost{
+//                
+//                vc.secondarySelectedCategory = self.secondarySelectedCategory
+//                vc.secondarySelectedObject = self.secondarySelectedObject
+//                vc.hasSecondaryPost = true
+//            }
             
         }else if segue.identifier == "unwindToCreateCustomPostSegue"{
             

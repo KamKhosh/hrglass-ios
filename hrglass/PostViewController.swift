@@ -13,6 +13,17 @@ import Firebase
 
 
 
+
+
+protocol PostViewDelegate {
+    
+    
+    func likedButtonPressed(liked: Bool, indexPath: IndexPath)
+    func  moreButtonPressed(data: PostData, indexPath: IndexPath)
+    
+}
+
+
 class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate
 {
 
@@ -44,7 +55,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var songView: UIView!
     
 
-    
+    var delegate: PostViewDelegate!
+    var selectedIndexPath: IndexPath = IndexPath(item: 0, section: 0)
     
     @IBOutlet weak var linkLbl: UILabel!
 
@@ -86,7 +98,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         super.viewDidLoad()
         
         let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-//        self.view.addGestureRecognizer(panGesture)
+        self.view.addGestureRecognizer(panGesture)
         panGesture.minimumNumberOfTouches = 1
         panGesture.delegate = self
         
@@ -156,11 +168,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
-    
 
-    
-    
-    
     func dataSetup(){
         
         self.songView.isHidden = true
@@ -172,12 +180,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             let user: NSDictionary = postData.user
             
             //setup secondary data if applicable
-            if self.postData.secondaryPost != nil{
-                
-                self.postCurrentlyViewingStackView.isHidden = false
-                self.setupViewingStackView()
-                self.setupSecondaryPostView(user: user, secondaryPostData: self.postData.secondaryPost)
-            }
+//            if self.postData.secondaryPost != nil{
+//                
+//                self.postCurrentlyViewingStackView.isHidden = false
+//                self.setupViewingStackView()
+//                self.setupSecondaryPostView(user: user, secondaryPostData: self.postData.secondaryPost)
+//            }
             
             
 
@@ -289,87 +297,87 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
-    
-    
-    func setupSecondaryPostView(user: NSDictionary, secondaryPostData:NSDictionary){
-        
-        self.swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeLeftHandler))
-        
-        self.swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeRightHandler))
-        
-        self.swipeLeftGesture.delegate = self
-        self.swipeRightGesture.delegate = self
-        
-        self.swipeLeftGesture.direction = .left
-        self.swipeRightGesture.direction = .right
-        self.swipeRightGesture.numberOfTouchesRequired = 1;
-        self.swipeLeftGesture.numberOfTouchesRequired = 1;
-        
-        self.firstPostView.addGestureRecognizer(swipeLeftGesture)
-        self.secondaryPostView.addGestureRecognizer(swipeRightGesture)
-        
-        self.secondaryLinkLbl.isHidden = true
-        self.secondaryPostPlayBtn.isHidden = true
-        let cat: Category = Category(rawValue: secondaryPostData.value(forKey: "secondaryCategory") as! String)!
-
-        //TODO: SETUP COMMENTS
-        switch cat {
-            
-        case .Photo:
-            print("")
-            imageCache.getImage(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image) in
-                self.secondaryContentImageView.image = image
-            })
-        case .Video:
-            print("")
-            //thumbnail URL
-            let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
-            
-            imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
-                self.secondaryContentImageView.image = image
-            })
-            self.secondaryPostPlayBtn.isHidden = false
-            
-        case .Recording:
-            
-            self.secondaryContentImageView.image = UIImage(named:"audioWave")
-            
-        case .Music:
-            
-            self.songView.isHidden = false
-            self.firstPostView.removeGestureRecognizer(swipeLeftGesture)
-            self.secondaryPostView.removeGestureRecognizer(swipeRightGesture)
-            self.postCurrentlyViewingStackView.isHidden = true
-            
-        case .Text:
-            print("")
-            imageCache.getImage(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image) in
-                self.secondaryContentImageView.image = image
-            })
-            
-        case .Link:
-            print("")
-            self.secondaryLinkLbl.isHidden = false
-            self.secondaryPostPlayBtn.setImage(self.dataManager.clearImage, for: .normal)
-            
-            self.dataManager.setURLView(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image, label) in
-                
-                self.secondaryContentImageView.image = image
-                
-                self.secondaryLinkLbl.adjustsFontSizeToFitWidth = true
-                self.secondaryLinkLbl.numberOfLines = 3
-                self.secondaryLinkLbl.backgroundColor = UIColor.darkGray
-                self.secondaryLinkLbl.alpha = 0.7
-                self.secondaryLinkLbl.text = label
-                self.secondaryLinkLbl.textAlignment = .center
-                self.secondaryLinkLbl.textColor = UIColor.white
-                self.secondaryLinkLbl.isHidden = false
-                
-            })
-        default:
-            print("")
-        }
-    }
+//    
+//    
+//    func setupSecondaryPostView(user: NSDictionary, secondaryPostData:NSDictionary){
+//        
+//        self.swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeLeftHandler))
+//        
+//        self.swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeRightHandler))
+//        
+//        self.swipeLeftGesture.delegate = self
+//        self.swipeRightGesture.delegate = self
+//        
+//        self.swipeLeftGesture.direction = .left
+//        self.swipeRightGesture.direction = .right
+//        self.swipeRightGesture.numberOfTouchesRequired = 1;
+//        self.swipeLeftGesture.numberOfTouchesRequired = 1;
+//        
+//        self.firstPostView.addGestureRecognizer(swipeLeftGesture)
+//        self.secondaryPostView.addGestureRecognizer(swipeRightGesture)
+//        
+//        self.secondaryLinkLbl.isHidden = true
+//        self.secondaryPostPlayBtn.isHidden = true
+//        let cat: Category = Category(rawValue: secondaryPostData.value(forKey: "secondaryCategory") as! String)!
+//
+//        //TODO: SETUP COMMENTS
+//        switch cat {
+//            
+//        case .Photo:
+//            print("")
+//            imageCache.getImage(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image) in
+//                self.secondaryContentImageView.image = image
+//            })
+//        case .Video:
+//            print("")
+//            //thumbnail URL
+//            let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
+//            
+//            imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
+//                self.secondaryContentImageView.image = image
+//            })
+//            self.secondaryPostPlayBtn.isHidden = false
+//            
+//        case .Recording:
+//            
+//            self.secondaryContentImageView.image = UIImage(named:"audioWave")
+//            
+//        case .Music:
+//            
+//            self.songView.isHidden = false
+//            self.firstPostView.removeGestureRecognizer(swipeLeftGesture)
+//            self.secondaryPostView.removeGestureRecognizer(swipeRightGesture)
+//            self.postCurrentlyViewingStackView.isHidden = true
+//            
+//        case .Text:
+//            print("")
+//            imageCache.getImage(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image) in
+//                self.secondaryContentImageView.image = image
+//            })
+//            
+//        case .Link:
+//            print("")
+//            self.secondaryLinkLbl.isHidden = false
+//            self.secondaryPostPlayBtn.setImage(self.dataManager.clearImage, for: .normal)
+//            
+//            self.dataManager.setURLView(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image, label) in
+//                
+//                self.secondaryContentImageView.image = image
+//                
+//                self.secondaryLinkLbl.adjustsFontSizeToFitWidth = true
+//                self.secondaryLinkLbl.numberOfLines = 3
+//                self.secondaryLinkLbl.backgroundColor = UIColor.darkGray
+//                self.secondaryLinkLbl.alpha = 0.7
+//                self.secondaryLinkLbl.text = label
+//                self.secondaryLinkLbl.textAlignment = .center
+//                self.secondaryLinkLbl.textColor = UIColor.white
+//                self.secondaryLinkLbl.isHidden = false
+//                
+//            })
+//        default:
+//            print("")
+//        }
+//    }
     
     
     
@@ -398,9 +406,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBAction func minimizeAction(_ sender: Any) {
         
         UIView.animate(withDuration: 0.2, animations: {
-            
+            self.shadowView.transform = CGAffineTransform(translationX: 0, y: 1000)
             self.popupView.transform = CGAffineTransform(translationX: 0, y: 1000)
-            
+            self.alphaView.alpha = 0.0
         }){ (success) in
             if success{
                 self.willMove(toParentViewController: nil)
@@ -415,70 +423,20 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBAction func likeAction(_ sender: Any) {
         
         let postId:String = self.postData.postId
-        let postUserId: String = self.postData.user.value(forKey: "uid") as! String
 
         if(likedByUser){
             
             if (postId != ""){
+                
                 self.likedByUser = false
                 
                 //set image to normal color
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
                 self.likeBtn.setImage(newImage, for: .normal)
                 
-                //decrement like count
-//               let likeCount: Int = self.postData.likes
-
+                self.likedButtonPressed(liked: false, indexPath: self.selectedIndexPath)
                 
-                let postLikesRef = Database.database().reference().child("Posts").child(postUserId).child("likes")
-                
-                //remove current user from likes list
-                let postLikesDictRef = Database.database().reference().child("Posts").child(postUserId).child("users_who_liked").child(currentUserId)
-                postLikesDictRef.removeValue()
-                
-                let likedDictRef = Database.database().reference().child("Users").child(currentUserId).child("liked_posts")
-                
-                postLikesRef.observeSingleEvent(of: .value, with: { snapshot in
-                    
-                    let likes = snapshot.value as? Int
-                    
-                    if likes != nil{
-                        
-                        let tempNum = likes! - 1
-                        postLikesRef.setValue(tempNum)
-                        
-                        self.dataManager.getLikedPostsList(userId: self.currentUserId, completion: { snapshot in
-                            
-                            if let data: NSMutableDictionary = snapshot.mutableCopy() as? NSMutableDictionary{
-                                
-                                //Liked Dictionary Cleanup
-                                //Uncomment and change 2 lines below when post timing is in place
-                                let newdata: NSMutableDictionary = self.dataManager.postsCleanup(dictionary: data).mutableCopy() as! NSMutableDictionary
-                                
-                                newdata.removeObject(forKey: postUserId)
-                                likedDictRef.setValue(newdata)
-                                
-                                
-                                let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
-                                
-                                tmp.removeObject(forKey: (Auth.auth().currentUser?.uid)!)
-                                
-                                self.postData.usersWhoLiked = tmp;
-                                
-                                self.postData.likes = tempNum
-                                
-                                //Fire the action in FEEDVIEWCONTROLLER cellForRowAt:
-//                                if let likeAction = self.newUsersDict
-//                                {
-//                                    likeAction()
-//                                }
-                            }
-                            
-                        })
-                    }
-                })
             }
-            
             
         }else{
             
@@ -489,56 +447,13 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
                 
-//                let likeCount: Int = self.postData.likes
-                
-                let postLikesRef = Database.database().reference().child("Posts").child(postUserId).child("likes")
-                
-                //Add the current user to the likes list
-                let postLikesDictRef = Database.database().reference().child("Posts").child(postUserId).child("users_who_liked")
-                postLikesDictRef.child(currentUserId).setValue(true)
-                
-                
-                let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts")
-                
-                
-                //increment likes and update list
-                postLikesRef.observeSingleEvent(of: .value, with: { snapshot in
-                    
-                    let likes = snapshot.value as? Int
-                    
-                    if likes != nil{
-                        
-                        let tempNum = likes! + 1
-                        postLikesRef.setValue(tempNum)
-                        
-                        
-                        self.dataManager.getLikedPostsList(userId: self.currentUserId, completion: { snapshot in
-                            
-                            if let data: NSMutableDictionary = snapshot.mutableCopy() as? NSMutableDictionary{
-                                
-                                //make the value the time created (In Milliseconds since 1970) so we can remove from dictionary when appropriate
-                                data.setValue(self.postData.expireTime, forKey:postUserId)
-                                likedDictRef.setValue(data)
-                                
-                                let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
-                                
-                                tmp.setValue(true, forKey: (Auth.auth().currentUser?.uid)!)
-                                self.postData.usersWhoLiked = tmp;
-                                
-                                //set liked users dict and call action on tableView
-                                self.postData.likes = tempNum
-                                
-//                                if let likeAction = self.newUsersDict
-//                                {
-//                                    likeAction()
-//                                }
-                            }
-                        })
-                    }
-                })
+                self.likedButtonPressed(liked: true, indexPath: self.selectedIndexPath)
+
             }
         }
     }
+    
+    
     
     @IBAction func commentsAction(_ sender: Any) {
         
@@ -565,6 +480,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     @IBAction func moreBtnAction(_ sender: Any) {
         
+        self.moreButtonPressed(data: self.postData, indexPath: self.selectedIndexPath)
         
     }
     
@@ -602,35 +518,35 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    @IBAction func secondaryPlayAction(_ sender: Any) {
-        
-        self.secondaryPostPlayBtn.isHidden = true
-        
-        let sData: String =  self.postData.secondaryPost.value(forKey: "secondaryData") as! String
-        let sCat: Category = Category(rawValue: self.postData.secondaryPost.value(forKey: "secondaryCategory") as! String)!
-        
-        switch sCat {
-            
-        case .Video:
-            
-            playURLData(urlString: sData, uid: self.postData.user.value(forKey: "uid") as! String, primary: false)
-            
-        case .Recording:
-            print("")
-            
-            self.playURLData(urlString: sData, uid: self.postData.user.value(forKey: "uid") as! String, primary:  false)
-        case .Link:
-            
-            let urlString = sData
-            
-            //Image will already be cached so we shouldn't need to use a loading indicator
-            UIApplication.shared.open(URL(string: urlString)!)
-            
-        default:
-            
-            print("")
-        }
-    }
+//    @IBAction func secondaryPlayAction(_ sender: Any) {
+//        
+//        self.secondaryPostPlayBtn.isHidden = true
+//        
+//        let sData: String =  self.postData.secondaryPost.value(forKey: "secondaryData") as! String
+//        let sCat: Category = Category(rawValue: self.postData.secondaryPost.value(forKey: "secondaryCategory") as! String)!
+//        
+//        switch sCat {
+//            
+//        case .Video:
+//            
+//            playURLData(urlString: sData, uid: self.postData.user.value(forKey: "uid") as! String, primary: false)
+//            
+//        case .Recording:
+//            print("")
+//            
+//            self.playURLData(urlString: sData, uid: self.postData.user.value(forKey: "uid") as! String, primary:  false)
+//        case .Link:
+//            
+//            let urlString = sData
+//            
+//            //Image will already be cached so we shouldn't need to use a loading indicator
+//            UIApplication.shared.open(URL(string: urlString)!)
+//            
+//        default:
+//            
+//            print("")
+//        }
+//    }
     
     
     
@@ -642,27 +558,29 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 
 
     //SWIPE GESTURE Handlers
-    func swipeLeftHandler(){
-        
-        UIView.animate(withDuration: 0.3) { 
-            
-            self.secondPostCircle.backgroundColor = UIColor.darkGray
-            self.firstPostCircle.backgroundColor = UIColor.lightGray
-            self.firstPostView.center = CGPoint(x: self.postContainerPlaceholder.center.x - self.firstPostView.frame.width,y: self.postContainerPlaceholder.center.y)
-            self.secondaryPostView.center = self.postContainerPlaceholder.center
-        }
-    }
+//    func swipeLeftHandler(){
+//        
+//        UIView.animate(withDuration: 0.3) { 
+//            
+//            self.secondPostCircle.backgroundColor = UIColor.darkGray
+//            self.firstPostCircle.backgroundColor = UIColor.lightGray
+//            self.firstPostView.center = CGPoint(x: self.postContainerPlaceholder.center.x - self.firstPostView.frame.width,y: self.postContainerPlaceholder.center.y)
+//            self.secondaryPostView.center = self.postContainerPlaceholder.center
+//        }
+//    }
+//    
+//    func swipeRightHandler(){
+//        
+//        UIView.animate(withDuration: 0.3) {
+//            self.secondPostCircle.backgroundColor = UIColor.lightGray
+//            self.firstPostCircle.backgroundColor = UIColor.darkGray
+//            self.firstPostView.center = self.postContainerPlaceholder.center
+//            self.secondaryPostView.center = CGPoint(x: self.postContainerPlaceholder.center.x + self.secondaryPostView.frame.width,y: self.postContainerPlaceholder.center.y)
+//            
+//        }
+//    }
+
     
-    func swipeRightHandler(){
-        
-        UIView.animate(withDuration: 0.3) {
-            self.secondPostCircle.backgroundColor = UIColor.lightGray
-            self.firstPostCircle.backgroundColor = UIColor.darkGray
-            self.firstPostView.center = self.postContainerPlaceholder.center
-            self.secondaryPostView.center = CGPoint(x: self.postContainerPlaceholder.center.x + self.secondaryPostView.frame.width,y: self.postContainerPlaceholder.center.y)
-            
-        }
-    }
     
     
     //PAN GESTURE
@@ -677,9 +595,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         print(translation)
         
+        
         if panGesture.state == UIGestureRecognizerState.began {
             // add something you want to happen when the Label Panning has started
+            
             self.popupView.center = self.contentView.center
+            self.shadowView.center = self.contentView.center
         }
         
         if panGesture.state == UIGestureRecognizerState.ended {
@@ -690,6 +611,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 UIView.animate(withDuration: 0.1, animations: {
                     
                     self.popupView.transform = CGAffineTransform(translationX: xVel/2, y: yVel/2)
+                    self.shadowView.transform = CGAffineTransform(translationX: xVel/2, y: yVel/2)
                     
                 }){ (success) in
                     if success{
@@ -718,6 +640,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
+        
+        
+        
     func playURLData(urlString: String, uid: String, primary: Bool){
         
         //add loading idicator while video downloads
@@ -725,11 +650,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         loadingView.hidesWhenStopped = true
         loadingView.center = self.postContainerPlaceholder.center
         
-        if(primary){
+//        if(primary){
             self.firstPostView.addSubview(loadingView)
-        }else{
-            self.secondaryPostView.addSubview(loadingView)
-        }
+//        }else{
+//            self.secondaryPostView.addSubview(loadingView)
+//        }
         
         
         loadingView.startAnimating()
@@ -783,6 +708,23 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
+    
+    //DELEGTE METHODS
+    
+    func likedButtonPressed(liked: Bool, indexPath: IndexPath){
+        
+        self.delegate.likedButtonPressed(liked: liked, indexPath: indexPath)
+        
+    }
+    
+    func  moreButtonPressed(data: PostData, indexPath: IndexPath){
+        
+        self.delegate.moreButtonPressed(data: data, indexPath: indexPath)
+    }
+    
+    
+    
+    
     func playerDidFinishPlayingPrimary(note: NSNotification) {
         
 //        self.avPlayerViewController.dismiss(animated: false, completion: nil)
@@ -812,6 +754,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
     }
     
+        
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -827,5 +770,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             }
         }
     }
+        
+
 
 }

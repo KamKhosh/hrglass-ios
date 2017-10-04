@@ -9,6 +9,9 @@
 import UIKit
 import Firebase
 
+
+
+
 class FeedTableViewCell: UITableViewCell {
 
     @IBOutlet weak var moreBtn: UIButton!
@@ -69,6 +72,13 @@ class FeedTableViewCell: UITableViewCell {
      *    -- Relays to FeedViewController Table View Cell what actions to Perform
      *
      ***************************************************************************/
+    
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+    }
+    
 
 
     @IBAction func moreBtnAction(_ sender: Any) {
@@ -253,13 +263,7 @@ class FeedTableViewCell: UITableViewCell {
             
         }
     }
-    
 
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

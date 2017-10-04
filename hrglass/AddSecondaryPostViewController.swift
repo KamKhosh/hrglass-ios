@@ -1740,25 +1740,25 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
         
         if segue.identifier == "unwindToSubmitPost"{
             
-            let submitVC: SubmitPostViewController = segue.destination as! SubmitPostViewController
+//            let submitVC: SubmitPostViewController = segue.destination as! SubmitPostViewController
             
-            if (self.useSecondaryPostData){
-                
-                submitVC.hasSecondaryPost = true;
-                submitVC.secondarySelectedObject = self.selectedObject
-                submitVC.secondarySelectedCategory = self.selectedCategory
-                
-                if self.selectedCategory == .Video{
-                    
-                    submitVC.selectedThumbnail = self.postPhotoView.image!
-                    
-                    if trimmedVideoPath != ""{
-                        submitVC.selectedVideoPath = self.trimmedVideoPath
-                    }
-                    
-                }
-                
-            }
+//            if (self.useSecondaryPostData){
+//                
+//                submitVC.hasSecondaryPost = true;
+//                submitVC.secondarySelectedObject = self.selectedObject
+//                submitVC.secondarySelectedCategory = self.selectedCategory
+//                
+//                if self.selectedCategory == .Video{
+//                    
+//                    submitVC.selectedThumbnail = self.postPhotoView.image!
+//                    
+//                    if trimmedVideoPath != ""{
+//                        submitVC.selectedVideoPath = self.trimmedVideoPath
+//                    }
+//                    
+//                }
+//                
+//            }
             
         }else if (segue.identifier == "toCropView"){
             

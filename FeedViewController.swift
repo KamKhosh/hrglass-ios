@@ -13,7 +13,7 @@ import AVKit
 import AVFoundation
 
 
-class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate{
+class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate{
 
     
     //side navigation bar, swipe to open
@@ -430,7 +430,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         cell.contentSelected = {
-            self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center)
+            
+            
+            self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
             
             
             self.dataManager.incrementViewsCount(post: cell.postData, completion: { views in
@@ -441,32 +443,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         cell.moreBtnSelected = {
             
-            let alert: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             
-            let block: UIAlertAction = UIAlertAction(title: String(format:"Block %@", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
-                
-                self.moreMenuPostData = cell.postData
-                self.blockUserRow = indexPath.row
-                self.blockUserAction()
-                alert.dismiss(animated: true, completion: nil)
-            }
+            self.moreButtonPressed(data: cell.postData, indexPath: indexPath)
             
-            let message: UIAlertAction = UIAlertAction(title: String(format:"Send %@ a Message", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
-                
-                self.moreMenuPostData = cell.postData
-                self.blockUserRow = indexPath.row
-                self.sendMessageAction()
-                alert.dismiss(animated: true, completion: nil)
-            }
-            
-            let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
-                alert.dismiss(animated: true, completion: nil)
-            }
-    
-            alert.addAction(message)
-            alert.addAction(block)
-            alert.addAction(cancel)
-            self.present(alert, animated: true, completion: nil)
         }
 
         
@@ -656,7 +635,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     
-    func showPostPopUp(postData: PostData, postCenter: CGPoint){
+    func showPostPopUp(postData: PostData, postCenter: CGPoint, indexPath:IndexPath){
         
 
 //        let translucentView = UIView(frame: view.frame)
@@ -676,11 +655,11 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // add child view controller view to container
 //        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
-        
+        postVC.delegate = self
         postVC.imageCache = self.imageCache
         postVC.postData = postData
         postVC.videoCache = self.videoStore
-        
+        postVC.selectedIndexPath = indexPath
         
         addChildViewController(postVC)
         
@@ -689,6 +668,53 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         view.addSubview(postVC.view)
         postVC.didMove(toParentViewController: self)
+        
+    }
+    
+    
+    
+    
+    //PostView Delegate Method
+    func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
+        
+        
+        let cell: FeedTableViewCell = self.tableView.cellForRow(at: indexPath) as! FeedTableViewCell
+        cell.likeAction((Any).self)
+        
+    }
+    
+    
+    
+    func moreButtonPressed(data: PostData, indexPath: IndexPath){
+        
+        let fullname: String = data.user.value(forKey: "name") as! String
+        
+        let alert: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let block: UIAlertAction = UIAlertAction(title: String(format:"Block %@", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            
+            self.moreMenuPostData = data
+            self.blockUserRow = indexPath.row
+            self.blockUserAction()
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let message: UIAlertAction = UIAlertAction(title: String(format:"Send %@ a Message", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            
+            self.moreMenuPostData = data
+            self.blockUserRow = indexPath.row
+            self.sendMessageAction()
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(message)
+        alert.addAction(block)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
         
     }
     
@@ -863,6 +889,24 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
         
     }
-
-
 }
+
+
+
+
+
+
+
+//extension FeedViewController:TableViewCellDelegate {
+//    
+//    
+//    func tableViewCell(singleTapActionDelegatedFrom cell: FeedTableViewCell) {
+//        let indexPath = tableView.indexPath(for: cell)
+//        print("singleTap \(String(describing: indexPath)) ")
+//    }
+//    
+//    func tableViewCell(doubleTapActionDelegatedFrom cell: FeedTableViewCell) {
+//        let indexPath = tableView.indexPath(for: cell)
+//        print("doubleTap \(String(describing: indexPath)) ")
+//    }
+//}

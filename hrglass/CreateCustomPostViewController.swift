@@ -166,15 +166,15 @@ class CreateCustomPostViewController: UIViewController {
             addPostVC.loggedInUser = self.loggedInUser
             addPostVC.postWasSaved = true
             
-            var secondCat: Category = .None
-            var savedPostHasChild:Bool = false
-            if let child: NSDictionary  = self.savedPost.value(forKey: "secondaryPost") as? NSDictionary{
-                savedPostHasChild = true
-                addPostVC.hasSecondarySavedPost = true
-                secondCat = Category(rawValue: child.value(forKey: "secondaryCategory") as! String)!
-                addPostVC.secondarySelectedCategory = secondCat
-                
-            }
+//            var secondCat: Category = .None
+//            var savedPostHasChild:Bool = false
+//            if let child: NSDictionary  = self.savedPost.value(forKey: "secondaryPost") as? NSDictionary{
+//                savedPostHasChild = true
+//                addPostVC.hasSecondarySavedPost = true
+//                secondCat = Category(rawValue: child.value(forKey: "secondaryCategory") as! String)!
+//                addPostVC.secondarySelectedCategory = secondCat
+//                
+//            }
             
             
         
@@ -187,27 +187,27 @@ class CreateCustomPostViewController: UIViewController {
                 addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
             }else{
             
-                addPostVC.selectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
+                addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
             
             }
                 
                 
-                
-            if savedPostHasChild{
-                
-                if (secondCat == .Video){
-                    let path = self.dataManager.documentsPathForFileName(name: "secondarySavedPostData.mp4")
-
-                    addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
-//                    addPostVC.secondarySelectedObject = AVAsset(url: path)
-                    addPostVC.trimmedVideoPath = path.absoluteString
-                    addPostVC.secondarySelectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
-                }else{
-                        
-                    addPostVC.secondarySelectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
-
-                }
-            }
+//                
+//            if savedPostHasChild{
+//                
+//                if (secondCat == .Video){
+//                    let path = self.dataManager.documentsPathForFileName(name: "secondarySavedPostData.mp4")
+//
+//                    addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
+////                    addPostVC.secondarySelectedObject = AVAsset(url: path)
+//                    addPostVC.trimmedVideoPath = path.absoluteString
+//                    addPostVC.secondarySelectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
+//                }else{
+//                        
+//                    addPostVC.secondarySelectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
+//
+//                }
+//            }
         }
     }
     

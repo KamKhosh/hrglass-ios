@@ -321,24 +321,21 @@ class DataManager {
         let creationDate: String = NSString(format: "%@", cd as CVarArg) as String
         let expireTime: String = NSString(format: "%@", et as CVarArg) as String
         
-        var postData: PostData!
+//        var postData: PostData!
         
-        if let secondDict: NSDictionary = postDict.value(forKey: "secondaryPost") as? NSDictionary{
+//        if let secondDict: NSDictionary = postDict.value(forKey: "secondaryPost") as? NSDictionary{
+//            
+//            postData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, secondaryPost: secondDict,commentThread: postDict.value(forKey: "postID") as! String)
+//            
+//        }else{
+        
+        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, commentThread: postDict.value(forKey: "postID") as! String)
             
-            postData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, secondaryPost: secondDict,commentThread: postDict.value(forKey: "postID") as! String)
-            
-        }else{
-            
-            postData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, commentThread: postDict.value(forKey: "postID") as! String)
-            
-        }
+//        }
 
         print(postDict.value(forKey: "likes") as! Int)
         print(postDict.value(forKey: "views") as! Int)
         print(postDict.value(forKey: "user")  as! NSDictionary)
-        
-
-        
         
         return postData
     }
@@ -946,11 +943,13 @@ class DataManager {
         var dataKey: String = ""
         let assetIdKey: String = "localVideoAssetId"
         
-        if primary{
+//        if primary{
             dataKey = "savedPostData"
-        }else{
-            dataKey = "secondarySavedPostData"
-        }
+//        }
+        
+//        else{
+//            dataKey = "secondarySavedPostData"
+//        }
         
         switch category{
             
@@ -1004,11 +1003,11 @@ class DataManager {
         let assetIdKey: String = "localVideoAssetId"
         let postKey: String = "savedPost"
         
-        if primary{
+//        if primary{
             dataKey = "savedPostData"
-        }else{
-            dataKey = "secondarySavedPostData"
-        }
+//        }else{
+//            dataKey = "secondarySavedPostData"
+//        }
         
         switch category{
         case .Photo:

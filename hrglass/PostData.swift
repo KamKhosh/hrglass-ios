@@ -52,7 +52,7 @@ class PostData: NSObject{
     var creationDate: String!
     var expireTime: String!
     var postShape: String!
-    var secondaryPost: NSDictionary!
+//    var secondaryPost: NSDictionary!
     var commentThread: String!
     
     
@@ -70,30 +70,30 @@ class PostData: NSObject{
         self.creationDate = creationDate
         self.expireTime = expireTime
         self.postShape = postShape
-        self.secondaryPost = nil
+//        self.secondaryPost = nil
         self.commentThread = commentThread
         
     }
     
-    
-    
-    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, postShape: String!, secondaryPost: NSDictionary!, commentThread: String){
-        
-        self.postId = postId
-        self.likes = likes
-        self.views = views
-        self.category = category
-        self.data = withDataString
-        self.user = user
-        self.mood = mood
-        self.usersWhoLiked = usersWhoLiked
-        self.creationDate = creationDate
-        self.expireTime = expireTime
-        self.postShape = postShape
-        self.secondaryPost = secondaryPost
-        self.commentThread = commentThread
-        
-    }
+//    
+//    
+//    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, postShape: String!, secondaryPost: NSDictionary!, commentThread: String){
+//        
+//        self.postId = postId
+//        self.likes = likes
+//        self.views = views
+//        self.category = category
+//        self.data = withDataString
+//        self.user = user
+//        self.mood = mood
+//        self.usersWhoLiked = usersWhoLiked
+//        self.creationDate = creationDate
+//        self.expireTime = expireTime
+//        self.postShape = postShape
+//        self.secondaryPost = secondaryPost
+//        self.commentThread = commentThread
+//        
+//    }
 }
 
 

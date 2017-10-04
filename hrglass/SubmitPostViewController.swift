@@ -45,10 +45,10 @@ class SubmitPostViewController: UIViewController {
     var selectedVideoPath: String = ""
     
     //secondary post data
-    var secondarySelectedObject: AnyObject!
-    var secondarySelectedCategory: Category = .None
-    var primaryVideoURL: String = ""
-    var secondaryVideoThumbnail: UIImage!
+//    var secondarySelectedObject: AnyObject!
+//    var secondarySelectedCategory: Category = .None
+//    var primaryVideoURL: String = ""
+//    var secondaryVideoThumbnail: UIImage!
     
     //Bool set to true if user is posting a saved post -- ie sent from the createCustomPostVC
     var postWasSaved: Bool = false
@@ -74,8 +74,8 @@ class SubmitPostViewController: UIViewController {
     
     
     //Secondary Content View
-    @IBOutlet weak var secondaryPostBtn: UIButton!
-    var removeBtn: UIButton = UIButton()
+//    @IBOutlet weak var secondaryPostBtn: UIButton!
+//    var removeBtn: UIButton = UIButton()
     
     
     override func viewDidLoad() {
@@ -126,21 +126,21 @@ class SubmitPostViewController: UIViewController {
         self.linkBtn = UIButton(type: .custom)
         self.linkBtn.setImage(UIImage(named: "news"), for: .normal)
         
-        self.photoBtn.addTarget(self, action: #selector(self.photoBtnAction(_:)), for: .touchUpInside)
-        self.videoBtn.addTarget(self, action: #selector(self.videoBtnAction(_:)), for: .touchUpInside)
-        self.textBtn.addTarget(self, action: #selector(self.textBtnAction(_:)), for: .touchUpInside)
-        self.recordingBtn.addTarget(self, action: #selector(self.recordingBtnAction(_:)), for: .touchUpInside)
-        self.musicBtn.addTarget(self, action: #selector(self.musicBtnAction(_:)), for: .touchUpInside)
-        self.linkBtn.addTarget(self, action: #selector(self.linkBtnAction(_:)), for: .touchUpInside)
+//        self.photoBtn.addTarget(self, action: #selector(self.photoBtnAction(_:)), for: .touchUpInside)
+//        self.videoBtn.addTarget(self, action: #selector(self.videoBtnAction(_:)), for: .touchUpInside)
+//        self.textBtn.addTarget(self, action: #selector(self.textBtnAction(_:)), for: .touchUpInside)
+//        self.recordingBtn.addTarget(self, action: #selector(self.recordingBtnAction(_:)), for: .touchUpInside)
+//        self.musicBtn.addTarget(self, action: #selector(self.musicBtnAction(_:)), for: .touchUpInside)
+//        self.linkBtn.addTarget(self, action: #selector(self.linkBtnAction(_:)), for: .touchUpInside)
         
         self.buttonArray = [photoBtn, videoBtn, textBtn, recordingBtn, musicBtn, linkBtn]
         
         
-        if (self.hasSecondaryPost){
-            self.setSecondaryPostButtons(hidden: true)
-            self.addExtraLbl.isHidden = true
-            self.postLabel.text = "Ready to post!"
-        }
+//        if (self.hasSecondaryPost){
+//            self.setSecondaryPostButtons(hidden: true)
+//            self.addExtraLbl.isHidden = true
+//            self.postLabel.text = "Ready to post!"
+//        }
         
         self.setPreviewImageViewFor(primaryPost: true)
         
@@ -164,15 +164,16 @@ class SubmitPostViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if (self.hasSecondaryPost){
+        
+//        if (self.hasSecondaryPost){
+        
+//            self.setSecondaryPostButtons(hidden: true)
+//            self.addExtraLbl.isHidden = true
+//            self.postLabel.text = "Ready to post!"
+//            self.uniquePostLbl.isHidden = true
             
-            self.setSecondaryPostButtons(hidden: true)
-            self.addExtraLbl.isHidden = true
-            self.postLabel.text = "Ready to post!"
-            self.uniquePostLbl.isHidden = true
-            
-            setupSecondaryBtn();
-        }
+//            setupSecondaryBtn();
+//        }
     }
 //    
     
@@ -182,60 +183,60 @@ class SubmitPostViewController: UIViewController {
     }
     
     
-    func setupSecondaryBtn(){
-        
-        self.secondaryPostBtn.clipsToBounds = true
-        self.secondaryPostBtn.isHidden = false
-        self.secondaryPostBtn.layer.cornerRadius = self.secondaryPostBtn.frame.width / 2
-        self.secondaryPostBtn.layer.borderWidth = 3.0
-        self.secondaryPostBtn.layer.borderColor = dataManager.getUIColorForCategory(category: self.secondarySelectedCategory).cgColor
-        
-        let closeImage: UIImage = UIImage(named: "close")!
-        self.removeBtn = UIButton(frame: CGRect(x: self.secondaryPostBtn.frame.maxX - 3, y: self.secondaryPostBtn.frame.minY - 3, width: 15, height:15))
-        removeBtn.setImage(closeImage, for: .normal)
-        removeBtn.addTarget(self, action: #selector(removeSecondaryPost), for: .touchUpInside)
-        self.view.addSubview(removeBtn)
-        
-        self.setPreviewImageViewFor(primaryPost: false)
-    }
+//    func setupSecondaryBtn(){
+//        
+//        self.secondaryPostBtn.clipsToBounds = true
+//        self.secondaryPostBtn.isHidden = false
+//        self.secondaryPostBtn.layer.cornerRadius = self.secondaryPostBtn.frame.width / 2
+//        self.secondaryPostBtn.layer.borderWidth = 3.0
+//        self.secondaryPostBtn.layer.borderColor = dataManager.getUIColorForCategory(category: self.secondarySelectedCategory).cgColor
+//        
+//        let closeImage: UIImage = UIImage(named: "close")!
+//        self.removeBtn = UIButton(frame: CGRect(x: self.secondaryPostBtn.frame.maxX - 3, y: self.secondaryPostBtn.frame.minY - 3, width: 15, height:15))
+//        removeBtn.setImage(closeImage, for: .normal)
+//        removeBtn.addTarget(self, action: #selector(removeSecondaryPost), for: .touchUpInside)
+//        self.view.addSubview(removeBtn)
+//        
+//        self.setPreviewImageViewFor(primaryPost: false)
+//    }
     
     
-    func removeSecondaryPost(){
-        
-        self.secondaryPostBtn.isHidden = true
-        self.hasSecondaryPost = false
-        self.secondarySelectedCategory = .None
-        self.secondarySelectedObject = nil
-        
-        self.setSecondaryPostButtons(hidden: false)
-        self.addExtraLbl.isHidden = false
-        self.postLabel.text = "Let's make this post unique"
-        self.uniquePostLbl.isHidden = false
-        self.removeBtn.removeFromSuperview()
-        
-    }
+//    func removeSecondaryPost(){
+//        
+//        self.secondaryPostBtn.isHidden = true
+//        self.hasSecondaryPost = false
+//        self.secondarySelectedCategory = .None
+//        self.secondarySelectedObject = nil
+//        
+//        self.setSecondaryPostButtons(hidden: false)
+//        self.addExtraLbl.isHidden = false
+//        self.postLabel.text = "Let's make this post unique"
+//        self.uniquePostLbl.isHidden = false
+//        self.removeBtn.removeFromSuperview()
+//        
+//    }
     
     
-    func setSecondaryPostButtons(hidden: Bool){
-        
-        self.photoBtn.isHidden = hidden
-        self.videoBtn.isHidden = hidden
-        self.textBtn.isHidden = hidden
-        self.recordingBtn.isHidden = hidden
-        self.musicBtn.isHidden = hidden
-        self.linkBtn.isHidden = hidden
-    }
+//    func setSecondaryPostButtons(hidden: Bool){
+//        
+//        self.photoBtn.isHidden = hidden
+//        self.videoBtn.isHidden = hidden
+//        self.textBtn.isHidden = hidden
+//        self.recordingBtn.isHidden = hidden
+//        self.musicBtn.isHidden = hidden
+//        self.linkBtn.isHidden = hidden
+//    }
     
     
     
     func setPreviewImageViewFor(primaryPost: Bool){
         
         var categorySwitch:Category = .None
-        if primaryPost {
+//        if primaryPost {
             categorySwitch = self.selectedCategory
-        }else{
-            categorySwitch = self.secondarySelectedCategory
-        }
+//        }else{
+//            categorySwitch = self.secondarySelectedCategory
+//        }
         
         
         
@@ -248,11 +249,14 @@ class SubmitPostViewController: UIViewController {
                 self.postImagePreview.image = self.selectedObject as? UIImage
                 self.buttonArray.removeObject(at: 0)
                 
-            }else{
-                
-                self.secondaryPostBtn.setBackgroundImage(self.secondarySelectedObject as? UIImage, for:UIControlState.normal)
-                
             }
+            
+            
+//            else{
+//                
+//                self.secondaryPostBtn.setBackgroundImage(self.secondarySelectedObject as? UIImage, for:UIControlState.normal)
+//                
+//            }
             
             
         case .Video:
@@ -283,21 +287,23 @@ class SubmitPostViewController: UIViewController {
                     self.postImagePreview.image = self.selectedThumbnail
                 }
                 
-            }else{
-                if self.selectedThumbnail == nil{
-                    if let asset: PHAsset = self.secondarySelectedObject as? PHAsset{
-                        
-                        PHImageManager.default().requestImage(for: asset, targetSize: self.secondaryPostBtn.frame.size, contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
-                            if result != nil {
-                                 self.secondaryPostBtn.setBackgroundImage(result, for:UIControlState.normal)
-                            }
-                        })
-                    }
-                    
-                }else{
-                    self.secondaryPostBtn.setBackgroundImage(self.selectedThumbnail, for:UIControlState.normal)
-                }
             }
+            
+//            else{
+//                if self.selectedThumbnail == nil{
+//                    if let asset: PHAsset = self.secondarySelectedObject as? PHAsset{
+//                        
+//                        PHImageManager.default().requestImage(for: asset, targetSize: self.secondaryPostBtn.frame.size, contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
+//                            if result != nil {
+//                                 self.secondaryPostBtn.setBackgroundImage(result, for:UIControlState.normal)
+//                            }
+//                        })
+//                    }
+//                    
+//                }else{
+//                    self.secondaryPostBtn.setBackgroundImage(self.selectedThumbnail, for:UIControlState.normal)
+//                }
+//            }
             
             
             
@@ -308,10 +314,12 @@ class SubmitPostViewController: UIViewController {
                 self.postImagePreview.image = self.selectedObject as? UIImage
                 self.buttonArray.removeObject(at: 2)
                 
-            }else{
-                
-                self.secondaryPostBtn.setBackgroundImage(self.secondarySelectedObject as? UIImage, for:UIControlState.normal)
             }
+            
+//            else{
+//                
+//                self.secondaryPostBtn.setBackgroundImage(self.secondarySelectedObject as? UIImage, for:UIControlState.normal)
+//            }
             
             
         case .Recording:
@@ -322,10 +330,12 @@ class SubmitPostViewController: UIViewController {
                 self.postImagePreview.image = UIImage(named: "audioWave")
                 self.buttonArray.removeObject(at: 3)
                 
-            }else{
-                
-                self.secondaryPostBtn.setBackgroundImage(UIImage(named: "audioWave"), for:UIControlState.normal)
             }
+            
+//            else{
+//                
+//                self.secondaryPostBtn.setBackgroundImage(UIImage(named: "audioWave"), for:UIControlState.normal)
+//            }
             
 
             
@@ -340,9 +350,11 @@ class SubmitPostViewController: UIViewController {
             if primaryPost{
                self.buttonArray.removeObject(at: 5)
                 setURLView(urlString: self.selectedObject as! String, primary: primaryPost)
-            }else{
-                setURLView(urlString: self.secondarySelectedObject as! String, primary: primaryPost)
             }
+//            
+//            else{
+//                setURLView(urlString: self.secondarySelectedObject as! String, primary: primaryPost)
+//            }
             
             
 
@@ -443,11 +455,11 @@ class SubmitPostViewController: UIViewController {
                             
                             let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Photo", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "post_shape":self.selectedShape]
                             
-                            if self.hasSecondaryPost{
-                                self.postSecondaryData(primaryData: dataDictionary)
-                            }else{
+//                            if self.hasSecondaryPost{
+//                                self.postSecondaryData(primaryData: dataDictionary)
+//                            }else{
                                 self.submitPost(dataDictionary: dataDictionary)
-                            }
+//                            }
                             
                             
                         }else{
@@ -528,11 +540,11 @@ class SubmitPostViewController: UIViewController {
                     if(linkString != ""){
                         
                         
-                        if self.hasSecondaryPost{
-                            self.postSecondaryData(primaryData: dataDictionary)
-                        }else{
+//                        if self.hasSecondaryPost{
+//                            self.postSecondaryData(primaryData: dataDictionary)
+//                        }else{
                            self.submitPost(dataDictionary: dataDictionary)
-                        }
+//                        }
                         
                     }else{
                         
@@ -557,11 +569,11 @@ class SubmitPostViewController: UIViewController {
                             
                             let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Recording", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "post_shape":self.selectedShape]
                             
-                            if self.hasSecondaryPost{
-                                self.postSecondaryData(primaryData: dataDictionary)
-                            }else{
+//                            if self.hasSecondaryPost{
+//                                self.postSecondaryData(primaryData: dataDictionary)
+//                            }else{
                                 self.submitPost(dataDictionary: dataDictionary)
-                            }
+//                            }
                             self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                             
                         }else{
@@ -594,11 +606,11 @@ class SubmitPostViewController: UIViewController {
                             
                             let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Text", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "post_shape":self.selectedShape]
                             
-                            if self.hasSecondaryPost{
-                                self.postSecondaryData(primaryData: dataDictionary)
-                            }else{
+//                            if self.hasSecondaryPost{
+//                                self.postSecondaryData(primaryData: dataDictionary)
+//                            }else{
                                 self.submitPost(dataDictionary: dataDictionary)
-                            }
+//                            }
                             
                             
                         }else{
@@ -659,18 +671,18 @@ class SubmitPostViewController: UIViewController {
                     let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": self.selectedObject, "category":self.selectedCategory.rawValue, "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "post_shape":self.selectedShape]
                     
                     
-                    if (self.hasSecondaryPost){
-                        
-                        
-                        let secondary: NSMutableDictionary = NSMutableDictionary()
-                        secondary.setValue(self.secondarySelectedCategory.rawValue, forKey: "secondaryCategory")
-                        secondary.setValue(self.secondarySelectedObject, forKey: "secondaryData")
-                        
-                        
-                        
-                        dataDictionary.setValue(secondary, forKey: "secondaryPost")
-                        
-                    }
+//                    if (self.hasSecondaryPost){
+//                        
+//                        
+//                        let secondary: NSMutableDictionary = NSMutableDictionary()
+//                        secondary.setValue(self.secondarySelectedCategory.rawValue, forKey: "secondaryCategory")
+//                        secondary.setValue(self.secondarySelectedObject, forKey: "secondaryData")
+//                        
+//                        
+//                        
+//                        dataDictionary.setValue(secondary, forKey: "secondaryPost")
+//                        
+//                    }
                     
                     
                     self.savePostForLater(primary: true, postData: dataDictionary)
@@ -706,180 +718,180 @@ class SubmitPostViewController: UIViewController {
     **************************************************************************************************/
     
     
-    func postSecondaryData(primaryData: NSMutableDictionary){
-        
-        let postID: String = primaryData.value(forKey: "postID") as! String
-        let secondaryData: NSMutableDictionary = NSMutableDictionary()
-        
-        switch self.secondarySelectedCategory {
-            
-        case .Photo:
-            print("Photo Selected")
-            
-            let uploadImage: UIImage = self.secondarySelectedObject as! UIImage
-           secondaryData.setValue("Photo", forKey: "secondaryCategory")
-            
-            //convert uiimage to JPG
-            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-            self.dataManager.saveImageForPath(imageData: data, name: "secondaryPost")
-            let path = self.dataManager.documentsPathForFileName(name: "secondaryPost.jpg")
-            
-            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "secondaryPost", type:"jpg", completion:{ success in
-                
-                if success{
-                    
-                    print("Success")
-                    
-                    let downloadURL: String = String(format:"%@/%@/images/secondaryPost.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                    
-                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
-                    primaryData.setValue(secondaryData, forKey: "secondaryPost")
-                    self.submitPost(dataDictionary: primaryData)
-                    
-                    
-                }else{
-                    
-                    print("Failure, try again?")
-                    
-                    self.postFailedAlert(title: "Post Failed", message: "try again")
-                }
-            })
-            
-            self.progressUpdateTimer(category: .Photo)
-            
-        case .Video:
-            
-            print("Video Selected")
-            
-            let uploadImage: UIImage = self.secondaryPostBtn.backgroundImage(for: .normal)!
-            secondaryData.setValue("Video", forKey: "secondaryCategory")
-            
-            //convert uiimage to JPG
-            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-            self.dataManager.saveImageForPath(imageData: data, name: "thumbnail")
-            let path = self.dataManager.documentsPathForFileName(name: "thumbnail.jpg")
-            
-            
-            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "thumbnail", type: "jpg", completion: { (success) in
-                
-                if success{
-                    
-                    print("Success thumbnail uploaded")
-                    
-                }else{
-                    
-                    print("Failure, try again?")
-                    
-                }
-            })
-            
-            if(self.selectedVideoPath != ""){
-                
-                self.uploadVideo(url: URL(string:self.selectedVideoPath)!, postID: postID, dataDict: primaryData, primary: false)
-                
-            }else{
-                
-                let asset: PHAsset = self.secondarySelectedObject as! PHAsset
-                
-                self.dataManager.getURLForPHAsset(videoAsset: asset, name: "savedPostData.mp4", completion: { url in
-                    
-                    self.uploadVideo(url: url, postID: postID, dataDict: primaryData, primary: false)
-                })
-            }
-            
-            self.progressUpdateTimer(category: .Video)
-            
-            
-        case .Link:
-            
-            print("Link Selected")
-            secondaryData.setValue("Link", forKey: "secondaryCategory")
-            let linkString: String = self.selectedObject as! String
-            
-            self.selectedObject = linkString as AnyObject
-            
-            
-            if(linkString != ""){
-                
-                secondaryData.setValue(linkString, forKey: "secondaryData")
-                primaryData.setValue(secondaryData, forKey: "secondaryPost")
-                self.submitPost(dataDictionary: primaryData)
-                
-            }else{
-                
-                self.postFailedAlert(title: "Empty Link", message: "")
-            }
-            
-        case .Music:
-            
-            print("Music Selected")
-            secondaryData.setValue("Music", forKey: "secondaryCategory")
-            
-            //TODO, add music upload
-            
-        case .Recording:
-            
-            //selected object will be of type NSDATA
-            
-            let url = self.dataManager.documentsPathForFileName(name: "recording.m4a")
-            secondaryData.setValue("Recording", forKey: "secondaryCategory")
-            
-            self.awsManager.uploadAudioAction(resourceURL: url, fileName: "post", type:"m4a", completion:{ success in
-                
-                if success{
-                    
-                    let downloadURL: String = String(format:"%@/%@/audio/post.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                    
-                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
-                    primaryData.setValue(secondaryData, forKey: "secondaryPost")
-                    self.submitPost(dataDictionary: primaryData)
-                    
-                }else{
-                    
-                    print("Failure, try again?")
-                    self.postFailedAlert(title: "Post Failed", message: "try again")
-                }
-            })
-            
-            self.progressUpdateTimer(category: .Recording)
-            
-        case .Text:
-            
-            print("Text Selected")
-            secondaryData.setValue("Text", forKey: "secondaryCategory")
-
-            let uploadImage: UIImage = self.secondarySelectedObject as! UIImage
-            
-            //convert uiimage to JPG
-            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-            self.dataManager.saveImageForPath(imageData: data, name: "secondaryPost")
-            let path = self.dataManager.documentsPathForFileName(name: "secondaryPost.jpg")
-            
-            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "secondaryPost", type:"jpg", completion:{ success in
-                
-                if success{
-                    
-                    print("Success")
-                    
-                    let downloadURL: String = String(format:"%@/%@/images/secondaryPost.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                    
-                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
-                    primaryData.setValue(secondaryData, forKey: "secondaryPost")
-                    self.submitPost(dataDictionary: primaryData)
-                    
-                }else{
-                    
-                    print("Failure, try again?")
-                    self.postFailedAlert(title: "Post Failed", message: "try again")
-                }
-            })
-            
-            self.progressUpdateTimer(category: .Photo)
-            
-        default:
-            print("None, do nothing")
-        }
-    }
+//    func postSecondaryData(primaryData: NSMutableDictionary){
+//        
+//        let postID: String = primaryData.value(forKey: "postID") as! String
+//        let secondaryData: NSMutableDictionary = NSMutableDictionary()
+//        
+//        switch self.secondarySelectedCategory {
+//            
+//        case .Photo:
+//            print("Photo Selected")
+//            
+//            let uploadImage: UIImage = self.secondarySelectedObject as! UIImage
+//           secondaryData.setValue("Photo", forKey: "secondaryCategory")
+//            
+//            //convert uiimage to JPG
+//            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+//            self.dataManager.saveImageForPath(imageData: data, name: "secondaryPost")
+//            let path = self.dataManager.documentsPathForFileName(name: "secondaryPost.jpg")
+//            
+//            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "secondaryPost", type:"jpg", completion:{ success in
+//                
+//                if success{
+//                    
+//                    print("Success")
+//                    
+//                    let downloadURL: String = String(format:"%@/%@/images/secondaryPost.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+//                    
+//                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
+//                    primaryData.setValue(secondaryData, forKey: "secondaryPost")
+//                    self.submitPost(dataDictionary: primaryData)
+//                    
+//                    
+//                }else{
+//                    
+//                    print("Failure, try again?")
+//                    
+//                    self.postFailedAlert(title: "Post Failed", message: "try again")
+//                }
+//            })
+//            
+//            self.progressUpdateTimer(category: .Photo)
+//            
+//        case .Video:
+//            
+//            print("Video Selected")
+//            
+//            let uploadImage: UIImage = self.secondaryPostBtn.backgroundImage(for: .normal)!
+//            secondaryData.setValue("Video", forKey: "secondaryCategory")
+//            
+//            //convert uiimage to JPG
+//            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+//            self.dataManager.saveImageForPath(imageData: data, name: "thumbnail")
+//            let path = self.dataManager.documentsPathForFileName(name: "thumbnail.jpg")
+//            
+//            
+//            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "thumbnail", type: "jpg", completion: { (success) in
+//                
+//                if success{
+//                    
+//                    print("Success thumbnail uploaded")
+//                    
+//                }else{
+//                    
+//                    print("Failure, try again?")
+//                    
+//                }
+//            })
+//            
+//            if(self.selectedVideoPath != ""){
+//                
+//                self.uploadVideo(url: URL(string:self.selectedVideoPath)!, postID: postID, dataDict: primaryData, primary: false)
+//                
+//            }else{
+//                
+//                let asset: PHAsset = self.secondarySelectedObject as! PHAsset
+//                
+//                self.dataManager.getURLForPHAsset(videoAsset: asset, name: "savedPostData.mp4", completion: { url in
+//                    
+//                    self.uploadVideo(url: url, postID: postID, dataDict: primaryData, primary: false)
+//                })
+//            }
+//            
+//            self.progressUpdateTimer(category: .Video)
+//            
+//            
+//        case .Link:
+//            
+//            print("Link Selected")
+//            secondaryData.setValue("Link", forKey: "secondaryCategory")
+//            let linkString: String = self.selectedObject as! String
+//            
+//            self.selectedObject = linkString as AnyObject
+//            
+//            
+//            if(linkString != ""){
+//                
+//                secondaryData.setValue(linkString, forKey: "secondaryData")
+//                primaryData.setValue(secondaryData, forKey: "secondaryPost")
+//                self.submitPost(dataDictionary: primaryData)
+//                
+//            }else{
+//                
+//                self.postFailedAlert(title: "Empty Link", message: "")
+//            }
+//            
+//        case .Music:
+//            
+//            print("Music Selected")
+//            secondaryData.setValue("Music", forKey: "secondaryCategory")
+//            
+//            //TODO, add music upload
+//            
+//        case .Recording:
+//            
+//            //selected object will be of type NSDATA
+//            
+//            let url = self.dataManager.documentsPathForFileName(name: "recording.m4a")
+//            secondaryData.setValue("Recording", forKey: "secondaryCategory")
+//            
+//            self.awsManager.uploadAudioAction(resourceURL: url, fileName: "post", type:"m4a", completion:{ success in
+//                
+//                if success{
+//                    
+//                    let downloadURL: String = String(format:"%@/%@/audio/post.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+//                    
+//                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
+//                    primaryData.setValue(secondaryData, forKey: "secondaryPost")
+//                    self.submitPost(dataDictionary: primaryData)
+//                    
+//                }else{
+//                    
+//                    print("Failure, try again?")
+//                    self.postFailedAlert(title: "Post Failed", message: "try again")
+//                }
+//            })
+//            
+//            self.progressUpdateTimer(category: .Recording)
+//            
+//        case .Text:
+//            
+//            print("Text Selected")
+//            secondaryData.setValue("Text", forKey: "secondaryCategory")
+//
+//            let uploadImage: UIImage = self.secondarySelectedObject as! UIImage
+//            
+//            //convert uiimage to JPG
+//            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+//            self.dataManager.saveImageForPath(imageData: data, name: "secondaryPost")
+//            let path = self.dataManager.documentsPathForFileName(name: "secondaryPost.jpg")
+//            
+//            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "secondaryPost", type:"jpg", completion:{ success in
+//                
+//                if success{
+//                    
+//                    print("Success")
+//                    
+//                    let downloadURL: String = String(format:"%@/%@/images/secondaryPost.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+//                    
+//                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
+//                    primaryData.setValue(secondaryData, forKey: "secondaryPost")
+//                    self.submitPost(dataDictionary: primaryData)
+//                    
+//                }else{
+//                    
+//                    print("Failure, try again?")
+//                    self.postFailedAlert(title: "Post Failed", message: "try again")
+//                }
+//            })
+//            
+//            self.progressUpdateTimer(category: .Photo)
+//            
+//        default:
+//            print("None, do nothing")
+//        }
+//    }
     
     
     
@@ -906,18 +918,20 @@ class SubmitPostViewController: UIViewController {
                     self.linkContentView.isHidden = false
                     self.postImagePreview.addSubview(self.linkContentView)
                     
-                }else{
-                    
-                    self.secondaryPostBtn.setBackgroundImage(image, for:UIControlState.normal)
-                    
-                    self.linkContentView.text = label
-                    self.linkContentView.numberOfLines = 3
-                    
-                    self.postImagePreview.isHidden = false
-                    self.linkContentView.isHidden = false
-                    self.secondaryPostBtn.addSubview(self.linkContentView)
-                    
                 }
+                
+//                else{
+//                    
+//                    self.secondaryPostBtn.setBackgroundImage(image, for:UIControlState.normal)
+//                    
+//                    self.linkContentView.text = label
+//                    self.linkContentView.numberOfLines = 3
+//                    
+//                    self.postImagePreview.isHidden = false
+//                    self.linkContentView.isHidden = false
+//                    self.secondaryPostBtn.addSubview(self.linkContentView)
+//                    
+//                }
                 
                 
             }
@@ -960,27 +974,29 @@ class SubmitPostViewController: UIViewController {
                 let downloadURL: String = String(format:"%@/%@/videos/post.mp4", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
             
                 
-                if (!self.hasSecondaryPost) {
-                    
+//                if (!self.hasSecondaryPost) {
+                
                     dataDict.setValue(downloadURL, forKey: "data")
                     self.submitPost(dataDictionary: dataDict)
                     
-                }else if (self.hasSecondaryPost  && primary){
-                    
-                    self.primaryVideoURL = downloadURL
-                    dataDict.setValue(downloadURL, forKey: "data")
-                    self.postSecondaryData(primaryData: dataDict)
-                    
-                }else if (!primary) {
-                    
-                    let secondaryData: NSMutableDictionary = NSMutableDictionary()
-                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
-                    secondaryData.setValue("Video", forKey: "secondaryCategory")
-                    dataDict.setValue(secondaryData, forKey: "secondaryPost")
-                    
-                    self.submitPost(dataDictionary: dataDict)
-                    
-                }
+//                }
+                
+//                else if (self.hasSecondaryPost  && primary){
+//                    
+//                    self.primaryVideoURL = downloadURL
+//                    dataDict.setValue(downloadURL, forKey: "data")
+//                    self.postSecondaryData(primaryData: dataDict)
+//                    
+//                }else if (!primary) {
+//                    
+//                    let secondaryData: NSMutableDictionary = NSMutableDictionary()
+//                    secondaryData.setValue(downloadURL, forKey: "secondaryData")
+//                    secondaryData.setValue("Video", forKey: "secondaryCategory")
+//                    dataDict.setValue(secondaryData, forKey: "secondaryPost")
+//                    
+//                    self.submitPost(dataDictionary: dataDict)
+//                    
+//                }
             }else{
                 
                 print("Failure, try again?")
@@ -991,14 +1007,14 @@ class SubmitPostViewController: UIViewController {
     
     
     func submitPost(dataDictionary: NSMutableDictionary){
-        if hasSecondaryPost && selectedCategory == .Video{
-            dataDictionary.setValue(self.primaryVideoURL, forKey: "data")
-        }
+//        if hasSecondaryPost && selectedCategory == .Video{
+//            dataDictionary.setValue(self.primaryVideoURL, forKey: "data")
+//        }
         
         self.postRef.setValue(dataDictionary)
         
         //reset comments
-        let commentRef: DatabaseReference = Database.database().reference().child("comments").child(Auth.auth().currentUser!.uid)
+        let commentRef: DatabaseReference = Database.database().reference().child("Comments").child(Auth.auth().currentUser!.uid)
         commentRef.removeValue()
         
         self.activityIndicator.stopAnimating()
@@ -1108,19 +1124,21 @@ class SubmitPostViewController: UIViewController {
             object = self.selectedObject
             dataKey = "savedPostData"
             
-        }else{
-            
-            category = self.secondarySelectedCategory
-            object = self.secondarySelectedObject
-            dataKey = "secondarySavedPostData"
-            
         }
+        
+//        else{
+//            
+//            category = self.secondarySelectedCategory
+//            object = self.secondarySelectedObject
+//            dataKey = "secondarySavedPostData"
+//            
+//        }
         
         if (category != .Video){
             
             self.dataManager.savePostData(category: category, data: object!, primary: primary, completion:{ value in
                 
-                if (!self.hasSecondaryPost){
+//                if (!self.hasSecondaryPost){
                     let dataPath = value
                     postData.setValue(dataPath, forKey:"data")
                     let newDict: NSDictionary = postData as NSDictionary
@@ -1129,26 +1147,26 @@ class SubmitPostViewController: UIViewController {
                     UserDefaults.standard.set(dataPath, forKey: dataKey)
                     UserDefaults.standard.synchronize()
                     
-                }else if self.hasSecondaryPost && primary{
-                    let dataPath = value
-                    postData.setValue(dataPath, forKey:"data")
-                    
-                    self.savePostForLater(primary: false, postData: postData)
-                    
-                }else if (!primary){
-                    
-                    let dataPath = value
-                    let secondaryData: NSMutableDictionary = postData.value(forKey: "secondaryPost") as! NSMutableDictionary
-                    secondaryData.setValue(dataPath, forKey: "secondaryData")
-                    postData.setValue(secondaryData, forKey:"secondaryData")
-                    
-                    let newDict: NSDictionary = postData as NSDictionary
-                    
-                    UserDefaults.standard.set(newDict, forKey: dictionaryKey)
-                    UserDefaults.standard.set(dataPath, forKey: dataKey)
-                    UserDefaults.standard.synchronize()
-                    
-                }
+//                }else if self.hasSecondaryPost && primary{
+//                    let dataPath = value
+//                    postData.setValue(dataPath, forKey:"data")
+//                    
+//                    self.savePostForLater(primary: true, postData: postData)
+//
+//                }else if (!primary){
+//                    
+//                    let dataPath = value
+//                    let secondaryData: NSMutableDictionary = postData.value(forKey: "secondaryPost") as! NSMutableDictionary
+//                    secondaryData.setValue(dataPath, forKey: "secondaryData")
+//                    postData.setValue(secondaryData, forKey:"secondaryData")
+//                    
+//                    let newDict: NSDictionary = postData as NSDictionary
+//                    
+//                    UserDefaults.standard.set(newDict, forKey: dictionaryKey)
+//                    UserDefaults.standard.set(dataPath, forKey: dataKey)
+//                    UserDefaults.standard.synchronize()
+//                    
+//                }
             })
             
         }else{
@@ -1158,9 +1176,11 @@ class SubmitPostViewController: UIViewController {
             if primary{
                 thumbnailImage = self.postImagePreview.image!
                 
-            }else{
-                thumbnailImage = self.secondaryPostBtn.backgroundImage(for: .normal)!
             }
+            
+//            else{
+//                thumbnailImage = self.secondaryPostBtn.backgroundImage(for: .normal)!
+//            }
             
             let data: Data = UIImageJPEGRepresentation(thumbnailImage, 0.8)! as Data
             self.dataManager.saveImageForPath(imageData: data, name: thumbnailKey)
@@ -1171,8 +1191,8 @@ class SubmitPostViewController: UIViewController {
             self.dataManager.savePostData(category: category, data: object!, primary: primary, completion:{ value in
                 
                 
-                if (!self.hasSecondaryPost){
-                    
+//                if (!self.hasSecondaryPost){
+                
                     postData.setValue(self.selectedVideoPath, forKey:"data")
                     postData.setValue(tpath.absoluteString, forKey: thumbnailKey)
                     
@@ -1183,28 +1203,28 @@ class SubmitPostViewController: UIViewController {
                     UserDefaults.standard.synchronize()
                     
                     
-                }else if self.hasSecondaryPost && primary{
-                    
-                    postData.setValue(self.selectedVideoPath, forKey:"data")
-                    postData.setValue(tpath.absoluteString, forKey: thumbnailKey)
-                    
-                    self.savePostForLater(primary: false, postData: postData)
-                    
-                }else if (!primary){
-                    
-                    postData.setValue(tpath.absoluteString, forKey: thumbnailKey)
-                    let secondaryData: NSMutableDictionary = postData.value(forKey: "secondaryPost") as! NSMutableDictionary
-                    secondaryData.setValue(self.selectedVideoPath, forKey: "secondaryData")
-                    postData.setValue(secondaryData, forKey:"secondaryPost")
-                    
-                    
-                    let newDict: NSDictionary = postData as NSDictionary
-                    
-                    UserDefaults.standard.set(newDict, forKey: dictionaryKey)
-                    UserDefaults.standard.synchronize()
-                    
-                    
-                }
+//                }else if self.hasSecondaryPost && primary{
+//                    
+//                    postData.setValue(self.selectedVideoPath, forKey:"data")
+//                    postData.setValue(tpath.absoluteString, forKey: thumbnailKey)
+//                    
+//                    self.savePostForLater(primary: true, postData: postData)
+//
+//                }else if (!primary){
+//                    
+//                    postData.setValue(tpath.absoluteString, forKey: thumbnailKey)
+//                    let secondaryData: NSMutableDictionary = postData.value(forKey: "secondaryPost") as! NSMutableDictionary
+//                    secondaryData.setValue(self.selectedVideoPath, forKey: "secondaryData")
+//                    postData.setValue(secondaryData, forKey:"secondaryPost")
+//                    
+//                    
+//                    let newDict: NSDictionary = postData as NSDictionary
+//                    
+//                    UserDefaults.standard.set(newDict, forKey: dictionaryKey)
+//                    UserDefaults.standard.synchronize()
+//                    
+//                    
+//                }
             })
         }
     }
@@ -1308,28 +1328,29 @@ class SubmitPostViewController: UIViewController {
                  self.awsManager.cancelRequest()
             }
            
-        }else if (segue.identifier == "toAddSecondPost"){
-            
-            let addVC: AddSecondaryPostViewController = segue.destination as! AddSecondaryPostViewController
-            addVC.selectedCategory = self.addPostCategory
-            
-            
-            if hasSecondaryPost{
-                
-                if self.selectedThumbnail != nil{
-                    addVC.selectedThumbnail = selectedThumbnail
-                }
-                if self.secondarySelectedCategory != .None{
-                    addVC.selectedCategory = secondarySelectedCategory
-                }
-                if self.secondarySelectedObject != nil{
-                    addVC.selectedObject = secondarySelectedObject
-                }
-                if self.selectedVideoPath != ""{
-                    addVC.trimmedVideoPath = self.selectedVideoPath
-                }
-            }
         }
+//        else if (segue.identifier == "toAddSecondPost"){
+//            
+//            let addVC: AddSecondaryPostViewController = segue.destination as! AddSecondaryPostViewController
+//            addVC.selectedCategory = self.addPostCategory
+//            
+//
+//            if hasSecondaryPost{
+//                
+//                if self.selectedThumbnail != nil{
+//                    addVC.selectedThumbnail = selectedThumbnail
+//                }
+//                if self.secondarySelectedCategory != .None{
+//                    addVC.selectedCategory = secondarySelectedCategory
+//                }
+//                if self.secondarySelectedObject != nil{
+//                    addVC.selectedObject = secondarySelectedObject
+//                }
+//                if self.selectedVideoPath != ""{
+//                    addVC.trimmedVideoPath = self.selectedVideoPath
+//                }
+//            }
+//        }
     }
 }
 

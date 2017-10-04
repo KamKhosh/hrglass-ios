@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */; };
 		5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */; };
 		5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */; };
 		5E1403621F2FE7960024EBFF /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */; };
@@ -78,6 +79,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
 		5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				5E28F4C51EECAAE400E74B01 /* MenuView.swift */,
 				5E24BDA91EB27CBA0047ED50 /* FeedViewController.swift */,
 				5E24BDAB1EB27EB10047ED50 /* FeedTableViewCell.swift */,
+				5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */,
 			);
 			name = FeedViewController;
 			sourceTree = "<group>";
@@ -571,6 +574,7 @@
 				5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */,
 				5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */,
 				5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */,
+				5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */,
 				5E254C551ECB775800CFBFCE /* ProfileTableViewCell.swift in Sources */,
 				5E270D581EF74F280085D5D3 /* EditProfilePicturesViewController.swift in Sources */,
 				5E24BDB01EB280C90047ED50 /* PostData.swift in Sources */,
