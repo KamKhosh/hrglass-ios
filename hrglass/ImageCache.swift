@@ -69,4 +69,16 @@ class ImageCache {
             }
         }
     }
+    
+    
+    
+    
+    
+    func replacePhotoForKey(url: String, image: UIImage){
+        
+        
+        self.cache.setObject(image, forKey: url as NSString)
+        
+        
+    }
 }

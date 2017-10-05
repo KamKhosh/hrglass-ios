@@ -53,7 +53,6 @@ class AWSManager {
         
         let key = "\(uid)/images/\(fileName).\(type)"
         
-        
         self.photoTransferRequest = AWSS3TransferManagerUploadRequest()!
         self.photoTransferRequest?.bucket = self.bucketName
         self.photoTransferRequest?.key = key
@@ -62,7 +61,6 @@ class AWSManager {
         
         transferManager = AWSS3TransferManager.default()
         transferManager.upload(photoTransferRequest!).continueWith(executor: AWSExecutor.mainThread()) { (task) -> Any? in
-            
             
             if let error = task.error {
                 

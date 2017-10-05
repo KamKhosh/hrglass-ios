@@ -1766,12 +1766,6 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
             cropVC.originalImage = self.selectedObject
             cropVC.parentView = "secondaryPostView"
             
-        }else if (segue.identifier == "toTrimView"){
-            
-            let trimVC: TrimViewController = segue.destination as! TrimViewController
-            trimVC.selectedObject = self.selectedObject
-            trimVC.parentView = "secondaryPostView"
-            
         }else if (segue.identifier == "toThumbnailView"){
             
             let thumbVC: SelectThumbnailViewController = segue.destination as! SelectThumbnailViewController

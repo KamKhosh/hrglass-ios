@@ -2004,11 +2004,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             let cropVC: CropViewController = segue.destination as! CropViewController
             cropVC.originalImage = self.selectedObject
 
-        }else if (segue.identifier == "toTrimView"){
-            
-            let trimVC: TrimViewController = segue.destination as! TrimViewController
-            trimVC.selectedObject = self.selectedObject
-            
         }else if (segue.identifier == "toThumbnailView"){
             
             let thumbVC: SelectThumbnailViewController = segue.destination as! SelectThumbnailViewController

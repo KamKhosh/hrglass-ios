@@ -255,13 +255,8 @@ class CropViewController: UIViewController, UIGestureRecognizerDelegate {
             addVC.selectedObject = self.imageView.image
             addVC.postPhotoView.image = self.imageView.image
             
-        }else if (segue.identifier == "unwindToEditProfile"){
-            
-            let editVC: EditProfilePicturesViewController = segue.destination as! EditProfilePicturesViewController
-            
-            editVC.profilePictureImageBtn.setImage(self.imageView.image, for: .normal)
-            
-        }else if (segue.identifier == "unwindToSecondPost"){
+        }
+        else if (segue.identifier == "unwindToSecondPost"){
             
             let addVC: AddSecondaryPostViewController = segue.destination as! AddSecondaryPostViewController
             

@@ -369,9 +369,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 
             case .None:
                 print("None")
-                
             }
-            
         }
         
         cell.borderView.layer.cornerRadius = cell.borderView.frame.width / 2
@@ -405,7 +403,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 
                 self.showLikedContentBtns()
             }
-            
         }
         
         return items

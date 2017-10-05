@@ -28,7 +28,6 @@
 		5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */; };
 		5E254C5C1ECCC36B00CFBFCE /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */; };
 		5E270D561EF748980085D5D3 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E270D551EF748980085D5D3 /* DataManager.swift */; };
-		5E270D581EF74F280085D5D3 /* EditProfilePicturesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E270D571EF74F280085D5D3 /* EditProfilePicturesViewController.swift */; };
 		5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E28BF3A1ED79219006E653B /* AddPostViewController.swift */; };
 		5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E28F4C51EECAAE400E74B01 /* MenuView.swift */; };
 		5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E29FD841EDFA0D100555CCB /* ImageCache.swift */; };
@@ -45,7 +44,6 @@
 		5E32DCB81F53664A004E6AA1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E32DCB61F53664A004E6AA1 /* MediaPlayer.framework */; };
 		5E32DCB91F53664A004E6AA1 /* MediaToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E32DCB71F53664A004E6AA1 /* MediaToolbox.framework */; };
 		5E32DCBB1F536656004E6AA1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E32DCBA1F536656004E6AA1 /* AudioToolbox.framework */; };
-		5E32DCBD1F549B06004E6AA1 /* TrimViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32DCBC1F549B06004E6AA1 /* TrimViewController.swift */; };
 		5E32DCBF1F560C78004E6AA1 /* SelectThumbnailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */; };
 		5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34053F1F5F32B900BAA06F /* ProgressView.swift */; };
 		5E3537FC1F2034AA009D121B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3537FA1F2034AA009D121B /* AVFoundation.framework */; };
@@ -103,7 +101,6 @@
 		5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		5E270D551EF748980085D5D3 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		5E270D571EF74F280085D5D3 /* EditProfilePicturesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfilePicturesViewController.swift; sourceTree = "<group>"; };
 		5E28BF3A1ED79219006E653B /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		5E28F4B71EEC78DD00E74B01 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/FBSDKLoginKit/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		5E28F4B91EEC78E300E74B01 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../Library/Developer/Xcode/DerivedData/hrglass-ftrikzauxysbzdaiqpveucdqnepn/Build/Products/Debug-iphoneos/FBSDKCoreKit/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
@@ -122,7 +119,6 @@
 		5E32DCB61F53664A004E6AA1 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		5E32DCB71F53664A004E6AA1 /* MediaToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaToolbox.framework; path = System/Library/Frameworks/MediaToolbox.framework; sourceTree = SDKROOT; };
 		5E32DCBA1F536656004E6AA1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		5E32DCBC1F549B06004E6AA1 /* TrimViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrimViewController.swift; sourceTree = "<group>"; };
 		5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectThumbnailViewController.swift; sourceTree = "<group>"; };
 		5E34053F1F5F32B900BAA06F /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		5E3537FA1F2034AA009D121B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -301,11 +297,9 @@
 			isa = PBXGroup;
 			children = (
 				5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */,
-				5E32DCBC1F549B06004E6AA1 /* TrimViewController.swift */,
 				5E375C0A1F4A19BB009AC14E /* CropViewController.swift */,
 				5E375C091F4A11DD009AC14E /* AddPostCollectionCell */,
 				5E28BF3A1ED79219006E653B /* AddPostViewController.swift */,
-				5E270D571EF74F280085D5D3 /* EditProfilePicturesViewController.swift */,
 				5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */,
 				5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */,
 				5E60F5371F42270900569F74 /* ColorSlider.swift */,
@@ -564,7 +558,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E3BAC451F00282E0007197A /* SubmitPostViewController.swift in Sources */,
-				5E32DCBD1F549B06004E6AA1 /* TrimViewController.swift in Sources */,
 				5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */,
 				5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */,
 				5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */,
@@ -576,7 +569,6 @@
 				5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */,
 				5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */,
 				5E254C551ECB775800CFBFCE /* ProfileTableViewCell.swift in Sources */,
-				5E270D581EF74F280085D5D3 /* EditProfilePicturesViewController.swift in Sources */,
 				5E24BDB01EB280C90047ED50 /* PostData.swift in Sources */,
 				5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */,
 				5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */,

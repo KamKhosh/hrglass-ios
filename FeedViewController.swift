@@ -43,7 +43,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var homeBtn: UIButton!
     var discoverBtn: UIButton!
     var messagesBtn: UIButton!
-    var uploadBtn: UIButton!
     @IBOutlet weak var noPostsLbl: UILabel!
     
     /**************************
@@ -342,22 +341,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.discoverBtn.center = center
         self.discoverBtn.addTarget(self, action: #selector(self.discoverButtonAction), for: .touchUpInside)
         
-//        self.homeBtn = UIButton(frame: CGRect.zero)
-//        self.homeBtn.setImage(UIImage(named:"home"), for: .normal)
-//        self.homeBtn.center = center
-//        self.homeBtn.addTarget(self, action: #selector(self.homeButtonAction), for: .touchUpInside)
         
         self.messagesBtn = UIButton(frame: CGRect.zero)
         self.messagesBtn.setImage(UIImage(named:"mail"), for: .normal)
         self.messagesBtn.center = center
         self.messagesBtn.addTarget(self, action: #selector(self.messagesButtonAction), for: .touchUpInside)
         
-        self.uploadBtn = UIButton(frame: CGRect.zero)
-        self.uploadBtn.setImage(UIImage(named:"upload"), for: .normal)
-        self.uploadBtn.center = center
-        self.uploadBtn.addTarget(self, action: #selector(self.uploadButtonAction), for: .touchUpInside)
-        
-        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.uploadBtn, self.profileBtn], feedViewController: self, offset: true)
+        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.profileBtn], feedViewController: self, offset: true)
         
         self.view.addSubview(self.navigationMenu)
 
@@ -405,8 +395,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: FeedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "feedCell") as! FeedTableViewCell
-        
-        
         let colors:Colors = Colors()
         
         cell.postData = feedData[indexPath.row]
@@ -431,45 +419,24 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         cell.contentSelected = {
             
-            
             self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
-            
-            
+        
             self.dataManager.incrementViewsCount(post: cell.postData, completion: { views in
                 cell.viewCountLbl.text = String(views)
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
             })
         }
         
+        
         cell.moreBtnSelected = {
             
-            
             self.moreButtonPressed(data: cell.postData, indexPath: indexPath)
-            
         }
 
-        
-        
-//        if (cell.postData.postShape == "circle"){
-        
-            cell.contentImageBtn.layer.cornerRadius = cell.contentImageBtn.frame.height/2
-            cell.previewContentView.layer.cornerRadius = cell.previewContentView.frame.height/2
-            cell.previewContentView.layer.borderWidth = 5.0
-            cell.contentImageBtn.clipsToBounds = true
-            
-//        }
-        
-//        else{
-//            
-//            //change image size
-//            cell.postPreviewWidthConstraint.constant = self.view.frame.width
-//            cell.postPreviewHeightConstraint.constant = self.view.frame.width * (9 / 14)
-//            cell.contentImageBtn.layer.cornerRadius = 0
-//            cell.previewContentView.layer.cornerRadius = 0
-//            cell.previewContentView.layer.borderWidth = 0.0
-//            cell.contentImageBtn.clipsToBounds = false
-//        }
-
+        cell.contentImageBtn.layer.cornerRadius = cell.contentImageBtn.frame.height/2
+        cell.previewContentView.layer.cornerRadius = cell.previewContentView.frame.height/2
+        cell.previewContentView.layer.borderWidth = 5.0
+        cell.contentImageBtn.clipsToBounds = true
         cell.previewContentView.backgroundColor = UIColor.white
         cell.likeCountLbl.text = String(feedData[indexPath.row].likes)
         cell.viewCountLbl.text = String(feedData[indexPath.row].views)
@@ -482,6 +449,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.postUserId = user.value(forKey: "uid") as! String
         cell.postData.creationDate = feedData[indexPath.row].creationDate
         
+        
         let photoString: String = user.value(forKey: "profilePhoto") as! String
         if (photoString != ""){
             self.imageCache.getImage(urlString: photoString, completion: { image in
@@ -491,6 +459,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }else{
             cell.profileImageBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
         }
+        
         
         cell.posterNameLbl.text = fullname
         cell.playImageView.isHidden = true
@@ -787,6 +756,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         if(segue.identifier == "toMyProfileSegue"){
             
+            
+            
+//            let destinationNavigationController = segue.destination as! UINavigationController
+//            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
             let profileVC = segue.destination as! ProfileViewController
             
             profileVC.imageCache = self.imageCache
@@ -801,16 +774,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
             
             
-        }else if (segue.identifier == "toUploadProfile"){
-            
-            let uploadVC = segue.destination as! EditProfilePicturesViewController
-            uploadVC.currentUser = loggedInUser
-            if navigationMenu != nil{
-                self.navigationMenu.close()
-                
-            }
-            
-        }else if (segue.identifier == "toCreatePostSegue"){
+        }
+        else if (segue.identifier == "toCreatePostSegue"){
             
             let destinationNavigationController = segue.destination as! UINavigationController
             let createPostVC: CreateCustomPostViewController = destinationNavigationController.topViewController as! CreateCustomPostViewController
@@ -823,6 +788,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
         }else if (segue.identifier == "toUserProfileSegue"){
             
+//            let destinationNavigationController = segue.destination as! UINavigationController
+//            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
             let profileVC = segue.destination as! ProfileViewController
             profileVC.imageCache = self.imageCache
             self.imageCache = ImageCache()

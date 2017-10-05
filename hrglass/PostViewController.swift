@@ -13,20 +13,16 @@ import Firebase
 
 
 
-
-
 protocol PostViewDelegate {
     
     
     func likedButtonPressed(liked: Bool, indexPath: IndexPath)
     func  moreButtonPressed(data: PostData, indexPath: IndexPath)
-    
 }
 
 
-class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate
-{
 
+class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate {
     
     var postData: PostData!
  
@@ -55,23 +51,21 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var songView: UIView!
     
 
-    var delegate: PostViewDelegate!
-    var selectedIndexPath: IndexPath = IndexPath(item: 0, section: 0)
-    
     @IBOutlet weak var linkLbl: UILabel!
-
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var popupView: UIView!
-    
     @IBOutlet weak var alphaView: UIView!
+    @IBOutlet weak var shadowView: UIView!
+    
     
     var likedByUser: Bool = false
     var currentUserId: String = ""
     var hub: RKNotificationHub!
     var commentData: NSDictionary!
+    var delegate: PostViewDelegate!
+    var selectedIndexPath: IndexPath = IndexPath(item: 0, section: 0)
     
     
-    @IBOutlet weak var shadowView: UIView!
     //secondary view relevant variables and outlets
     @IBOutlet weak var showHideSecondaryView: UIButton!
     @IBOutlet weak var secondaryPostView: UIView!
@@ -81,16 +75,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var secondaryPostPlayBtn: UIButton!
     @IBOutlet weak var secondaryLinkLbl: UILabel!
     
+    
     var secondaryViewIsShowing: Bool = false
     var swipeLeftGesture: UISwipeGestureRecognizer!
     var swipeRightGesture: UISwipeGestureRecognizer!
     
     
-    
     @IBOutlet weak var postCurrentlyViewingStackView: UIStackView!
-    
     @IBOutlet weak var firstPostCircle: UIView!
-    
     @IBOutlet weak var secondPostCircle: UIView!
     
     
@@ -109,26 +101,21 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.viewSetup()
         self.dataSetup()
-        
-
-        
+    
     }
+    
     
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         self.alphaView.frame.size = CGSize(width: self.contentView.frame.size.width * 3.0 , height: self.contentView.frame.size.height * 3.0)
  
     }
     
     
     
-    deinit {
-        
-//        NotificationCenter.default.removeObserver(self)
-        
-    }
-    
+
     
     func viewSetup(){
         
@@ -149,7 +136,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.popupView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.popupView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
-        
         self.shadowView.layer.cornerRadius = 8.0
         self.shadowView.layer.masksToBounds = false
         self.shadowView.layer.shadowColor = UIColor.black.cgColor
@@ -158,12 +144,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.shadowView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.shadowView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
-        
         hub = RKNotificationHub(view: self.commentBtn)
-        
-        
     }
-    
     
     
     
@@ -400,9 +382,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
      *
      **********************/
     
-    
-
-    
     @IBAction func minimizeAction(_ sender: Any) {
         
         UIView.animate(withDuration: 0.2, animations: {
@@ -478,14 +457,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
+    
     @IBAction func moreBtnAction(_ sender: Any) {
         
         self.moreButtonPressed(data: self.postData, indexPath: self.selectedIndexPath)
         
     }
-    
-    
-
     
     
     
@@ -712,14 +689,17 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //DELEGTE METHODS
     
     func likedButtonPressed(liked: Bool, indexPath: IndexPath){
-        
-        self.delegate.likedButtonPressed(liked: liked, indexPath: indexPath)
-        
+        if self.delegate != nil{
+            self.delegate.likedButtonPressed(liked: liked, indexPath: indexPath)
+        }
     }
     
     func  moreButtonPressed(data: PostData, indexPath: IndexPath){
         
-        self.delegate.moreButtonPressed(data: data, indexPath: indexPath)
+        if self.delegate != nil{
+            self.delegate.moreButtonPressed(data: data, indexPath: indexPath)
+        }
+        
     }
     
     

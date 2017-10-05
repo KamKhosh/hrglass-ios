@@ -8,14 +8,13 @@
 
 import UIKit
 
-class AllPostsViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class AllPostsViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, PostViewDelegate {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
     
     //Set this on segue
     var postsArray: [PostData]!
-    
     let colors: Colors = Colors()
     var imageCache: ImageCache!
     var awsManager: AWSManager = AWSManager()
@@ -148,6 +147,7 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     
         let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
         
+        postVC.delegate = self
         postVC.imageCache = self.imageCache
         postVC.postData = postsArray[indexPath.row]
         
@@ -159,6 +159,17 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         view.addSubview(postVC.view)
         postVC.didMove(toParentViewController: self)
         
+    }
+    
+    //Post View Delegates
+    func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
+        //don't do anything
+        
+    }
+    
+    func moreButtonPressed(data: PostData, indexPath: IndexPath) {
+        
+        //don't do anything
     }
     
     

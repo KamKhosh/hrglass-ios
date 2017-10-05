@@ -11,32 +11,35 @@ import Firebase
 import URLEmbeddedView
 import AVKit
 import AVFoundation
+import CLImageEditor
 
-class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate{
 
-    @IBOutlet weak var coverPhoto: UIImageView!
+class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CLImageEditorDelegate{
+    
+    let dataManager = DataManager()
+    let colors = Colors()
+    var progressView: ProgressView!
+    var timer: Timer!
     
     //DataSource
     var latestPostData:PostData!
     var likedDataArray = [PostData]()
     var ref: DatabaseReference = Database.database().reference()
     var latestPostRef: DatabaseReference!
-    
     var imageCache: ImageCache = ImageCache()
     var awsManager: AWSManager! = nil
     
     //Must set User in prepare segue in this VC's parent
     var currentlyViewingUser: User!
     var currentlyViewingUID: String = ""
-    
-    let dataManager = DataManager()
-    let colors = Colors()
-    
-    
     var follwBtnIsUnfollow: Bool = false
+    var isChoosingProfile: Bool = false
+    let imagePicker = UIImagePickerController()
     
     //table view with one cell
     @IBOutlet weak var profileTableView: UITableView!
+    @IBOutlet weak var editBtn: UIButton!
+    @IBOutlet weak var coverPhoto: UIImageView!
     
     
     /*******************************
@@ -50,22 +53,24 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
 
         self.profileTableView.delegate = self
         self.profileTableView.dataSource = self
-        
-        
+        self.imagePicker.delegate = self
         //In case phone is in silent mode
+        
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
         
         self.profileTableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        
+        
         //If the current user was set before in prepare for segue
         if currentlyViewingUser != nil{
             
             currentlyViewingUID = (Auth.auth().currentUser?.uid)!
             awsManager = AWSManager(uid: currentlyViewingUID)
             
+            
             //PULLED FROM FIREBASE
             self.getLatestPostData()
             self.getLikedPostData()
-            
             
             //SET THE CURRENT USER COVER PHOTO AS BACKGROUND
             if (currentlyViewingUser.coverPhoto != ""){
@@ -79,7 +84,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     dataManager.syncProfilePhotosToDevice(user: self.currentlyViewingUser, path: "coverPhoto", completion: { image in
                             
                         self.coverPhoto.image = image
-                            
                     })
                 }
             }else{
@@ -96,7 +100,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             if (currentlyViewingUID != "")
             {
                 let userRef = ref.child("Users").child(currentlyViewingUID)
-                
+                self.editBtn.isHidden = true
                 awsManager = AWSManager(uid: currentlyViewingUID)
                 
                 userRef.observeSingleEvent(of: .value, with: { snapshot in
@@ -110,7 +114,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                             self.imageCache.getImage(urlString: self.currentlyViewingUser.coverPhoto, completion: { image in
 
                                     self.coverPhoto.image = image
-
                             })
                             
                         }else{
@@ -142,6 +145,351 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
 
+    
+    deinit{
+        
+        self.awsManager = nil
+        self.imageCache = ImageCache()
+        self.currentlyViewingUser = nil
+        self.currentlyViewingUID = ""
+        self.likedDataArray = [PostData]()
+        
+    }
+    
+    
+    
+    
+
+    @IBAction func editAction(_ sender: Any) {
+        
+        let editAlert: UIAlertController = UIAlertController(title: "Edit Profile Pictures", message: "", preferredStyle: .actionSheet)
+        
+        let profilePhotoAction: UIAlertAction = UIAlertAction(title: "Change Profile Photo", style: .default) { (success) in
+            
+            print("chose to edit profile picture")
+            self.isChoosingProfile = true
+            self.imagePicker.allowsEditing = true
+            self.imagePicker.sourceType = .photoLibrary
+            
+            self.presentImagePicker()
+        }
+        
+        let coverPhotoAction: UIAlertAction = UIAlertAction(title: "Change Cover Photo", style: .default) { (success) in
+            
+            print("chose to edit profile picture")
+            
+            self.isChoosingProfile = false
+            self.imagePicker.allowsEditing = true
+            self.imagePicker.sourceType = .photoLibrary
+            
+            self.presentImagePicker()
+        }
+        
+        let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { (success) in
+            
+            print("chose to edit profile picture")
+            editAlert.dismiss(animated: true, completion: nil)
+        }
+        
+        editAlert.addAction(profilePhotoAction)
+        editAlert.addAction(coverPhotoAction)
+        editAlert.addAction(cancel)
+        
+        self.present(editAlert, animated: true, completion: nil)
+        
+    }
+    
+    
+    
+    
+    func presentImagePicker(){
+        
+        present(self.imagePicker, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    func postFailedAlert(title: String, message: String){
+        
+        let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default) {(_) -> Void in
+            
+            alert.dismiss(animated: true, completion: nil)
+            
+        }
+        
+        alert.addAction(ok)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    func uploadCoverPhoto(completion: @escaping (String) -> ()){
+        
+        let imageName: String = "coverPhoto.jpg"
+        
+        let coverRef = self.ref.child("Users").child(currentlyViewingUser.userID as String)
+        
+        let uploadImage: UIImage = self.coverPhoto.image!
+        
+        let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+        
+        //Save photo to local documents dir
+        dataManager.saveImageForPath(imageData: data, name: "coverPhoto")
+        
+        let path = dataManager.documentsPathForFileName(name: "coverPhoto.jpg")
+        
+        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "coverPhoto", type:"jpg", completion:{ success in
+            
+            if success{
+                
+                print("Success, Stop the things")
+                
+                let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
+                self.currentlyViewingUser.coverPhoto = downloadURL as String
+                coverRef.child("coverPhoto").setValue(downloadURL)
+                completion(downloadURL)
+                
+            }else{
+                
+                print("Failure, try again?")
+                self.postFailedAlert(title: "Post Failed", message: "try again")
+                
+                return
+            }
+        })
+    }
+    
+    
+    
+    
+    
+    func uploadProfilePhoto(completion: @escaping (String) -> ()){
+        
+        let imageName: String = "profilePhoto.jpg"
+        
+        let profileRef = self.ref.child("Users").child(currentlyViewingUser.userID as String)
+
+        let path = dataManager.documentsPathForFileName(name: "profilePhoto.jpg")
+        
+        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "profilePhoto", type:"jpg", completion:{ success in
+            
+            if success{
+                
+                print("Success, Stop the things")
+                
+                //store downloadURL
+                let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
+                
+                self.currentlyViewingUser.profilePhoto = downloadURL as String
+                
+                profileRef.child("profilePhoto").setValue(downloadURL)
+                
+//                self.updatePostPhotoURL(urlString: downloadURL)
+                
+                completion(downloadURL)
+                
+            }else{
+                
+                print("Failure, try again?")
+                self.postFailedAlert(title: "Post Failed", message: "try again")
+                
+                return
+            }
+        })
+        
+    }
+    
+    
+    
+    
+    
+    /************************
+     *
+     * IMAGE PICKER DELEGATE
+     *
+     ***********************/
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        
+        //if picture is edited use the edited version
+        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage{
+            
+            if (isChoosingProfile){
+                
+                let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+                let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+                
+                cell.profilePhoto.contentMode = .scaleAspectFill
+                
+                let data: Data = UIImageJPEGRepresentation(editedImage, 0.8)! as Data
+                dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
+                
+                cell.profilePictureIndicator.startAnimating()
+                
+                self.uploadProfilePhoto(completion: { (url) in
+                    print(url)
+                    
+                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
+                    self.profileTableView.reloadData()
+                    cell.profilePictureIndicator.stopAnimating()
+                })
+                
+            }else{
+                
+                coverPhoto.contentMode = .scaleAspectFill
+                coverPhoto.image = editedImage
+                
+                self.uploadCoverPhoto(completion: { (url) in
+                    print(url)
+                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
+
+                })
+            }
+        }
+            
+        else{
+            //else use the original
+            if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+                
+                if (isChoosingProfile){
+                    
+                    let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+                    let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+                    
+                    cell.profilePhoto.contentMode = .scaleAspectFill
+
+                    let data: Data = UIImageJPEGRepresentation(pickedImage, 0.8)! as Data
+                    dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
+                    
+                    cell.profilePictureIndicator.startAnimating()
+                    self.profileTableView.reloadData()
+                    
+                    self.uploadProfilePhoto(completion: { (url) in
+                        print(url)
+                        
+                        self.imageCache.replacePhotoForKey(url: url, image: pickedImage)
+                        self.profileTableView.reloadData()
+                        cell.profilePictureIndicator.stopAnimating()
+                    })
+                    
+                }else{
+                    
+                    coverPhoto.contentMode = .scaleAspectFill
+                    coverPhoto.image = pickedImage
+                    self.uploadCoverPhoto(completion: { (url) in
+                        print(url)
+                        self.imageCache.replacePhotoForKey(url: url, image: pickedImage)
+                    })
+                }
+            }
+            
+        }
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    
+//    func progressUpdateTimer(){
+//        
+//        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.photoTimer), userInfo: nil, repeats: true)
+//    }
+//    
+//    
+//    func photoTimer(){
+//        
+//        if (self.progressView.percentageComplete <= 1.0){
+//            
+//            self.awsManager.photoUploadProgressCheck()
+//            self.progressView.percentageComplete = CGFloat(self.awsManager.photoUploadProgress)
+//            
+//            self.progressView.updateProgress()
+//            
+//        }else{
+//            
+//            self.timer.invalidate()
+//        }
+//    }
+    
+    
+    
+    //CLImageEditor Functions
+    func presentImageEditorWithImage(image:UIImage){
+        
+        
+        guard let editor = CLImageEditor(image: image, delegate: self) else {
+            
+            return;
+        }
+        
+        editor.theme.backgroundColor = UIColor.white
+        editor.theme.toolbarColor = UIColor.white
+        editor.theme.toolbarTextColor = UIColor.lightGray
+        editor.theme.toolIconColor = "black"
+        
+        self.present(editor, animated: true, completion: {});
+    }
+    
+    
+    
+    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
+        
+        
+        
+        let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+        let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+        
+        cell.profilePhoto.contentMode = .scaleAspectFill
+        cell.profilePhoto.image = image
+        self.profileTableView.reloadData()
+        
+        editor.dismiss(animated: true, completion: nil)
+        
+    }
+    
+    
+    
+    
+    
+    
+
+    /*******************************
+     *
+     *  Post Profile Photo Update
+     *
+     ******************************/
+    
+    //In the case where the user updates their profile picture with a current post we need to update the post profilephotos download URL
+    
+//    func updatePostPhotoURL(urlString: String){
+//        
+//        let postRef: DatabaseReference = self.ref.child("Posts").child(currentlyViewingUser.userID as String).child("user")
+//        
+//        postRef.observeSingleEvent(of: .value, with: { snapshot in
+//            
+//            if let _: NSDictionary = snapshot.value as? NSDictionary{
+//                
+//                postRef.child("profilePhoto").setValue(urlString)
+//                
+//            }
+//        })
+//    }
+    
+    
     
     /***************************
      *
@@ -265,7 +613,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.playImageView.isHidden = true
             cell.noRecentPostsLbl.isHidden = true
         
-            
             switch self.latestPostData.category {
                 
             case .Link:
@@ -348,7 +695,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.latestPostImageButton.isHidden = true
             cell.noRecentPostsLbl.isHidden = false
             
-
         }
         
         
@@ -397,10 +743,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.collectionContentSelected = {
             
             let collCellData: PostData = self.likedDataArray[cell.selectedCellRow]
-//            let url:URL = URL(string: self.likedDataArray[cell.selectedCellRow].data)!
             
             let postVC: PostViewController = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
             
+            postVC.delegate = self
             postVC.imageCache = self.imageCache
             postVC.postData = collCellData
             
@@ -411,15 +757,15 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             self.view.addSubview(postVC.view)
             postVC.didMove(toParentViewController: self)
-            
-            
         }
+        
         
         //Action that is called when the latest post is selected
         cell.latestContentSelected = {
             
             let postVC: PostViewController = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
             
+            postVC.delegate = self
             postVC.imageCache = self.imageCache
             postVC.postData = self.latestPostData
             
@@ -500,20 +846,33 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
 
     
-    //Will play a video
-    func playURLData(url: URL){
-    
-        let player=AVPlayer(url: url)
+    //Post View Delegates
+    func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
+        //don't do anything
         
-        let avPlayerViewController = AVPlayerViewController()
-        avPlayerViewController.player =  player
-        
-        self.present(avPlayerViewController, animated: true) {
-            avPlayerViewController.player!.play()
-        }
     }
     
+    func moreButtonPressed(data: PostData, indexPath: IndexPath) {
+        
+        //don't do anything
+    }
+    
+    
+    //Will play a video
+//    func playURLData(url: URL){
+//    
+//        let player=AVPlayer(url: url)
+//        
+//        let avPlayerViewController = AVPlayerViewController()
+//        avPlayerViewController.player =  player
+//        
+//        self.present(avPlayerViewController, animated: true) {
+//            avPlayerViewController.player!.play()
+//        }
+//    }
+//    
 
+    
     /**********************
      *
      *  -- Text View --
@@ -538,6 +897,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.currentlyViewingUser.bio = textView.text
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("bio").setValue(textView.text)
     }
+    
     
     func textViewDidChange(_ textView: UITextView) {
         
@@ -590,14 +950,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             let vc = segue.destination as! FeedViewController
             
+            if currentlyViewingUser.userID == Auth.auth().currentUser?.uid{
+                vc.loggedInUser = self.currentlyViewingUser
+            }
+            
             vc.imageCache = self.imageCache
             
-            self.currentlyViewingUser = nil
-            self.currentlyViewingUID = ""
+            
             
         }
-        
     }
+    
     
     @IBAction func unwindToProfile(unwindSegue: UIStoryboardSegue) {
         
