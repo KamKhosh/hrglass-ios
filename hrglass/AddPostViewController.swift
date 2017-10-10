@@ -941,6 +941,14 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
+    func getLocalMusicFiles(){
+        
+        self.setupMusicAccess()
+        
+        
+    }
+    
+    
     func setupMusicAccess(){
         
         if (MPMediaLibrary.authorizationStatus() == .authorized){
@@ -1351,15 +1359,15 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         appleLibraryBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
         appleLibraryBtn.contentMode = .scaleAspectFill
         
-        let spotifyBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 + 10,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
-        spotifyBtn.setImage(UIImage(named:"spotifyIcon"), for: .normal)
+        let localMusicBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 + 10,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
+        localMusicBtn.setImage(UIImage(named:"musicFolder"), for: .normal)
         
-//        spotifyBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
-        spotifyBtn.contentMode = .scaleAspectFill
+        localMusicBtn.addTarget(self, action: #selector(self.getLocalMusicFiles), for: .touchUpInside)
+        localMusicBtn.contentMode = .scaleAspectFill
         
         musicView.addSubview(label)
         musicView.addSubview(appleLibraryBtn)
-        musicView.addSubview(spotifyBtn)
+        musicView.addSubview(localMusicBtn)
         
     }
     

@@ -54,6 +54,4 @@ static CLImageEditorTheme *_sharedInstance = nil;
     return self;
 }
 
-
-
 @end

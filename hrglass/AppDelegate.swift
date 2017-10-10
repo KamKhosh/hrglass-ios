@@ -4,7 +4,6 @@
 //
 //  Created by Justin Hershey on 4/27/17.
 //
-//
 
 import UIKit
 import Firebase

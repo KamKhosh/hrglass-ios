@@ -4,7 +4,8 @@
 //
 //  Created by Justin Hershey on 5/31/17.
 //
-//
+//  cached images instance,
+// getImage: string -> will return image without downloading if the image is cached. Otherwise it will download the image than perform a completion to return that image to sender
 
 import Foundation
 import UIKit

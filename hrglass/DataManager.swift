@@ -24,7 +24,6 @@ import AWSS3
  *      - additional methods for data conversion, date formatting live here
  *
  *
- *
  ***********************************************************************************/
 
 
@@ -365,9 +364,9 @@ class DataManager {
     
     /******************************************************************************
      *
-     *          GET COMMENT DATA OBJECT FROM FIREBASE COMMENT SNAPSHOT DICTIONARY
-     *          - dictionary parameter: commentThreadId parameter: String
-     *          - returns a Dictionary of dictionary's containing comment data
+     *  GET COMMENT DATA OBJECT FROM FIREBASE COMMENT SNAPSHOT DICTIONARY
+     *     - uid parameter
+     *     - completion yields a Dictionary of dictionary's containing comment data
      *******************************************************************************/
     
     func getCommentDataFromFirebase(uid: String, completion:@escaping (NSDictionary) -> ()){
@@ -389,8 +388,8 @@ class DataManager {
     
     /******************************************************************************
      *
-     *          GET COMMENT DATA OBJECT FROM FIREBASE COMMENT SNAPSHOT DICTIONARY
-     *          - dictionary parameter: commentThreadId parameter: String
+     *   GET X NUMBER OF COMMENT DATA OBJECT FROM FIREBASE COMMENT SNAPSHOT DICTIONARY
+     *          - dictionary parameter: num parameter: Int
      *          - returns a Dictionary of dictionary's containing comment data
      *******************************************************************************/
     
@@ -484,11 +483,12 @@ class DataManager {
     
     
     
-    /*****************************************
+    /***********************************************************
      *
-     *      Get Liked Posts Dictionary
-     *
-     ****************************************/
+     *    Get Liked Posts Dictionary
+     *  userId(uid) as parameter, 
+     *  completion: yields a dictionary of post dictionaries
+     **********************************************************/
     
     func getLikedPostsList(userId: String, completion:@escaping (NSDictionary) -> ()){
         
@@ -734,7 +734,7 @@ class DataManager {
     
     /*********************************
      *
-     * LOCAL VIDEOS RETRIEVAL/DELETE
+     * LOCAL DATA DELETION METHODS
      *
      *********************************/
     
@@ -939,6 +939,7 @@ class DataManager {
      *
      ************************************************/
     
+    //parameters: Category, data, primary post boolean, completion: String
     func savePostData(category: Category, data: AnyObject, primary: Bool, completion:@escaping (String) -> ()){
         var dataKey: String = ""
         let assetIdKey: String = "localVideoAssetId"
@@ -996,6 +997,9 @@ class DataManager {
     }
     
     
+    
+    
+    //retrieves saved post data in the format required by addPostViewController
     func getSavedPostData(category: Category, primary: Bool) -> AnyObject{
         var object: AnyObject? = nil
         
@@ -1088,6 +1092,7 @@ class DataManager {
             }
         }
     }
+    
     
     
     
@@ -1226,6 +1231,15 @@ class DataManager {
     }
     
     
+    /*******************************************************************************
+     *
+     *  GET URL FOR PHASSET =- VIDEO ONLY
+     *
+     * - parameters: PHASSET, NAME, completion
+     * -completion returns a URL
+     *
+     ******************************************************************************/
+    
 
     func getURLForPHAsset(videoAsset: PHAsset, name: String, completion:@escaping (URL) -> ()){
         
@@ -1357,7 +1371,8 @@ class DataManager {
     
     /****************************************************
      *
-     *  MESSAGING AND FOLLOW REQUESTS METHODS
+     *  FOLLOW REQUESTS METHOD
+     * - completion -> NSARRAY of user uid's
      *
      ****************************************************/
     
@@ -1393,7 +1408,11 @@ class DataManager {
     
     
     
-    
+    /****************************************************
+     *
+     *  MESSAGING METHODs
+     *
+     ****************************************************/
     
     func getMessages(completion:@escaping (NSDictionary) -> ()){
         
@@ -1431,6 +1450,11 @@ class DataManager {
     }
     
     
+    
+    
+    //get latest, used for retreiving the latest for the inbox view
+    //parameter: objectId(convoId)
+    // completion, message text as String
     
     func getLatestMessageText(objectId: String, completion:@escaping (String) -> ()){
         
@@ -1499,6 +1523,8 @@ class DataManager {
         return color
     }
     
+    
+    //pass full name as parameter to get first name
     func getFirstName(name: String) -> String{
         var names: [String] = []
         
@@ -1507,7 +1533,7 @@ class DataManager {
         
     }
     
-    
+    //pass full name as parameter to get last name
     func getLastName(name: String) -> String{
         var names: [String] = []
         names = name.components(separatedBy: " ")
@@ -1518,6 +1544,7 @@ class DataManager {
     }
 
     
+    //get now in millis, returns double
     func nowInMillis() -> Double{
         
         let date: Date = Date.init()
@@ -1527,6 +1554,7 @@ class DataManager {
     }
     
     
+    //gets one day from now in millis, returns double
     func oneDayFromNow() -> Double {
     
         let date: Date = Date.init()
@@ -1537,6 +1565,7 @@ class DataManager {
     }
     
     
+    //Translates a time in milliseconds as a string to an easy readable time remaining format
     func getTimeString(expireTime: String) -> String{
         
         //Calculate and Set Time Remaining Lbl
@@ -1575,6 +1604,8 @@ class DataManager {
 
 
 
+
+//UIImage Extension to Crop the image, not used currently
 extension UIImage {
     
     func crop(to:CGSize) -> UIImage {

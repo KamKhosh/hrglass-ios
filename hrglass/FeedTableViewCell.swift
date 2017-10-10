@@ -273,6 +273,8 @@ class FeedTableViewCell: UITableViewCell {
 }
 
 
+//UIImage extention to chang the context Color of the image passed to it
+
 extension UIImage {
     
     func transform(withNewColor color: UIColor) -> UIImage {

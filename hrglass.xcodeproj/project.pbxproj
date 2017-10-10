@@ -8,9 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */; };
+		5E0D9FD11F894CD2006AFB18 /* CustomSpinningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FD01F894CD2006AFB18 /* CustomSpinningView.swift */; };
+		5E0D9FD71F89588D006AFB18 /* CustomRefreshControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E0D9FD61F89588D006AFB18 /* CustomRefreshControl.xib */; };
+		5E0D9FD91F8958B6006AFB18 /* CustomRefreshControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FD81F8958B6006AFB18 /* CustomRefreshControlView.swift */; };
 		5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */; };
 		5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */; };
-		5E1403621F2FE7960024EBFF /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */; };
 		5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403661F3101370024EBFF /* RequestTableViewCell.swift */; };
 		5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403681F3101500024EBFF /* InboxTableViewCell.swift */; };
 		5E2032251EFB17740006D2CE /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2032241EFB17740006D2CE /* UsernameViewController.swift */; };
@@ -57,12 +59,6 @@
 		5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC471F0042420007197A /* DiscoverViewController.swift */; };
 		5E3BAC4A1F00450B0007197A /* DiscoverTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC491F00450B0007197A /* DiscoverTableViewCell.swift */; };
 		5E3CBC791F76D6450073322B /* AddSecondaryPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC781F76D6450073322B /* AddSecondaryPostViewController.swift */; };
-		5E3CBC7D1F78104A0073322B /* SpotifyAudioPlayback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CBC7A1F78104A0073322B /* SpotifyAudioPlayback.framework */; };
-		5E3CBC7E1F78104A0073322B /* SpotifyAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CBC7B1F78104A0073322B /* SpotifyAuthentication.framework */; };
-		5E3CBC7F1F78104A0073322B /* SpotifyMetadata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CBC7C1F78104A0073322B /* SpotifyMetadata.framework */; };
-		5E3CBC8B1F7817230073322B /* SpotifyLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC861F7817230073322B /* SpotifyLoginController.m */; };
-		5E3CBC8C1F7817230073322B /* SpotifyStreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC881F7817230073322B /* SpotifyStreamViewController.m */; };
-		5E3CBC8D1F7817230073322B /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC8A1F7817230073322B /* WebViewController.m */; };
 		5E3CBC8F1F7AD6870073322B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */; };
 		5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC921F7AE91D0073322B /* RKNotificationHub.swift */; };
 		5E3CBC951F7AF3080073322B /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */; };
@@ -78,9 +74,11 @@
 
 /* Begin PBXFileReference section */
 		5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
+		5E0D9FD01F894CD2006AFB18 /* CustomSpinningView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomSpinningView.swift; sourceTree = "<group>"; };
+		5E0D9FD61F89588D006AFB18 /* CustomRefreshControl.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomRefreshControl.xib; sourceTree = "<group>"; };
+		5E0D9FD81F8958B6006AFB18 /* CustomRefreshControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomRefreshControlView.swift; sourceTree = "<group>"; };
 		5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
-		5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
 		5E1403661F3101370024EBFF /* RequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTableViewCell.swift; sourceTree = "<group>"; };
 		5E1403681F3101500024EBFF /* InboxTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxTableViewCell.swift; sourceTree = "<group>"; };
 		5E2032231EFB07BD0006D2CE /* hrglass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = hrglass.entitlements; sourceTree = "<group>"; };
@@ -135,14 +133,6 @@
 		5E3CBC7A1F78104A0073322B /* SpotifyAudioPlayback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyAudioPlayback.framework; sourceTree = "<group>"; };
 		5E3CBC7B1F78104A0073322B /* SpotifyAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyAuthentication.framework; sourceTree = "<group>"; };
 		5E3CBC7C1F78104A0073322B /* SpotifyMetadata.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyMetadata.framework; sourceTree = "<group>"; };
-		5E3CBC831F7817220073322B /* hrglass-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hrglass-Bridging-Header.h"; sourceTree = "<group>"; };
-		5E3CBC841F7817230073322B /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
-		5E3CBC851F7817230073322B /* SpotifyLoginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyLoginController.h; sourceTree = "<group>"; };
-		5E3CBC861F7817230073322B /* SpotifyLoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotifyLoginController.m; sourceTree = "<group>"; };
-		5E3CBC871F7817230073322B /* SpotifyStreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyStreamViewController.h; sourceTree = "<group>"; };
-		5E3CBC881F7817230073322B /* SpotifyStreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotifyStreamViewController.m; sourceTree = "<group>"; };
-		5E3CBC891F7817230073322B /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
-		5E3CBC8A1F7817230073322B /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		5E3CBC921F7AE91D0073322B /* RKNotificationHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RKNotificationHub.swift; sourceTree = "<group>"; };
 		5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
@@ -170,13 +160,10 @@
 			files = (
 				5E4190571F7EFB9300BF2955 /* CLImageEditor.framework in Frameworks */,
 				5E32DCBB1F536656004E6AA1 /* AudioToolbox.framework in Frameworks */,
-				5E3CBC7E1F78104A0073322B /* SpotifyAuthentication.framework in Frameworks */,
 				5E32DCB81F53664A004E6AA1 /* MediaPlayer.framework in Frameworks */,
-				5E3CBC7D1F78104A0073322B /* SpotifyAudioPlayback.framework in Frameworks */,
 				5E32DCB91F53664A004E6AA1 /* MediaToolbox.framework in Frameworks */,
 				5E3537FC1F2034AA009D121B /* AVFoundation.framework in Frameworks */,
 				5E3537FD1F2034AA009D121B /* AVKit.framework in Frameworks */,
-				5E3CBC7F1F78104A0073322B /* SpotifyMetadata.framework in Frameworks */,
 				9FBA73AE948A184FB49720E9 /* Pods_hrglass.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,6 +180,16 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		5E0D9FCF1F894CAE006AFB18 /* LoadingAnimationViews */ = {
+			isa = PBXGroup;
+			children = (
+				5E0D9FD01F894CD2006AFB18 /* CustomSpinningView.swift */,
+				5E0D9FD61F89588D006AFB18 /* CustomRefreshControl.xib */,
+				5E0D9FD81F8958B6006AFB18 /* CustomRefreshControlView.swift */,
+			);
+			name = LoadingAnimationViews;
+			sourceTree = "<group>";
+		};
 		5E14035C1F2FCDD20024EBFF /* MessagesViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,14 +197,6 @@
 				5E2DCFD71F660A6E00211001 /* MessageCollectionViewCell.swift */,
 			);
 			name = MessagesViewController;
-			sourceTree = "<group>";
-		};
-		5E1403651F2FF1FE0024EBFF /* Segues */ = {
-			isa = PBXGroup;
-			children = (
-				5E1403611F2FE7960024EBFF /* SegueFromLeft.swift */,
-			);
-			name = Segues;
 			sourceTree = "<group>";
 		};
 		5E24BD711EB275800047ED50 = {
@@ -233,8 +222,8 @@
 		5E24BD7C1EB275800047ED50 /* hrglass */ = {
 			isa = PBXGroup;
 			children = (
+				5E0D9FCF1F894CAE006AFB18 /* LoadingAnimationViews */,
 				5E3CBC911F7AE8FE0073322B /* NotificationHub */,
-				5E3CBC801F7814750073322B /* Spotify */,
 				5E2DCFD91F660AC600211001 /* InboxViewController */,
 				5E34053E1F5F327000BAA06F /* ProgressView */,
 				5E74F1F21F464A9700B40293 /* PostPopupView */,
@@ -245,7 +234,6 @@
 				5E254C561ECCC2DC00CFBFCE /* LoginViews */,
 				5E35D7561EC5089E00A41633 /* ProfileView */,
 				5E2B0B1E1EBFA98900F8DEF3 /* SettingsView */,
-				5E1403651F2FF1FE0024EBFF /* Segues */,
 				5E24BDAE1EB280A30047ED50 /* DataManagers */,
 				5E24BDAD1EB27EB70047ED50 /* FeedViewController */,
 				5E24BD7D1EB275800047ED50 /* AppDelegate.swift */,
@@ -368,21 +356,6 @@
 			name = DiscoverViewController;
 			sourceTree = "<group>";
 		};
-		5E3CBC801F7814750073322B /* Spotify */ = {
-			isa = PBXGroup;
-			children = (
-				5E3CBC841F7817230073322B /* Config.h */,
-				5E3CBC851F7817230073322B /* SpotifyLoginController.h */,
-				5E3CBC861F7817230073322B /* SpotifyLoginController.m */,
-				5E3CBC871F7817230073322B /* SpotifyStreamViewController.h */,
-				5E3CBC881F7817230073322B /* SpotifyStreamViewController.m */,
-				5E3CBC891F7817230073322B /* WebViewController.h */,
-				5E3CBC8A1F7817230073322B /* WebViewController.m */,
-				5E3CBC831F7817220073322B /* hrglass-Bridging-Header.h */,
-			);
-			name = Spotify;
-			sourceTree = "<group>";
-		};
 		5E3CBC911F7AE8FE0073322B /* NotificationHub */ = {
 			isa = PBXGroup;
 			children = (
@@ -498,6 +471,7 @@
 				5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */,
 				5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */,
 				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
+				5E0D9FD71F89588D006AFB18 /* CustomRefreshControl.xib in Resources */,
 				5E24BD831EB275800047ED50 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -566,12 +540,14 @@
 				5E24BDAA1EB27CBA0047ED50 /* FeedViewController.swift in Sources */,
 				5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */,
 				5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */,
+				5E0D9FD91F8958B6006AFB18 /* CustomRefreshControlView.swift in Sources */,
 				5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */,
 				5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */,
 				5E254C551ECB775800CFBFCE /* ProfileTableViewCell.swift in Sources */,
 				5E24BDB01EB280C90047ED50 /* PostData.swift in Sources */,
 				5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */,
 				5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */,
+				5E0D9FD11F894CD2006AFB18 /* CustomSpinningView.swift in Sources */,
 				5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */,
 				5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */,
 				5E32A8561ED4703300AEF9DA /* AllPostsViewController.swift in Sources */,
@@ -580,7 +556,6 @@
 				5E3CBC951F7AF3080073322B /* CommentTableViewCell.swift in Sources */,
 				5E375C0B1F4A19BB009AC14E /* CropViewController.swift in Sources */,
 				5E2DCFD81F660A6E00211001 /* MessageCollectionViewCell.swift in Sources */,
-				5E3CBC8D1F7817230073322B /* WebViewController.m in Sources */,
 				5E254C5C1ECCC36B00CFBFCE /* CreateAccountViewController.swift in Sources */,
 				5E24BDAC1EB27EB10047ED50 /* FeedTableViewCell.swift in Sources */,
 				5E32A8581ED4705000AEF9DA /* AllPostsCollectionViewCell.swift in Sources */,
@@ -588,21 +563,18 @@
 				5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */,
 				5E3098151EBC3457001AC1A6 /* SettingsViewController.swift in Sources */,
 				5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */,
-				5E3CBC8C1F7817230073322B /* SpotifyStreamViewController.m in Sources */,
 				5E3CBC791F76D6450073322B /* AddSecondaryPostViewController.swift in Sources */,
 				5E2A89671F44FCF6002AD645 /* PostViewController.swift in Sources */,
 				5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */,
 				5E32DCB51F5365F4004E6AA1 /* SongQuery.swift in Sources */,
 				5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */,
 				5E32A85A1ED4F19800AEF9DA /* ChangePasswordViewController.swift in Sources */,
-				5E1403621F2FE7960024EBFF /* SegueFromLeft.swift in Sources */,
 				5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */,
 				5E32DCBF1F560C78004E6AA1 /* SelectThumbnailViewController.swift in Sources */,
 				5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */,
 				5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */,
 				5E2B0B271EBFB21200F8DEF3 /* BlockedAccountsViewController.swift in Sources */,
 				5E270D561EF748980085D5D3 /* DataManager.swift in Sources */,
-				5E3CBC8B1F7817230073322B /* SpotifyLoginController.m in Sources */,
 				5E3214BD1EC3AB24004ACBB1 /* Colors.swift in Sources */,
 				5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */,
 				5E2032251EFB17740006D2CE /* UsernameViewController.swift in Sources */,
@@ -738,6 +710,7 @@
 			baseConfigurationReference = 679F2954E6A921045974D60D /* Pods-hrglass.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
@@ -752,7 +725,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "hrglass/hrglass-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -764,6 +737,7 @@
 			baseConfigurationReference = B1056FFAE72262910DAB591F /* Pods-hrglass.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
@@ -778,7 +752,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "hrglass/hrglass-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -15,12 +15,20 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     
     let currentUserId = Auth.auth().currentUser?.uid
     let ref = Database.database().reference()
+    var parentView: String = "feedView"
+    @IBOutlet weak var submitBtn: UIButton!
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         self.usernameField.delegate = self
         self.addBottomLine(forView: usernameField, tag: 1)
+        
+        if parentView == "accountView"{
+            
+            self.submitBtn.setTitle("Change Username", for: .normal)
+        }
+        
         
         
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismisskeyboard))
@@ -67,7 +75,13 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
             let usernameRef = ref.child("Users").child(currentUserId!).child("username")
             usernameRef.setValue(self.usernameField.text!)
 
-            performSegue(withIdentifier: "unwindToFeed", sender: nil)
+            
+            if self.parentView == "feedView"{
+                performSegue(withIdentifier: "unwindToFeed", sender: nil)
+            }else if self.parentView == "accountView" {
+                performSegue(withIdentifier: "unwindToAccount", sender: nil)
+            }
+            
             
         }else{
             let views: [UIView] = self.view.subviews
@@ -113,14 +127,23 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         return true
     }
     
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        if segue.identifier == "unwindToAccounts"{
+            
+            let vc: AccountViewController = segue.destination as! AccountViewController
+            vc.newUsername = self.usernameField.text!
+            
+        }else if segue.identifier == "unwindToFeed"{
+            
+            
+        }
+        
     }
-    */
 
 }

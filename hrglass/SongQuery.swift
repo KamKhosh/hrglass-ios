@@ -9,6 +9,17 @@
 import Foundation
 import MediaPlayer
 
+
+
+
+/*******************************************
+ *     
+ *  CLASS FOR APPLE MUSIC DATA QUERIES
+ *
+ *******************************************/
+
+
+
 struct SongInfo {
     
     var albumTitle: String
@@ -24,8 +35,20 @@ struct AlbumInfo {
     var songs: [SongInfo]
 }
 
+
+
+
+
+
 class SongQuery {
     
+    
+    
+    
+    /*******************************************
+     *      Get
+     *   - returns an array of Album info Structs
+     *******************************************/
     func get(songCategory: String) -> [AlbumInfo] {
         
         var albums: [AlbumInfo] = []
@@ -87,6 +110,12 @@ class SongQuery {
         return albums
         
     }
+    
+    
+    /*******************************************
+     *      GetItem
+     *   - returns MediaItem for songId parameter
+     *******************************************/
     
     func getItem( songId: NSNumber ) -> MPMediaItem {
         

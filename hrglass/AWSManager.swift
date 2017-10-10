@@ -12,6 +12,15 @@ import AWSS3
 
 
 
+
+/***********************************************************************************
+ *
+ *     AWS CONFIG VARIABLES and FUNCTIONS TO UPDATE AND RETRIEVE DATA AWS S3
+ *
+ *     -- additional functions to track upload status
+ *
+ ***********************************************************************************/
+
 class AWSManager {
 
     let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.USEast2,
@@ -46,7 +55,18 @@ class AWSManager {
         self.init(uid: "")
         
     }
-
+    
+    
+    
+    
+    /*******************************************
+     *
+     *     UPLOAD PHOTO TO S3
+     *
+     *     - takes filename, filetype string parameters
+     *      -resource URL is the local url location
+     *
+     *******************************************/
 
     func uploadPhotoAction(resourceURL: URL, fileName: String, type: String, completion:@escaping(Bool) -> ()){
         
@@ -79,7 +99,14 @@ class AWSManager {
     }
 
     
-    
+    /*******************************************
+     *
+     *     UPLOAD Video TO S3
+     *
+     *     - takes filename, filetype string parameters
+     *      -resource URL is the local url location
+     *
+     *******************************************/
 
 
     func uploadVideoAction(resourceURL: URL, fileName: String, type: String, completion:@escaping(Bool) -> ()){
@@ -116,6 +143,16 @@ class AWSManager {
     }
     
     
+    
+    /*******************************************
+     *
+     *     UPLOAD AUDIO TO S3
+     *
+     *     - takes filename, filetype string parameters
+     *      -resource URL is the local url location
+     *
+     *******************************************/
+    
     func uploadAudioAction(resourceURL: URL, fileName: String, type: String, completion:@escaping(Bool) -> ()){
         
         let key = "\(uid)/audio/\(fileName).\(type)"
@@ -149,6 +186,14 @@ class AWSManager {
     }
     
     
+    
+    
+    
+    /*******************************************
+     *
+     *     VIDEO UPLOAD PROGRESS CHECK
+     *******************************************/
+    
     func videoUploadProgressCheck(){
         
         self.videoTransferRequest?.uploadProgress = {(bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) -> Void in
@@ -165,6 +210,12 @@ class AWSManager {
     }
     
     
+    
+    
+    /*******************************************
+     *
+     *     PHOTO UPLOAD PROGRESS CHECK
+     *******************************************/
     func photoUploadProgressCheck(){
         self.photoTransferRequest?.uploadProgress = {(bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) -> Void in
             DispatchQueue.main.async(execute: {() -> Void in
@@ -179,6 +230,10 @@ class AWSManager {
     }
     
     
+    /*******************************************
+     *
+     *     AUDIO UPLOAD PROGRESS CHECK
+     *******************************************/
     func audioUploadProgressCheck(){
         
         self.audioTransferRequest?.uploadProgress = {(bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) -> Void in
@@ -195,6 +250,9 @@ class AWSManager {
     }
     
     
+    /*******************************************
+     *          CANCEL UPLOAD
+     *******************************************/
     func cancelRequest(){
             
         self.transferManager.cancelAll()

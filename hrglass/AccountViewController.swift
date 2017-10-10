@@ -17,7 +17,8 @@ class AccountViewController: UIViewController {
     @IBOutlet weak var nameView: UIView!
     @IBOutlet weak var nameLbl: UILabel!
     
-    @IBOutlet weak var usernameLbl: UILabel!
+
+    @IBOutlet weak var usernameBtn: UIButton!
     @IBOutlet weak var usernameView: UIView!
     
     @IBOutlet weak var emailView: UIView!
@@ -40,10 +41,7 @@ class AccountViewController: UIViewController {
     let user = Auth.auth().currentUser
     let ref: DatabaseReference = Database.database().reference()
     var currentUserRef: DatabaseReference!
-    
-
-
-    
+    var newUsername: String = ""
     
     /*********************************
      *
@@ -91,12 +89,15 @@ class AccountViewController: UIViewController {
             
             self.nameLbl.text = name
             self.emailLbl.text = email
-            self.usernameLbl.text = username
+            self.usernameBtn.setTitle(username, for: .normal)
             self.privacySwitch.isOn = isPrivate!
             
             
         }
         
+        if self.newUsername != ""{
+            self.nameLbl.text = newUsername
+        }
         
         
     }
@@ -117,6 +118,18 @@ class AccountViewController: UIViewController {
      *
      *********************************/
     
+    
+    
+    @IBAction func usernameBtnAction(_ sender: Any) {
+        
+        
+        
+        
+    }
+    
+    
+    
+    
     @IBAction func privacySwitchAction(_ sender: Any) {
         
         if privacySwitch.isOn{
@@ -136,9 +149,7 @@ class AccountViewController: UIViewController {
     
     func updateLocalPrivateBool(isPrivate: Bool){
         
-        
         let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
-        
         
         let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
         tempDict.setValue(isPrivate, forKey: "isPrivate")
@@ -206,6 +217,8 @@ class AccountViewController: UIViewController {
         self.addBottomLine(forView: blockedUsersView)
         
         self.nameLbl.text = self.user?.displayName
+
+        
     }
     
     
@@ -228,7 +241,17 @@ class AccountViewController: UIViewController {
      *
      ***************************/
     
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if (segue.identifier == "toChangeUsername"){
+            
+            let changeVC: UsernameViewController = segue.destination as! UsernameViewController
+            changeVC.parentView = "accountView"
+
+        }
+        
+        
+    }
     
     
     @IBAction func unwindToAccountsView(unwindSegue: UIStoryboardSegue){

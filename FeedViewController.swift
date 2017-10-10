@@ -27,14 +27,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var selectedPostData: PostData!
     
     //refresh control
-    let refreshControl: UIRefreshControl = UIRefreshControl()
+    var refreshControl: UIRefreshControl!
+    var customRefreshView: CustomRefreshControlView!
     
     //Current User
     var loggedInUser: User!
     var cachedImages: NSMutableDictionary!
-    
+        
     @IBOutlet weak var initialLoadIndicator: UIActivityIndicatorView!
-    
     /**************************
      * Navigation Menu Buttons
      *************************/
@@ -93,10 +93,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let uid = Auth.auth().currentUser?.uid
         awsManager = AWSManager(uid: uid!)
         
+        self.refreshControl = UIRefreshControl()
+        
+        refreshControl.backgroundColor = UIColor.white
+        refreshControl.tintColor = UIColor.gray
         self.refreshControl.addTarget(self, action: #selector (refresh), for: .valueChanged)
         self.tableView.addSubview(self.refreshControl)
         
+        self.initialLoadIndicator.hidesWhenStopped = true
+        self.view.addSubview(self.initialLoadIndicator)
         self.initialLoadIndicator.startAnimating()
+        
         
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
         
@@ -179,6 +186,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // Dispose of any resources that can be recreated.
     }
     
+    
+    
+    
+    func loadCustomRefreshContents() {
+        let refreshContents = Bundle.main.loadNibNamed("CustomRefreshControl", owner: self, options: nil)
+        
+        customRefreshView = refreshContents?.first as! CustomRefreshControlView
+        customRefreshView.frame = refreshControl.bounds
+        customRefreshView.spinView.startAnimating()
+        refreshControl.addSubview(customRefreshView)
+    }
     
     /*********************************
      *
@@ -830,10 +848,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let messageVC: MessagesViewController = segue.destination as! MessagesViewController
             messageVC.selectedUserId = self.moreMenuPostData.user.value(forKey: "uid") as! String
             messageVC.nameString = (self.moreMenuPostData.user.value(forKey: "name") as! String)
-            
             messageVC.loggedInUser = self.loggedInUser
-            
-            
         }
     }
     
@@ -856,24 +871,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
         
     }
+    
 }
 
 
 
-
-
-
-
-//extension FeedViewController:TableViewCellDelegate {
-//    
-//    
-//    func tableViewCell(singleTapActionDelegatedFrom cell: FeedTableViewCell) {
-//        let indexPath = tableView.indexPath(for: cell)
-//        print("singleTap \(String(describing: indexPath)) ")
-//    }
-//    
-//    func tableViewCell(doubleTapActionDelegatedFrom cell: FeedTableViewCell) {
-//        let indexPath = tableView.indexPath(for: cell)
-//        print("doubleTap \(String(describing: indexPath)) ")
-//    }
-//}
