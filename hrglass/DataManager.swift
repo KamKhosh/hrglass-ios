@@ -27,11 +27,24 @@ import AWSS3
  ***********************************************************************************/
 
 
+struct Song {
+    
+    var title: String = ""
+    var album: String = ""
+    var artist: String = ""
+    var source: String = ""
+}
 
+enum ExporterError: Error {
+    case unableToCreateExporter
 
+}
 
 
 class DataManager {
+    
+    
+    
     
     
     
@@ -328,7 +341,7 @@ class DataManager {
 //            
 //        }else{
         
-        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, commentThread: postDict.value(forKey: "postID") as! String)
+        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "extraData") as! String)
             
 //        }
 
@@ -660,25 +673,6 @@ class DataManager {
 
             }
         }
-        
-        
-        
-//        let inboxRef = Database.database().reference().child("Inbox").child((Auth.auth().currentUser?.uid)!)
-//        
-//        inboxRef.observeSingleEvent(of: .value, with: { snapshot in
-//            
-//            if let viewedDict: NSMutableDictionary = snapshot.value as? NSMutableDictionary{
-//                
-//                completion(viewedDict)
-//                
-//            }else{
-//                
-//                // if no viewed posts, pass back empty Dictionary
-//                completion([:])
-//            }
-//        })
-    
-    
     }
     
     /*********************************
@@ -988,6 +982,7 @@ class DataManager {
             completion(data as! String)
         case .Music:
             print("Music, no saved Data")
+            
             completion("")
             
         case .None:
@@ -1312,7 +1307,7 @@ class DataManager {
                     
                     DispatchQueue.main.async {
                         
-                        if (exporter.status == AVAssetExportSessionStatus.completed) {
+                        if (exporter.status == .completed) {
                             
                             let URL: URL = exporter.outputURL!;
                             completion(URL)
@@ -1499,7 +1494,6 @@ class DataManager {
         case .Video:
             
             color = colors.getPurpleColor()
-
             
         case .Text:
 
@@ -1511,7 +1505,8 @@ class DataManager {
             
         case .Music:
             
-             color = colors.getAudioColor()
+             color = colors.getMusicColor()
+            
         case .Link:
 
             color = UIColor.black
@@ -1600,10 +1595,104 @@ class DataManager {
 
         return finalString
     }
+    
+    
+    
+    
+    func export(_ assetURL: URL, completionHandler: @escaping (_ fileURL: URL?, _ error: Error?) -> ()) {
+        
+        let asset = AVURLAsset(url: assetURL)
+        
+        
+        if asset.isExportable{
+            print("exportable")
+        }else{
+            print("Not exportable")
+            completionHandler(nil, nil)
+        }
+        
+        let fileManager = FileManager()
+        let path = self.documentsPathForFileName(name: "exportSong.m4a")
+        
+        var success: Bool = false
+        do {
+            try fileManager.removeItem(at: path)
+            success = true
+        } catch _ {
+            success = false
+        }
+        if (!success) {
+            
+            print("delete failed")
+        }
+        
+        let exporter: AVAssetExportSession = AVAssetExportSession.init(asset:asset, presetName:AVAssetExportPresetAppleM4A)!;
+        exporter.outputURL = path;
+        exporter.outputFileType = AVFileTypeAppleM4A;
+        exporter.shouldOptimizeForNetworkUse = true;
+        
+        exporter.exportAsynchronously(completionHandler: {
+            
+            DispatchQueue.main.async {
+                
+                if (exporter.status == AVAssetExportSessionStatus.completed) {
+                    
+                    let URL: URL = exporter.outputURL!;
+                    completionHandler(URL, nil)
+                    
+                }else{
+                    completionHandler(nil, exporter.error)
+                }
+            }
+        })
+    }
+    
+    
+    
+    func extrapolate(songData:String) -> Song{
+        
+        let strings = songData.components(separatedBy: ":")
+        let title = strings[0]
+        let artist = strings[1]
+        let album = strings[2]
+        let source = strings[3]
+        
+        var songInfo = Song.init(title: "", album: "", artist: "", source: "")
+        songInfo.title = title
+        songInfo.artist = artist
+        songInfo.album = album
+        songInfo.source = source
+        
+        return songInfo
+    }
+
+    
 }
 
 
+extension TimeInterval {
+    var minuteSecondMS: String {
+        return String(format:"%d:%02d.%03d", minute, second, millisecond)
+    }
+    var minuteSecond: String {
+        return String(format:"%d:%02d", minute, second)
+    }
+    var minute: Int {
+        return Int((self/60).truncatingRemainder(dividingBy: 60))
+    }
+    var second: Int {
+        return Int(truncatingRemainder(dividingBy: 60))
+    }
+    var millisecond: Int {
+        return Int((self*1000).truncatingRemainder(dividingBy: 1000))
+    }
+}
 
+extension Int {
+    var msToSeconds: Double {
+        return Double(self) / 1000
+    }
+}
 
 //UIImage Extension to Crop the image, not used currently
 extension UIImage {

@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import Photos
+import MediaPlayer
 
 class CreateCustomPostViewController: UIViewController {
     
@@ -92,7 +93,21 @@ class CreateCustomPostViewController: UIViewController {
     
     
     
-    
+    func getMPMediaItemWith(persistentId: MPMediaEntityPersistentID) -> MPMediaItem{
+        
+        let query: MPMediaQuery  = MPMediaQuery.songs()  // general songs query
+        
+        let pred: MPMediaPropertyPredicate = MPMediaPropertyPredicate(value: persistentId, forProperty: MPMediaItemPropertyPersistentID)
+        
+        // narrow the query down to just items with that ID
+        query.addFilterPredicate(pred)
+        
+        // now get items (there should be only one):
+        let item: MPMediaItem = (query.items?.first)!
+        
+        return item
+        
+    }
     
     
     //actionSheet
@@ -162,9 +177,19 @@ class CreateCustomPostViewController: UIViewController {
             let cat: Category = Category(rawValue: self.savedPost.value(forKey: "category") as! String)!
             addPostVC.selectedCategory = cat
             addPostVC.selectedMood = Mood(rawValue: self.savedPost.value(forKey: "mood") as! String)!
-            addPostVC.selectedShape = self.savedPost.value(forKey: "post_shape") as! String
             addPostVC.loggedInUser = self.loggedInUser
             addPostVC.postWasSaved = true
+            
+            
+            //setting music objects if necessary
+            let musicId = self.savedPost.value(forKey: "songString") as! MPMediaEntityPersistentID
+            if (String(musicId) != ""){
+                let musicItem: MPMediaItem = self.getMPMediaItemWith(persistentId: musicId)
+                
+                addPostVC.selectedMusicItem = musicItem
+                
+            }
+            
             
 //            var secondCat: Category = .None
 //            var savedPostHasChild:Bool = false
@@ -185,10 +210,10 @@ class CreateCustomPostViewController: UIViewController {
                 addPostVC.trimmedVideoPath = path.absoluteString
                 addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
                 addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
+            }else if (cat == .Music){
+                    addPostVC.selectedObject = self.getMPMediaItemWith(persistentId: musicId)
             }else{
-            
-                addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
-            
+                    addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
             }
                 
                 

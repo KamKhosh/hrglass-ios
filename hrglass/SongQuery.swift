@@ -37,13 +37,7 @@ struct AlbumInfo {
 
 
 
-
-
-
 class SongQuery {
-    
-    
-    
     
     /*******************************************
      *      Get

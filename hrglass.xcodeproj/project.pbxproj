@@ -69,6 +69,10 @@
 		5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E74F1EE1F4626A300B40293 /* Images.xcassets */; };
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
 		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
+		5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */; };
+		5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */; };
+		5EF85DF91F9278B5008887F9 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DF81F9278B5008887F9 /* SettingsTableViewCell.swift */; };
+		5EF85DFB1F953AE6008887F9 /* AppleMusicManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DFA1F953AE6008887F9 /* AppleMusicManager.swift */; };
 		9FBA73AE948A184FB49720E9 /* Pods_hrglass.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63FA8C6AF0BD1C54CE32FE70 /* Pods_hrglass.framework */; };
 /* End PBXBuildFile section */
 
@@ -148,6 +152,10 @@
 		5E74F1EE1F4626A300B40293 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
 		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostTableViewCell.swift; sourceTree = "<group>"; };
+		5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddPostTableViewCell.xib; sourceTree = "<group>"; };
+		5EF85DF81F9278B5008887F9 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
+		5EF85DFA1F953AE6008887F9 /* AppleMusicManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleMusicManager.swift; sourceTree = "<group>"; };
 		63FA8C6AF0BD1C54CE32FE70 /* Pods_hrglass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_hrglass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		679F2954E6A921045974D60D /* Pods-hrglass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hrglass.debug.xcconfig"; path = "Pods/Target Support Files/Pods-hrglass/Pods-hrglass.debug.xcconfig"; sourceTree = "<group>"; };
 		B1056FFAE72262910DAB591F /* Pods-hrglass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hrglass.release.xcconfig"; path = "Pods/Target Support Files/Pods-hrglass/Pods-hrglass.release.xcconfig"; sourceTree = "<group>"; };
@@ -266,6 +274,7 @@
 				5E7197AD1F1D502900411A08 /* AWSManager.swift */,
 				5E3537FE1F204F99009D121B /* VideoStore.swift */,
 				5E32DCB41F5365F4004E6AA1 /* SongQuery.swift */,
+				5EF85DFA1F953AE6008887F9 /* AppleMusicManager.swift */,
 			);
 			name = DataManagers;
 			sourceTree = "<group>";
@@ -284,6 +293,7 @@
 		5E28BF371ED78D9F006E653B /* AddPostView */ = {
 			isa = PBXGroup;
 			children = (
+				5EF85DF31F8D5C89008887F9 /* AddPostTableViewCell */,
 				5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */,
 				5E375C0A1F4A19BB009AC14E /* CropViewController.swift */,
 				5E375C091F4A11DD009AC14E /* AddPostCollectionCell */,
@@ -304,6 +314,7 @@
 				5E2B0B261EBFB21200F8DEF3 /* BlockedAccountsViewController.swift */,
 				5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */,
 				5E32A8591ED4F19800AEF9DA /* ChangePasswordViewController.swift */,
+				5EF85DF81F9278B5008887F9 /* SettingsTableViewCell.swift */,
 			);
 			name = SettingsView;
 			sourceTree = "<group>";
@@ -373,6 +384,15 @@
 				5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */,
 			);
 			name = PostPopupView;
+			sourceTree = "<group>";
+		};
+		5EF85DF31F8D5C89008887F9 /* AddPostTableViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */,
+				5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */,
+			);
+			name = AddPostTableViewCell;
 			sourceTree = "<group>";
 		};
 		9559B4032DC5E89518972C79 /* Frameworks */ = {
@@ -469,6 +489,7 @@
 			files = (
 				5E24BD881EB275800047ED50 /* LaunchScreen.storyboard in Resources */,
 				5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */,
+				5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */,
 				5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */,
 				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
 				5E0D9FD71F89588D006AFB18 /* CustomRefreshControl.xib in Resources */,
@@ -549,6 +570,7 @@
 				5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */,
 				5E0D9FD11F894CD2006AFB18 /* CustomSpinningView.swift in Sources */,
 				5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */,
+				5EF85DF91F9278B5008887F9 /* SettingsTableViewCell.swift in Sources */,
 				5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */,
 				5E32A8561ED4703300AEF9DA /* AllPostsViewController.swift in Sources */,
 				5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */,
@@ -566,6 +588,8 @@
 				5E3CBC791F76D6450073322B /* AddSecondaryPostViewController.swift in Sources */,
 				5E2A89671F44FCF6002AD645 /* PostViewController.swift in Sources */,
 				5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */,
+				5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */,
+				5EF85DFB1F953AE6008887F9 /* AppleMusicManager.swift in Sources */,
 				5E32DCB51F5365F4004E6AA1 /* SongQuery.swift in Sources */,
 				5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */,
 				5E32A85A1ED4F19800AEF9DA /* ChangePasswordViewController.swift in Sources */,

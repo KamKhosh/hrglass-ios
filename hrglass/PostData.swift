@@ -25,6 +25,7 @@ enum Category: String{
 
 }
 
+
 enum Mood: String {
     
     case Funny = "😂"
@@ -51,13 +52,13 @@ class PostData: NSObject{
     var usersWhoLiked: NSDictionary!
     var creationDate: String!
     var expireTime: String!
-    var postShape: String!
 //    var secondaryPost: NSDictionary!
     var commentThread: String!
+    var songString: String!
     
     
 
-    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, postShape: String!, commentThread: String!){
+    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, commentThread: String!, songString: String!){
         
         self.postId = postId
         self.likes = likes
@@ -69,9 +70,9 @@ class PostData: NSObject{
         self.usersWhoLiked = usersWhoLiked
         self.creationDate = creationDate
         self.expireTime = expireTime
-        self.postShape = postShape
 //        self.secondaryPost = nil
         self.commentThread = commentThread
+        self.songString = songString
         
     }
     
@@ -94,6 +95,28 @@ class PostData: NSObject{
 //        self.commentThread = commentThread
 //        
 //    }
+    
+    
+//    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, postShape: String!, secondaryPost: NSDictionary!, commentThread: String, musicData: NSDictionary){
+//    
+//            self.postId = postId
+//            self.likes = likes
+//            self.views = views
+//            self.category = category
+//            self.data = withDataString
+//            self.user = user
+//            self.mood = mood
+//            self.usersWhoLiked = usersWhoLiked
+//            self.creationDate = creationDate
+//            self.expireTime = expireTime
+//            self.postShape = postShape
+////            self.secondaryPost = secondaryPost
+//            self.commentThread = commentThread
+//            self.musicData = musicData
+//            
+//        }
+    
+    
 }
 
 

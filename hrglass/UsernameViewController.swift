@@ -18,6 +18,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     var parentView: String = "feedView"
     @IBOutlet weak var submitBtn: UIButton!
     
+    @IBOutlet weak var backBtn: UIButton!
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         if parentView == "accountView"{
             
             self.submitBtn.setTitle("Change Username", for: .normal)
+            self.backBtn.isHidden = false
         }
         
         

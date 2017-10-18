@@ -18,7 +18,7 @@ import AWSS3
 import CLImageEditor
 
 
-class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, MPMediaPickerControllerDelegate, UIVideoEditorControllerDelegate, CLImageEditorDelegate{
+class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, CLImageEditorDelegate, MPMediaPickerControllerDelegate{
 
     
     //DEMO COLOR
@@ -43,7 +43,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var linkTextField: UITextField!
     var videoCollectionView: UICollectionView!
     var photoCollectionView: UICollectionView!
-    var musicView: UIView!
+//    var musicTableView: UITableView!
     var recordingView: UIView!
     var textPostView: UITextField!
     var cameraView: UIImageView!
@@ -59,6 +59,17 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var photosAsset: PHFetchResult<AnyObject>!
     var videosAsset: PHFetchResult<AnyObject>!
     var assetThumbnailSize: CGSize!
+    
+    //tableView data (Music)
+//    var musicItemsArray: NSMutableArray!
+//    var masterMusicArray: NSMutableArray!
+//    var musicSearch: UISearchBar!
+    
+    
+    @IBOutlet weak var musicLbl: UILabel!
+    var musicView: UIView!
+    var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer()
+    var avMusicPlayer: AVAudioPlayer!
     
     var selectedPhotoCell: Int = -1
     var selectedVideoCell: Int = -1
@@ -76,6 +87,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var selectedShape: String = "circle"
     var trimmedVideoPath: String = ""
     var selectedThumbnail: UIImage!
+    var selectedMusicItem: AnyObject!
     
     //secondary post
 //    var secondarySelectedObject: AnyObject!
@@ -109,7 +121,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var squareImageBtn: UIButton!
     @IBOutlet weak var circleImagebtn: UIButton!
-
     @IBOutlet weak var editThumbnailBtn: UIButton!
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     @IBOutlet var keyboardHeightLayoutConstraint: NSLayoutConstraint?
@@ -123,7 +134,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.ref = Database.database().reference()
         postRef = self.ref.child("Posts").child(currentUserID!)
         
@@ -139,6 +149,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         //removing bottom navigation line
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationBar.shadowImage = UIImage()
+//        self.musicTableView = UITableView(frame: CGRect.zero, style: .plain)
         
         let swipeDown: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeDownAction))
         swipeDown.direction = .down
@@ -152,6 +163,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.setupTabViews()
         self.setupMediaAccess()
         self.setupPlayBtn()
+        self.setupMoodMenu()
         
         self.currentTabView.frame = CGRect(x: 0,y: self.tabBar.frame.maxY, width: self.view.frame.width, height: self.view.frame.height -  self.tabBar.frame.maxY)
         
@@ -162,6 +174,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+    
     
     @objc func keyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
@@ -175,6 +188,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             } else {
                 self.keyboardHeightLayoutConstraint?.constant = endFrame?.size.height ?? 0.0
             }
+        
             UIView.animate(withDuration: duration,
                            delay: TimeInterval(0),
                            options: animationCurve,
@@ -182,6 +196,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                            completion: nil)
         }
     }
+    
     
     
     override func viewDidAppear(_ animated: Bool) {
@@ -199,8 +214,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             print(self.selectedTab)
             self.tabPassedFromParent = 0
         }else{
-            self.tabBar.selectedItem = self.tabBar.items?[0]
-            self.photoCollectionView.center = self.currentTabView.center
+//            self.tabBar.selectedItem = self.tabBar.items?[0]
+//            self.photoCollectionView.center = self.currentTabView.center
         }
         
         
@@ -261,6 +276,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
             case .Music:
                 print("Music")
+                self.setMusicItemData(mpMediaItem: self.selectedObject as! MPMediaItem)
+                
                 
             case .Link:
                 
@@ -270,6 +287,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             default:
                 print("")
             }
+            
+            //add Music Data
+            if self.selectedCategory != .Music{
+                self.setMusicItemData(mpMediaItem: self.selectedMusicItem as! MPMediaItem)
+            }
+            
         }
     }
 
@@ -290,8 +313,15 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         }else if self.textPostView.isFirstResponder{
             
             self.textPostView.resignFirstResponder()
+            
         }
+//        else if self.musicSearch.isFirstResponder{
+//            
+//            self.musicSearch.endEditing(true)
+//            self.musicSearch.resignFirstResponder()
+//        }
     }
+    
     
 
     func setupPlayBtn(){
@@ -306,8 +336,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
-    
-
     
     
     
@@ -382,7 +410,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         angryBtn.addTarget(self, action: #selector(self.angryAction), for: .touchUpInside)
         shockedBtn.addTarget(self, action: #selector(self.shockedAction), for: .touchUpInside)
         
-        moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, offset: false)
+        moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, offset: false, direction: .Down)
         
         self.view.addSubview(moodMenu)
         moodMenu.isHidden = true
@@ -414,8 +442,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundColorBtn.backgroundColor = color
         
         self.setTextImage()
-
     }
+    
     
     func changedTextColor(_ slider: ColorSlider) {
         let color = slider.color
@@ -424,6 +452,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
        self.setTextImage()
     }
+    
     
     
     func toggleBackgroundColorSliderVisibility(){
@@ -437,6 +466,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.showResizeButtons()
         }
     }
+    
     
     func toggleTextColorSliderVisibility(){
         
@@ -462,7 +492,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         editorVC.delegate = self
         editorVC.videoMaximumDuration = 600
         editorVC.videoQuality = .typeHigh
-        
 
         self.showLoadingView()
         
@@ -576,6 +605,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *    RECORDING METHODS
      **************************/
     func startRecording() {
+        
         self.playBtn.setImage(UIImage(named: "play"), for: .normal)
         self.selectedCategory = .Recording
         self.audioURL = self.dataManager.documentsPathForFileName(name: "recording.m4a")
@@ -752,13 +782,48 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             }
 
             
-        }
-        else if self.selectedCategory == .Photo || selectedCategory == .Text{
+        }else if self.selectedCategory == .Photo || selectedCategory == .Text{
             
             self.presentImageEditorWithImage(image: self.selectedObject as! UIImage)
             
+        }else if self.selectedCategory == .Music{
+            
+            if (playBtn.image(for: .normal) != UIImage(named: "pause")){
+
+                self.playBtn.setImage(UIImage(named: "pause"), for: .normal)
+                
+                if avMusicPlayer != nil{
+                    avMusicPlayer.pause()
+                }else{
+
+                    self.applicationMusicPlayer.play()
+                }
+                
+            }else{
+
+                self.playBtn.setImage(UIImage(named: "play"), for: .normal)
+                
+                if avMusicPlayer != nil{
+                    avMusicPlayer.play()
+                }else{
+                    self.applicationMusicPlayer.pause()
+                }
+            }
         }
     }
+    
+    
+    
+    func appleMusicPlayTrackId() {
+        
+        let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
+        
+        applicationMusicPlayer.setQueue(with: collection)
+        
+    }
+    
+    
+    
     
     
     //CLImageEditor Functions
@@ -800,6 +865,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             moodMenu.close()
             
         }else{
+            if !textSlider.isHidden{
+               self.toggleTextColorSliderVisibility()
+            }
             
             moodMenu.show()
             self.view.bringSubview(toFront: moodMenu)
@@ -839,13 +907,19 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.moodMenu.close()
     }
     
-
     /**************************************
-     *  CLImageEditor DELEGATES
+     *  Application Music Player
      **************************************/
     
+    func playSong(){
+        
+
+        
+        
+    }
     
     
+
     
     
     /**************************************
@@ -874,7 +948,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     /************************************************************
      *
-     * PHOTO/VIDEO/RECORDING/MUSIX ACCESS METHODS
+     * PHOTO/VIDEO/RECORDING ACCESS METHODS
      *
      ***********************************************************/
     
@@ -920,8 +994,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 playerViewController.player!.play()
             }
         }
-    
-        
     }
     
     
@@ -940,20 +1012,20 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
     }
     
-    
-    func getLocalMusicFiles(){
-        
-        self.setupMusicAccess()
-        
-        
-    }
-    
+//    
+//    func getLocalMusicFiles(){
+//        
+//        self.setupMusicAccess()
+//        
+//        
+//    }
+//    
     
     func setupMusicAccess(){
         
         if (MPMediaLibrary.authorizationStatus() == .authorized){
             
-            self.getSongPicker()
+            self.getSongs()
             
         }else{
             
@@ -963,7 +1035,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 {
                 case .authorized:
                     
-                    self.getSongPicker()
+                    self.getSongs()
                     
                 case .denied, .restricted:
                     
@@ -978,9 +1050,19 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         }
     }
     
-    func getSongPicker(){
+    func getSongs(){
 
+//        let temp: NSMutableArray = MPMediaQuery.songs().items as! NSMutableArray
+//        self.musicItemsArray = NSMutableArray()
+//        self.masterMusicArray = NSMutableArray()
+//        self.musicItemsArray = temp
+//        self.masterMusicArray = temp
+//        print(String(format: "%d songs found", self.musicItemsArray.count))
+//        
+//        self.musicTableView.reloadData()
+        
         songPicker = MPMediaPickerController(mediaTypes: .music)
+        songPicker.view.frame = self.currentTabView.frame
         songPicker.allowsPickingMultipleItems = false
         songPicker.showsCloudItems = true
         songPicker.delegate = self
@@ -1085,15 +1167,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *
      *********************************/
     
-    
-    
     func setPhotoView(image: UIImage){
         
         self.postPhotoView.image = image
         self.linkContentView.isHidden = true
         self.postPhotoView.isHidden = false
         self.showResizeButtons()
-        
     }
     
     
@@ -1101,21 +1180,20 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.circleImagebtn.isHidden = true
         self.squareImageBtn.isHidden = true
-        
     }
+    
     
     func hideVideoEditingBtns(){
         
         self.editVideoBtn.isHidden = true
         self.editThumbnailBtn.isHidden = true
-        
     }
+    
     
     func showVideoEditingBtns(){
         
         self.editVideoBtn.isHidden = false
         self.editThumbnailBtn.isHidden = false
-        
     }
     
     
@@ -1144,6 +1222,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundSlider.isHidden = false
         self.textSlider.isHidden = false
     }
+    
     
     func showColorBtns(){
         
@@ -1210,6 +1289,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.view.addSubview(recordingView)
         self.view.addSubview(textPostView)
         self.view.addSubview(cameraView)
+        
         
 //        panGesture = UIPanGestureRecognizer(target: self, action:#selector(self.handlePanGesture(panGesture:)))
 
@@ -1308,6 +1388,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundSlider.isHidden = true
 
         self.textSlider = ColorSlider(frame: CGRect(x: self.textPostView.frame.width - 35,y: self.textColorBtn.frame.minY - 10 - self.textPostView.frame.height * 0.7 ,width:20, height:self.textPostView.frame.height * 0.7))
+        
         self.textSlider.orientation = .vertical
         self.textSlider.borderWidth = 2.0
         self.textSlider.borderColor = UIColor.black
@@ -1339,6 +1420,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.setupMicAccess()
     }
     
+    
     //MUSIC VIEW, TAG 5
     func setupMusicView(center: CGPoint){
         
@@ -1359,16 +1441,45 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         appleLibraryBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
         appleLibraryBtn.contentMode = .scaleAspectFill
         
-        let localMusicBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 + 10,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
+        let localMusicBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 - self.musicView.frame.width / 8,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
         localMusicBtn.setImage(UIImage(named:"musicFolder"), for: .normal)
         
-        localMusicBtn.addTarget(self, action: #selector(self.getLocalMusicFiles), for: .touchUpInside)
+        localMusicBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
         localMusicBtn.contentMode = .scaleAspectFill
         
-        musicView.addSubview(label)
-        musicView.addSubview(appleLibraryBtn)
+//        musicView.addSubview(label)
+//        musicView.addSubview(appleLibraryBtn)
         musicView.addSubview(localMusicBtn)
         
+       
+        
+        
+
+        
+//        self.musicSearch = UISearchBar(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicView.bounds.minY, width:self.musicView.bounds.width, height: 44))
+//        self.musicSearch.showsCancelButton = true;
+//        self.musicSearch.barStyle = .default
+//        self.musicSearch.returnKeyType = .done
+//        self.musicSearch.delegate = self
+//        self.musicSearch.tintColor = UIColor.black
+//        
+//        self.musicTableView = UITableView(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicSearch.bounds.maxY, width:self.musicView.bounds.width, height: self.musicView.bounds.height - 44))
+//        self.musicTableView.rowHeight = 44.0
+//        self.musicTableView.backgroundColor = UIColor.white
+//
+//        self.musicTableView.allowsSelection = true
+//        self.musicTableView.allowsMultipleSelection = false
+//        self.musicTableView.separatorStyle = .singleLine
+//        self.musicTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: self.musicTableView.frame.size.width, height: 1))
+//        
+//        let nib = UINib(nibName: "AddPostTableViewCell", bundle:nil)
+//        self.musicTableView.register(nib, forCellReuseIdentifier: "addPostTableCell")
+//        self.musicTableView.dataSource = self
+//        self.musicTableView.delegate = self
+//        
+//
+//        self.musicView.addSubview(self.musicSearch)
+//        self.musicView.addSubview(self.musicTableView)
     }
     
     
@@ -1450,9 +1561,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 moveViews(newView: self.recordingView)
                 
             case 5:
-                
                 print("Music Chosen")
                 moveViews(newView: self.musicView)
+                self.setupMusicAccess()
                 
             case 6:
                 print("Link Chosen")
@@ -1523,7 +1634,64 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         })
     }
 
+    
+    /**************************************
+     *
+     * TABLE VIEW DELEGATE/DATASOURCE
+     *
+     ************************************/
 
+//    
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print("Did Select Row")
+//        
+//    }
+//    
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        
+//        var count = 0;
+//        if (self.musicItemsArray != nil){
+//           count = self.musicItemsArray.count;
+//        }
+//        return count;
+//        
+//    }
+//    
+//    
+//    func numberOfSections(in tableView: UITableView) -> Int {
+//        return 1
+//    }
+//    
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        
+//        let cell: AddPostTableViewCell = tableView.dequeueReusableCell(withIdentifier: "addPostTableCell", for: indexPath) as! AddPostTableViewCell
+//        
+//        let item: MPMediaItem = self.musicItemsArray[indexPath.row] as! MPMediaItem
+//        
+//        if let artist: String =  item.value(forProperty:MPMediaItemPropertyArtist) as? String {
+//            // Add it to the array of valid songs
+//            cell.artistLbl.text = artist
+//        }
+//        
+//        if let title: String = item.value(forProperty:MPMediaItemPropertyTitle) as? String{
+//            // Add it to the array of valid songs
+//            cell.songNameLbl.text = title
+//        }
+//        
+//        if let artwork: MPMediaItemArtwork = item.value(forProperty:MPMediaItemPropertyArtwork) as? MPMediaItemArtwork{
+//            cell.songImageView.image = artwork.image(at: CGSize(width: 44, height: 44))
+//        }else{
+//            
+//            cell.songImageView.image = UIImage(named: "musicpink")
+//        }
+//        
+//        return cell
+//        
+//    }
+    
+    
+    
     
 
     /*****************************
@@ -1547,7 +1715,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             if (videosAsset != nil){
                 
                 count = photosAsset.count
-                
             }
             
             print("Items in Section: ")
@@ -1735,6 +1902,93 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
+    
+    /*****************************
+     *
+     *     Search Bar DELEGATE
+     *
+     ****************************/
+    
+//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+//        
+//        print("Ended Editing")
+////        self.musicTableView.scrollsToTop = true
+//        
+//        UIView.animate(withDuration: 0.4) {
+//            self.tabBar.alpha = 1.0
+//            self.tabBar.isHidden = false
+//            
+//           self.musicView.center = self.currentTabView.center
+//        }
+//    }
+//    
+//    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+//        
+//        print("Began Editing")
+////        self.musicTableView.scrollsToTop = true
+//        
+//        UIView.animate(withDuration: 0.4) {
+//            self.tabBar.alpha = 0.0
+//            self.tabBar.isHidden = true
+//            
+//            if(self.keyboardHeight == 0.0){
+//            
+//                self.musicView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.currentTabView.frame.height/4 + 300))
+//            
+//            }else{
+//            
+//                self.musicView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.musicTableView.frame.height/4 + self.keyboardHeight))
+//
+//            }
+//        }
+//    }
+//    
+//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+//        print("Cancel Clicked")
+//        searchBar.endEditing(true)
+//    }
+//    
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        
+//        print(String(format:"Search String = %@",searchBar.text!))
+//        self.musicItemsArray.removeAllObjects()
+//        
+//        if (searchBar.text == "") {
+//            self.musicItemsArray.addObjects(from: self.masterMusicArray as! [MPMediaItem])
+//            self.musicTableView.reloadData()
+//            return
+//        }
+//        
+//        for obj in self.masterMusicArray{
+//            
+//            if let item = obj as? MPMediaItem{
+//                
+//                
+//                guard let artist: String =  item.value(forProperty:MPMediaItemPropertyArtist) as? String else{
+//                    //return
+//                    return
+//                }
+//                
+//                guard let title: String = item.value(forProperty:MPMediaItemPropertyTitle) as? String else{
+//                    
+//                    // return
+//                    return
+//                }
+//                
+//                
+//                if (artist.localizedCaseInsensitiveContains(searchText) || title.localizedCaseInsensitiveContains(searchText)){
+//                    
+//                    self.musicItemsArray.add(item)
+//                }
+//            }
+//        }
+//
+//        self.musicTableView.reloadData()
+//    }
+    
+    
+    
+    
     /*****************************
      *
      *     TEXT FIELD DELEGATE
@@ -1800,33 +2054,33 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
         if textField == self.linkTextField{
             
-            UIView.animate(withDuration: 0.3, animations: {
-                
-                if(self.keyboardHeight == 0.0){
-                    
-                    self.linkTextField.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.linkTextField.frame.height * 2 + 300))
-                    
-                }else{
-                    
-                    self.linkTextField.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.linkTextField.frame.height * 2 + self.keyboardHeight))
-                }
-            })
+//            UIView.animate(withDuration: 0.4, animations: {
+//                
+//                if(self.keyboardHeight == 0.0){
+//                    
+//                    self.linkTextField.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.linkTextField.frame.height * 2 + 300))
+//                    
+//                }else{
+//                    
+//                    self.linkTextField.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.linkTextField.frame.height * 2 + self.keyboardHeight))
+//                }
+//            })
             
         }else if (textField == self.textPostView){
             
             self.hideColorSliders()
             self.hideColorBtns()
             
-            UIView.animate(withDuration: 0.3, animations: {
+            UIView.animate(withDuration: 0.4, animations: {
                 
-                if(self.keyboardHeight == 0.0){
-                    
-                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + 300))
-                    
-                }else{
-                    
-                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + self.keyboardHeight))
-                }
+//                if(self.keyboardHeight == 0.0){
+//                    
+//                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + 300 ))
+//                    
+//                }else{
+//                    
+//                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + self.keyboardHeight))
+//                }
             })
             
         }
@@ -1875,8 +2129,51 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.tabBar.selectedItem = self.tabBar.items?[0]
             self.moveViews(newView: self.photoCollectionView)
         }
+    }
+    
+    
+    
+    //----- setMusicItemData(MPMediaItem)
+    //----- parameter: MPMediaItem
+    //----- If not the primarypost, a video, or a recording will set selectedMediaItem Only
+    // ---- If primary post, will set album art as picture, and unhide play button
+    // ---- NOTE: Only allows music posts with non-sound producing primary posts
+    func setMusicItemData(mpMediaItem: MPMediaItem){
+        var artist: String = "Unknown Artist"
+        var title: String = "Unknown Title"
+        
+        if let a: String = mpMediaItem.artist{
+            artist = a
+        }
+        if let t: String = mpMediaItem.title{
+            title = t
+        }
         
         
+        if (self.selectedCategory != .Video && self.selectedCategory != .Recording){
+            
+            self.musicLbl.text = String(format:"%@ by: %@", title, artist)
+            self.musicLbl.isHidden = false
+            self.selectedMusicItem = mpMediaItem
+            self.appleMusicPlayTrackId()
+            
+            if self.selectedCategory == .None || self.selectedCategory == .Music{
+                
+                self.postPhotoView.layer.borderColor = self.ourColors.getMusicColor().cgColor
+                let image: UIImage = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
+                self.setPhotoView(image: image)
+                self.selectedObject = mpMediaItem
+                self.selectedCategory = .Music
+                self.playBtn.setImage(UIImage(named:"play"), for: .normal)
+                self.playBtn.isHidden = false
+            }
+            
+        }else{
+            self.showToast(message: "Cannot add music to video or recording at this time")
+        }
+        
+        self.hideResizeButtons()
+        self.hideVideoEditingBtns()
         
     }
     
@@ -1893,32 +2190,23 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     /******************************************************
      *
-     *    MARK: - Music Picker Methods
+     *    MARK: - Music Picker Delegate Methods
      *
      ******************************************************/
     
     func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
 
         
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: {
+            
+           self.tabBar.selectedItem = self.tabBar.items?[4]
+        })
+        
         
         for mpMediaItem in mediaItemCollection.items {
             print("Add \(mpMediaItem) to a playlist, prep the player, etc.")
             
-            print (mpMediaItem.artist ?? "")
-            print (mpMediaItem.albumTitle ?? "")
-            print (mpMediaItem.title ?? "")
-            
-            self.postPhotoView.layer.borderColor = self.ourColors.getAudioColor().cgColor
-                
-            let image: UIImage = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
-            self.setPhotoView(image: image)
-            
-            self.hideResizeButtons()
-            self.hideVideoEditingBtns()
-            
-            self.selectedObject = mpMediaItem
-            self.selectedCategory = .Music
+            self.setMusicItemData(mpMediaItem: mpMediaItem)
         }
     }
     
@@ -1929,9 +2217,30 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         dismiss(animated: true, completion: {
             
-            self.tabBar(self.tabBar, didSelect: (self.tabBar.items?[0])!)
-            self.tabBar.selectedItem = self.tabBar.items?[0]
+            self.tabBar.selectedItem = self.tabBar.items?[4]
 
+        })
+    }
+    
+    
+    func showToast(message : String) {
+        
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textColor = UIColor.white
+        toastLabel.textAlignment = .center;
+        toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10;
+        toastLabel.clipsToBounds  =  true
+        
+        self.view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
         })
     }
 
@@ -1953,6 +2262,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         }
     }
     
+    
     func videoEditorController(_ editor: UIVideoEditorController, didSaveEditedVideoToPath editedVideoPath: String) {
         print(editedVideoPath)
         
@@ -1966,13 +2276,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.showVideoEditingBtns()
             self.playBtn.isHidden = false
             
-            
         })
     }
-    
-    
-
-    
     
     
     /****************************
@@ -1984,6 +2289,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
+        self.applicationMusicPlayer.stop()
         if segue.identifier == "toSubmitPostSegue"{
 
             let vc: SubmitPostViewController = segue.destination as! SubmitPostViewController
@@ -1995,7 +2301,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             vc.selectedVideoPath = self.trimmedVideoPath
             vc.selectedThumbnail = self.selectedThumbnail
             vc.postWasSaved = self.postWasSaved
-            
+            vc.selectedMusicItem = self.selectedMusicItem
 //            if self.hasSecondarySavedPost{
 //                
 //                vc.secondarySelectedCategory = self.secondarySelectedCategory
@@ -2031,99 +2337,5 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         
     }
-    
-
-    
-    /*******************************************************
-     *
-     *  MARK IMPLEMENTATION: - PAN GESTURE TO CHANGE TABS
-     *
-     ********************************************************/
-    
-//    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-//        if (gestureRecognizer == self.panGesture) {
-//            if (gestureRecognizer.numberOfTouches > 0) {
-//                
-//                if (tabBar.selectedItem?.tag == 0){
-//                    
-//                    let translation: CGPoint = self.panGesture.velocity(in: self.photoCollectionView)
-//                    return fabs(translation.y) > fabs(translation.x);
-//                    
-//                }else if (tabBar.selectedItem?.tag == 1){
-//                    
-//                    let translation: CGPoint = self.panGesture.velocity(in: self.videoCollectionView)
-//                    return fabs(translation.y) > fabs(translation.x);
-//                    
-//                    
-//                }
-//                
-//            } else {
-//                return false;
-//            }
-//        }
-//            return true;
-//    }
-    
-//    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-//        if (gestureRecognizer == self.panGesture) {
-//            if (gestureRecognizer.numberOfTouches > 0) {
-//                let point: CGPoint = gestureRecognizer.location(ofTouch: 0, in:gestureRecognizer.view);
-//                
-//                if (tabBar.selectedItem?.tag == 0){
-//                    
-//                    let distX: CGFloat = abs(self.photoCollectionView.lastTouchPos.x - point.x);
-//                    let distY: CGFloat = abs(self.photoCollectionView.lastTouchPos.y - point.y);
-//                    if (distX > distY) {
-//                        return false;
-//                    }
-//                    
-//                }else if (self.tabBar.selectedItem?.tag == 1){
-//                    
-//                    let distX: CGFloat = abs(self.videoCollectionView.lastTouchPos.x - point.x);
-//                    let distY: CGFloat = abs(self.videoCollectionView.lastTouchPos.y - point.y);
-//                    if (distX > distY) {
-//                        return false;
-//                    }
-//                }
-//                
-//                
-//            } else {
-//                return true;
-//            }
-//        }
-//        return true;
-//    }
-//    
-//    func handlePanGesture(panGesture: UIPanGestureRecognizer) {
-//        // get translation
-//        let translation = panGesture.translation(in: self.view)
-//        panGesture.setTranslation(CGPoint.zero, in: self.view)
-//        print(translation)
-//        
-//        // create a new Label and give it the parameters of the old one
-//        let view = panGesture.view!
-//        view.center = CGPoint(x: view.center.x+translation.x, y: view.center.y)
-//        view.isMultipleTouchEnabled = true
-//        view.isUserInteractionEnabled = true
-//        
-//        if panGesture.state == UIGestureRecognizerState.began {
-//            // add something you want to happen when the Label Panning has started
-//        }
-//        
-//        if panGesture.state == UIGestureRecognizerState.ended {
-//            // add something you want to happen when the Label Panning has ended
-//            
-//            
-//            
-//            
-//        }
-//        
-//        if panGesture.state == UIGestureRecognizerState.changed {
-//            // add something you want to happen when the Label Panning has been change ( during the moving/panning )
-//        } else {  
-//            // or something when its not moving
-//        }    
-//    }
-    
     
 }

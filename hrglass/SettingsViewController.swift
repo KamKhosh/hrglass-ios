@@ -88,18 +88,16 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell:UITableViewCell? = UITableViewCell.init(style:UITableViewCellStyle.value2, reuseIdentifier: "settingsCell")
-        
+        let cell:SettingsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "settingsCell") as! SettingsTableViewCell
         
         if tableOptions[indexPath.row] != .nothing{
             
-            cell?.accessoryType = .disclosureIndicator
-            cell?.textLabel?.text = tableOptions[indexPath.row].rawValue
-            cell?.textLabel?.textColor = UIColor.black
-            cell?.textLabel?.textAlignment = .left
+            cell.title?.text = tableOptions[indexPath.row].rawValue
+            cell.title?.textColor = UIColor.black
+            cell.title?.textAlignment = .left
         }
         
-        return cell!
+        return cell
         
     }
     
@@ -188,7 +186,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         
 
         do {
-            
             
             
             //Logout from firebase, then Facebook if necessary

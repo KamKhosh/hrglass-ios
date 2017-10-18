@@ -41,7 +41,6 @@ class AWSManager {
     var videoUploadProgress:Double = 0
     var photoUploadProgress:Double = 0
     var audioUploadProgress:Double = 0
-
     
     init(uid: String){
         

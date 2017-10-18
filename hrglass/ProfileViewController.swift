@@ -491,11 +491,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     
-    /***************************
+    /******************************************************************************
      *
-     *      DATA RETRIEVAL
-     *
-     **************************/
+     *      Latest Post DATA RETRIEVAL
+     *      -- sets self.latestPostData to nil if the post is expired
+     *****************************************************************************/
     
     func getLatestPostData(){
         
@@ -509,14 +509,28 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                         if let _: NSMutableDictionary = postData.value(forKey: "liked_by_list") as? NSMutableDictionary{
                             
+                            
                             self.latestPostData = self.dataManager.getPostDataFromDictionary(postDict: postData, uid: uid)
+                            if (Double(self.latestPostData.expireTime)! < Date().millisecondsSince1970) {
+                                
+                                self.latestPostData = nil
+                            }else{
+                                self.latestPostData.category = Category(rawValue: postData.value(forKey: "category") as! String)!
+                            }
+                            
                             
                         }else{
                             postData.setValue([:], forKey: "liked_by_list")
                             self.latestPostData = self.dataManager.getPostDataFromDictionary(postDict: postData, uid: uid)
+                            if (Double(self.latestPostData.expireTime)! < Date().millisecondsSince1970) {
+                                
+                                self.latestPostData = nil
+                            }else{
+                                self.latestPostData.category = Category(rawValue: postData.value(forKey: "category") as! String)!
+                            }
                         }
     
-                        self.latestPostData.category = Category(rawValue: postData.value(forKey: "category") as! String)!
+                    
                         self.profileTableView.reloadData()
                         
                 } else{
@@ -956,8 +970,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             vc.imageCache = self.imageCache
             
-            
-            
         }
     }
     
@@ -968,5 +980,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
 
+
+    
 
 }

@@ -21,7 +21,7 @@ class Colors {
     let audioPostColor: String = "#D5FB89"
     let orangeRed: String = "#FF5F45"
     let videoPostColor: String = ""
-
+    let musicPostColor: String = "#81BEF7"
     let mainBlueColor: String = "#2295C6"
     let photoPostColor: String = ""
     
@@ -88,8 +88,11 @@ class Colors {
     func getOrangeRedColor () -> UIColor{
         
         return hexStringToUIColor(hex: self.orangeRed)
+    }
+    
+    func getMusicColor () -> UIColor{
         
-        
+        return hexStringToUIColor(hex: self.musicPostColor)
     }
     
     

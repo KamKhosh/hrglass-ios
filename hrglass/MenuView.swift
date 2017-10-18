@@ -10,6 +10,15 @@ import UIKit
 
 
 
+enum Direction: String{
+    
+    case Up = "Up"
+    case Down = "Down"
+    case Left = "Left"
+    case Right = "Right"
+    case None = "None"
+}
+
 protocol MenuDelegate {
     
     
@@ -26,7 +35,7 @@ class MenuView: UIView{
     var listCount: Int
     var startCenter: CGPoint
     var offset: Bool = false
-    
+    var direction: Direction = .None
     
     /*********************************
      *
@@ -34,9 +43,10 @@ class MenuView: UIView{
      *
      *********************************/
     
-    init(buttonList: [UIButton], feedViewController: FeedViewController, offset: Bool) {
+    init(buttonList: [UIButton], feedViewController: FeedViewController, offset: Bool, direction: Direction) {
         
         self.offset = offset
+        self.direction = direction
         self.parentViewController = feedViewController
         self.buttonList = buttonList
         self.buttonSize = feedViewController.menuButton.frame.size
@@ -49,9 +59,10 @@ class MenuView: UIView{
         setupViews()
     }
     
-    init(buttonList: [UIButton], addPostViewController: AddPostViewController, offset: Bool) {
+    init(buttonList: [UIButton], addPostViewController: AddPostViewController, offset: Bool, direction: Direction) {
         
         self.offset = offset
+        self.direction = direction
         self.parentViewController = addPostViewController
         self.buttonList = buttonList
         self.buttonSize = addPostViewController.moodBtn.frame.size
@@ -132,6 +143,7 @@ class MenuView: UIView{
     func show () {
         
         let height = self.buttonSize.height
+        let width = self.buttonSize.width
         let center = self.startCenter
         
         self.open = true
@@ -146,7 +158,23 @@ class MenuView: UIView{
             
                 button.isHidden = false
                 button.alpha = 1.0
-                button.center = CGPoint(x: center.x ,y: center.y - (index * height))
+                
+                
+                switch self.direction{
+                    
+                case .Up:
+                    button.center = CGPoint(x: center.x ,y: center.y - (index * height))
+                case .Down:
+                    button.center = CGPoint(x: center.x ,y: center.y + (index * height))
+                case .Left:
+                    button.center = CGPoint(x: center.x - (index * width) ,y: center.y )
+                case .Right:
+                    button.center = CGPoint(x: center.x + (index * width) ,y: center.y)
+                case .None:
+                    print("None")
+                    
+                }
+                
             })
         }
 

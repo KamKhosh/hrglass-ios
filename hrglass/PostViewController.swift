@@ -10,7 +10,8 @@ import UIKit
 import AVFoundation
 import AVKit
 import Firebase
-
+import MediaPlayer
+import StoreKit
 
 
 protocol PostViewDelegate {
@@ -22,16 +23,20 @@ protocol PostViewDelegate {
 
 
 
+
 class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate {
     
     var postData: PostData!
  
     //Managers
+    let appleMusicManager: AppleMusicManager = AppleMusicManager()
     let dataManager: DataManager = DataManager()
     var imageCache: ImageCache = ImageCache()
     var videoCache: VideoStore = VideoStore()
     let awsManager: AWSManager = AWSManager()
     var avPlayerViewController: AVPlayerViewController!
+    var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer()
+    var avMusicPlayer: AVAudioPlayer!
     
     //Storyboard Outlets
     @IBOutlet weak var profilePhotoImageView: UIImageView!
@@ -49,14 +54,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var playMusicBtn: UIButton!
     @IBOutlet weak var playContentBtn: UIButton!
     @IBOutlet weak var songView: UIView!
-    
-
+    @IBOutlet weak var songLengthSlider: UISlider!
+    @IBOutlet weak var songLengthLbl: UILabel!
+    @IBOutlet weak var songTimeSpentLbl: UILabel!
     @IBOutlet weak var linkLbl: UILabel!
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var popupView: UIView!
     @IBOutlet weak var alphaView: UIView!
     @IBOutlet weak var shadowView: UIView!
-    
     
     var likedByUser: Bool = false
     var currentUserId: String = ""
@@ -64,7 +69,16 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     var commentData: NSDictionary!
     var delegate: PostViewDelegate!
     var selectedIndexPath: IndexPath = IndexPath(item: 0, section: 0)
-    
+    var songInfo: Song!
+    var musicViewMinimized: Bool = true
+    var musicViewMinCenter: CGPoint!
+    var blurView: UIVisualEffectView!
+    var songTapGesture: UITapGestureRecognizer!
+    var songIsPlaying: Bool = false
+    var songTimer: Timer!
+    var songLength: TimeInterval!
+    var songSource: String = ""
+    var panGesture: UIPanGestureRecognizer!
     
     //secondary view relevant variables and outlets
     @IBOutlet weak var showHideSecondaryView: UIButton!
@@ -74,34 +88,30 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var firstPostView: UIView!
     @IBOutlet weak var secondaryPostPlayBtn: UIButton!
     @IBOutlet weak var secondaryLinkLbl: UILabel!
-    
+    @IBOutlet weak var blurredMusicImageView: UIImageView!
     
     var secondaryViewIsShowing: Bool = false
     var swipeLeftGesture: UISwipeGestureRecognizer!
     var swipeRightGesture: UISwipeGestureRecognizer!
-    
-    
+
     @IBOutlet weak var postCurrentlyViewingStackView: UIStackView!
     @IBOutlet weak var firstPostCircle: UIView!
     @IBOutlet weak var secondPostCircle: UIView!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+        panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         self.view.addGestureRecognizer(panGesture)
         panGesture.minimumNumberOfTouches = 1
         panGesture.delegate = self
         
         self.contentView.backgroundColor = UIColor.clear
         self.contentView.clipsToBounds = false
-        
         self.currentUserId = Auth.auth().currentUser!.uid
         
         self.viewSetup()
         self.dataSetup()
-    
     }
     
     
@@ -110,9 +120,23 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         super.viewDidAppear(animated)
         
         self.alphaView.frame.size = CGSize(width: self.contentView.frame.size.width * 3.0 , height: self.contentView.frame.size.height * 3.0)
- 
+        
+        
+        //Auto play if content is of the following categories
+        if self.postData.category == .Music{
+            
+            self.maximizeMusicView()
+            
+        }else if self.postData.category == .Video{
+            
+            self.playContentBtn(self)
+            
+        }else if self.postData.category == .Recording{
+            
+            self.playContentBtn(self)
+            
+        }
     }
-    
     
     
 
@@ -148,8 +172,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    
-    
 
     func dataSetup(){
         
@@ -169,7 +191,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //                self.setupSecondaryPostView(user: user, secondaryPostData: self.postData.secondaryPost)
 //            }
             
-            
 
             let name: String = user.value(forKey: "name") as! String
             
@@ -179,7 +200,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             imageCache.getImage(urlString: user.value(forKey: "profilePhoto") as! String, completion: { (image) in
                 self.profilePhotoImageView.image = image
             })
-            
             
             //get ALL comments and set the count
             dataManager.getCommentDataFromFirebase(uid: user.value(forKey: "uid") as! String, completion: { (comments) in
@@ -194,8 +214,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     self.hub.checkZero()
                 }
             })
-            
-            
+        
             
             
             //SETUP LIKES
@@ -216,15 +235,128 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             }
             
             
+            //if there is a song with this post extra data won't be empty/nil
+            if (self.postData.songString != "" && self.postData.songString != nil){
+                
+                self.songLengthSlider.minimumValue = 0
+                self.songLengthSlider.isContinuous = false
+                self.songView.isHidden = false
+                self.musicViewMinCenter = self.songView.center
+                self.blurredMusicImageView.contentMode = .scaleAspectFill
+                self.songInfo = self.dataManager.extrapolate(songData: self.postData.songString)
+                self.artistLbl.text = self.songInfo.artist
+                self.songNameLbl.text = self.songInfo.title
+                let source = self.songInfo.source
+                
+                let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
+                
+                self.songLengthSlider.value = 0.0
+                self.songTimeSpentLbl.text = "0.00"
+                
+                if (source == "apple"){
+                    //songs on apple music
+                    
+                    self.getSongJson(completion: { (response) in
+                        
+                        let data = response.value as! NSDictionary
+                        let array = data.value(forKey: "results") as! NSArray
+
+                        let songData: NSDictionary = array[0] as! NSDictionary
+                        print(songData)
+                        let previewString: String = songData.value(forKey: "previewUrl") as! String
+                        let trackId: NSInteger = songData.value(forKey: "trackId") as! NSInteger
+                        let millis = songData.value(forKey: "trackTimeMillis") as! NSInteger
+                        self.songLength = TimeInterval(millis)
+                        print(self.songLength)
+                        
+                        
+                        self.appleMusicManager.appleMusicRequestPermission()
+
+                        if (SKCloudServiceController.authorizationStatus() == .authorized){
+                            //play song
+                            self.appleMusicPlayTrackId(ids: [String(trackId)])
+                            
+                        }else{
+                            //play preview -- 30 seconds in millis
+                            self.songLength = 30 * 1000
+                            
+                            do {
+                                
+                               self.avMusicPlayer = try? AVAudioPlayer(contentsOf: URL(string: previewString)!)
+                            }
+                            
+                            self.playPauseSongAction(self)
+                            
+                        }
+                        
+                        
+                        let seconds = self.songLength / 1000
+                        self.songLengthLbl.text = seconds.minuteSecond
+                    })
+                    
+                    
+                }else if (source == "local"){
+                    //play song.mp4 from s3
+                    
+                    
+                    
+                }else{
+                    
+                    
+                    //add other sources later
+                }
+                
+
+
+                imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
+                    
+                    self.songImageView.image = image
+                    self.blurredMusicImageView.image = image
+                    self.blurredMusicImageView.contentMode = .scaleAspectFill
+                    
+                    //Blurring the Image
+                    let context = CIContext(options: nil)
+                    let currentFilter = CIFilter(name: "CIGaussianBlur")
+                    let beginImage = CIImage(image: image)
+                    currentFilter!.setValue(beginImage, forKey: kCIInputImageKey)
+                    currentFilter!.setValue(10, forKey: kCIInputRadiusKey)
+                    
+                    let cropFilter = CIFilter(name: "CICrop")
+                    cropFilter!.setValue(currentFilter!.outputImage, forKey: kCIInputImageKey)
+                    cropFilter!.setValue(CIVector(cgRect: beginImage!.extent), forKey: "inputRectangle")
+                    
+                    let output = cropFilter!.outputImage
+                    let cgimg = context.createCGImage(output!, from: output!.extent)
+                    let processedImage = UIImage(cgImage: cgimg!)
+                    self.blurredMusicImageView.image = processedImage
+
+                    //Adding Gradient Sublayer
+                    let gradient: CAGradientLayer = CAGradientLayer()
+                    gradient.frame = self.blurredMusicImageView.frame
+                    gradient.colors = [UIColor.clear.cgColor, UIColor.white.cgColor]
+                    gradient.locations = [0.0, 1.0]
+                    self.blurredMusicImageView.layer.insertSublayer(gradient, at: 0)
+                })
+                
+                songTapGesture = UITapGestureRecognizer(target: self, action:  #selector (self.maximizeMusicView))
+                self.songView.addGestureRecognizer(songTapGesture)
+                
+            }else{
+                moveBtnsDown()
+            }
+            
+            
             //TODO: SETUP COMMENTS
             switch self.postData.category {
             
             case .Photo:
+                
                 print("")
                 imageCache.getImage(urlString: self.postData.value(forKey: "data") as! String, completion: { (image) in
                     self.contentImageView.image = image
                 })
             case .Video:
+                
                 print("")
                 //thumbnail URL
                 let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
@@ -239,17 +371,18 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 self.contentImageView.image = UIImage(named:"audioWave")
                 
             case .Music:
-
-                self.songView.isHidden = false
                 
+                self.musicViewMinimized = false
                 
             case .Text:
+                
                 print("")
                 imageCache.getImage(urlString: self.postData.value(forKey: "data") as! String, completion: { (image) in
                     self.contentImageView.image = image
                 })
                 
             case .Link:
+                
                 print("")
                 self.linkLbl.isHidden = false
                 self.playContentBtn.setImage(self.dataManager.clearImage, for: .normal)
@@ -266,8 +399,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     self.linkLbl.textAlignment = .center
                     self.linkLbl.textColor = UIColor.white
                     self.linkLbl.isHidden = false
-                    
                 })
+                
             default:
                 print("")
             }
@@ -277,14 +410,126 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
+    func songProgressTimerStart (){
+        
+        self.songTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.updatePlaybackViews), userInfo: nil, repeats: true)
+        
+    }
+    
+    //song timer selector
+    func updatePlaybackViews(){
+        if self.applicationMusicPlayer.playbackState == .playing{
+            
+            let millis = TimeInterval(self.applicationMusicPlayer.currentPlaybackTime * 1000)
+//            print(millis/self.songLength)
+            self.songTimeSpentLbl.text = self.applicationMusicPlayer.currentPlaybackTime.minuteSecond
+            
+            self.songLengthSlider.setValue(Float(millis/self.songLength * 100), animated: true)
+            
+        }else if(avMusicPlayer != nil){
+            
+            
+        }
+    }
     
     
-//    
-//    
+    func stopSongProgressTimer(){
+        self.songTimer.invalidate()
+    }
+    
+    
+    
+    func appleMusicPlayTrackId(ids:[String]) {
+        
+        applicationMusicPlayer.setQueueWithStoreIDs(ids)
+        self.playPauseSongAction(self)
+        
+    }
+
+    
+    
+    //music view moving to center
+    func maximizeMusicView(){
+        
+        self.blurredMusicImageView.alpha = 0.0
+        let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.minimizeBtn.frame.maxY + 20 + self.songView.frame.height/2)
+        
+        self.musicViewMinimized = false
+        self.blurredMusicImageView.isHidden = false
+        self.songTapGesture.isEnabled = false
+        
+        
+        self.moveBtnsDown()
+        UIView.animate(withDuration: 0.5) {
+            
+            self.songNameLbl.textColor = UIColor.white
+            self.artistLbl.textColor = UIColor.white
+    
+            self.songView.center = SongViewCenter
+            self.songNameLbl.textAlignment = .center
+            self.artistLbl.textAlignment = .center
+            self.songView.backgroundColor = UIColor.white
+            
+            self.songImageView.frame.size = CGSize(width: self.songView.frame.width/2, height:self.songView.frame.width/2)
+            self.songImageView.layer.cornerRadius = self.songView.frame.width/4
+            self.songImageView.center = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.songView.bounds.midY - 40)
+            self.playMusicBtn.center = CGPoint(x: self.postContainerPlaceholder.frame.midX,y: self.songView.bounds.maxY - 75)
+            
+            self.blurredMusicImageView.alpha = 1.0
+        }
+    }
+    
+    
+    func minimizeMusicView() {
+        
+        self.songTapGesture.isEnabled = true
+        
+        self.moveBtnsUp()
+        UIView.animate(withDuration: 0.5, animations: {
+            
+            self.songNameLbl.textAlignment = .left
+            self.artistLbl.textAlignment = .left
+            self.songNameLbl.textColor = UIColor.black
+            self.artistLbl.textColor = UIColor.darkGray
+            self.songView.backgroundColor = UIColor.lightGray
+            self.songImageView.frame.size = CGSize(width: 50, height:50)
+            self.songImageView.layer.cornerRadius = 25
+            self.blurredMusicImageView.alpha = 0.0
+            self.songView.center = self.musicViewMinCenter
+            self.songImageView.center = CGPoint(x: self.songView.bounds.minX + 35,y:self.songView.bounds.minY + 30)
+            self.playMusicBtn.center = CGPoint(x: self.songView.bounds.maxX - 35,y:self.songView.bounds.minY + 30)
+            
+        }) { (success) in
+            
+            self.blurredMusicImageView.isHidden = true
+        }
+    }
+    
+    
+    func moveBtnsDown(){
+        
+        UIView.animate(withDuration: 0.5){
+            
+            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.likeBtn.center.y + 50)
+            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.commentBtn.center.y + 50)
+            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.moreBtn.center.y + 50)
+        }
+    }
+    
+    func moveBtnsUp(){
+    
+        UIView.animate(withDuration: 0.5){
+    
+            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.likeBtn.center.y - 50)
+            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.commentBtn.center.y - 50)
+            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.moreBtn.center.y - 50)
+        }
+    }
+    
+    
 //    func setupSecondaryPostView(user: NSDictionary, secondaryPostData:NSDictionary){
 //        
 //        self.swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeLeftHandler))
-//        
 //        self.swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeRightHandler))
 //        
 //        self.swipeLeftGesture.delegate = self
@@ -368,11 +613,28 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.firstPostCircle.layer.cornerRadius = 3.0
         self.secondPostCircle.layer.cornerRadius = 3.0
-        
-        
     }
     
     
+    //task completion returns apple music song data as a JSON
+    func getSongJson(completion: @escaping (NetworkResponse) -> Void){
+        
+        var songQuery: String = ""
+        
+        appleMusicManager.createItunesQuery(songData: self.postData.songString) { (string) in
+            
+            songQuery = string;
+            print(songQuery)
+            
+            let url: URL = URL(string: songQuery)!
+            let task = self.appleMusicManager.buildTask(withURL: url, completion: completion)
+            
+            // start task
+            task.resume()
+
+            return
+        }
+    }
     
     
     
@@ -382,18 +644,51 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
      *
      **********************/
     
+    @IBAction func songSliderAction(_ sender: Any) {
+        
+        print(self.songLengthSlider.value)
+        let newPosition = TimeInterval(self.songLengthSlider.value) / 10 * self.songLength
+            
+        if (self.applicationMusicPlayer.playbackState == .playing){
+    // seeking isn't quite working so removing for now
+//            self.applicationMusicPlayer.currentPlaybackTime = TimeInterval(newPosition.millisecond)
+        }
+    }
+    
+    
+    
     @IBAction func minimizeAction(_ sender: Any) {
         
-        UIView.animate(withDuration: 0.2, animations: {
-            self.shadowView.transform = CGAffineTransform(translationX: 0, y: 1000)
-            self.popupView.transform = CGAffineTransform(translationX: 0, y: 1000)
-            self.alphaView.alpha = 0.0
-        }){ (success) in
-            if success{
-                self.willMove(toParentViewController: nil)
-                self.view.removeFromSuperview()
-                self.removeFromParentViewController()
+        if musicViewMinimized || self.postData.category == .Music{
+            
+            UIView.animate(withDuration: 0.2, animations: {
+                
+                self.shadowView.transform = CGAffineTransform(translationX: 0, y: 1000)
+                self.popupView.transform = CGAffineTransform(translationX: 0, y: 1000)
+                self.alphaView.alpha = 0.0
+                
+            }){ (success) in
+                if success{
+
+                    self.applicationMusicPlayer.pause()
+
+                    if self.songTimer != nil{
+                        self.songTimer.invalidate()
+                    }
+                    
+                    if self.applicationMusicPlayer.playbackState == .playing {
+                        self.applicationMusicPlayer.stop()
+                    }
+                    self.willMove(toParentViewController: nil)
+                    self.view.removeFromSuperview()
+                    self.removeFromParentViewController()
+                    
+                }
             }
+            
+        }else{
+            
+            self.minimizeMusicView()
         }
     }
     
@@ -452,7 +747,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         view.addSubview(commentsVC.view)
         commentsVC.didMove(toParentViewController: self)
-        
     }
     
     
@@ -461,9 +755,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBAction func moreBtnAction(_ sender: Any) {
         
         self.moreButtonPressed(data: self.postData, indexPath: self.selectedIndexPath)
-        
     }
-    
     
     
     
@@ -525,11 +817,37 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //        }
 //    }
     
+
     
     
     @IBAction func playPauseSongAction(_ sender: Any) {
         
         
+        if self.songIsPlaying{
+            self.songIsPlaying = false
+            self.playMusicBtn.setImage(UIImage(named: "play"), for: .normal)
+            
+            
+            if avMusicPlayer != nil{
+                avMusicPlayer.pause()
+            }else{
+                self.applicationMusicPlayer.pause()
+            }
+            self.stopSongProgressTimer()
+            
+            
+        }else{
+            self.songIsPlaying = true
+            self.playMusicBtn.setImage(UIImage(named: "pause"), for: .normal)
+
+            if avMusicPlayer != nil{
+                avMusicPlayer.play()
+            }else{
+                self.applicationMusicPlayer.play()
+            }
+            self.songProgressTimerStart()
+            
+        }
     }
     
 
@@ -592,6 +910,10 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     
                 }){ (success) in
                     if success{
+                        
+                        if self.applicationMusicPlayer.playbackState == .playing {
+                            self.applicationMusicPlayer.stop()
+                        }
                         self.willMove(toParentViewController: nil)
                         self.view.removeFromSuperview()
                         self.removeFromParentViewController()
@@ -669,7 +991,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 // handle errror
                 
                 print("Video could not be retrieved")
-                
+                print(error.localizedCapitalized)
             }
             
             

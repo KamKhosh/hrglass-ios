@@ -365,7 +365,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.messagesBtn.center = center
         self.messagesBtn.addTarget(self, action: #selector(self.messagesButtonAction), for: .touchUpInside)
         
-        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.profileBtn], feedViewController: self, offset: true)
+        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.profileBtn], feedViewController: self, offset: true, direction: .Up)
         
         self.view.addSubview(self.navigationMenu)
 
@@ -436,8 +436,11 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         cell.contentSelected = {
+            UIView.animate(withDuration: 0.4, animations: { 
+                self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
+                
+            })
             
-            self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
         
             self.dataManager.incrementViewsCount(post: cell.postData, completion: { views in
                 cell.viewCountLbl.text = String(views)
@@ -488,6 +491,22 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         case .Music:
             
             print("Music")
+            
+            cell.previewContentView.layer.borderColor = colors.getMusicColor().cgColor
+            
+            let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
+            
+            //just set the photo for now until we get AWS setup
+            cell.profileImageBtn.setImage(self.dataManager.clearImage, for: .normal)
+            cell.playImageView.isHidden = false
+            cell.contentView.bringSubview(toFront: cell.playImageView)
+            
+            self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
+                
+                cell.contentImageBtn.setImage(image, for: .normal)
+                cell.loadingIndication.stopAnimating()
+                
+            })
             
         case .Link:
             
@@ -610,37 +629,23 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        let data: PostData = feedData[indexPath.row]
+//        let data: PostData = feedData[indexPath.row]
+//        
+//        var height: CGFloat = 300.0
+//        if (data.postShape == "square"){
+//            
+//            height = 400.0
+//        }
         
-        var height: CGFloat = 300.0
-        if (data.postShape == "square"){
-            
-            height = 400.0
-        }
-        
-        return height
+        return 300.0
     }
 
     
     func showPostPopUp(postData: PostData, postCenter: CGPoint, indexPath:IndexPath){
         
-
-//        let translucentView = UIView(frame: view.frame)
-//        translucentView.backgroundColor = UIColor.clear
-//        translucentView.alpha = 0.5
-//        
-//        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.extraLight)
-//        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-//
-//        blurEffectView.frame = self.view.bounds
-//        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//        self.view.addSubview(translucentView)
-//        translucentView.addSubview(blurEffectView) 
-        
-        
         
         // add child view controller view to container
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
         let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
         postVC.delegate = self
         postVC.imageCache = self.imageCache
@@ -653,9 +658,11 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         postVC.view.frame = view.bounds
         postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.7)
         
-        view.addSubview(postVC.view)
-        postVC.didMove(toParentViewController: self)
-        
+        UIView.transition(with: self.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.view.addSubview(postVC.view)
+        }) { (success) in
+            postVC.didMove(toParentViewController: self)
+        }
     }
     
     
@@ -663,7 +670,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     //PostView Delegate Method
     func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
-        
         
         let cell: FeedTableViewCell = self.tableView.cellForRow(at: indexPath) as! FeedTableViewCell
         cell.likeAction((Any).self)
