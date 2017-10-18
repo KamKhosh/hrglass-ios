@@ -430,7 +430,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //CLImageEditor Functions
     func presentImageEditorWithImage(image:UIImage){
         
-        
         guard let editor = CLImageEditor(image: image, delegate: self) else {
             
             return;
@@ -447,9 +446,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-        
-        
-        
+
         let indexPath: IndexPath = IndexPath(row: 0, section: 0)
         let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
         
@@ -627,6 +624,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.playImageView.isHidden = true
             cell.noRecentPostsLbl.isHidden = true
         
+            cell.latestPostBackground.layer.borderColor = self.dataManager.getUIColorForCategory(category: self.latestPostData.category).cgColor
+            
+            
             switch self.latestPostData.category {
                 
             case .Link:
@@ -654,10 +654,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             case .Music:
                 
                 print("Music")
+                let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), currentlyViewingUID)
+                
+                self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
+                    
+                    cell.latestPostImageButton.setBackgroundImage(image, for: .normal)
+                    cell.playImageView.isHidden = false
+                    cell.postIndicator.stopAnimating()
+                    
+                })
                 
             case .Video:
-                
-                cell.latestPostBackground.layer.borderColor = colors.getPurpleColor().cgColor
                 
                 let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), currentlyViewingUID)
                 
@@ -671,7 +678,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
 
                 
             case .Photo:
-                cell.latestPostBackground.layer.borderColor = colors.getMenuColor().cgColor
+
                 self.imageCache.getImage(urlString: latestPostData.data, completion: { image in
                     
                     cell.latestPostImageButton.setBackgroundImage(image, for: .normal)
@@ -683,7 +690,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             case .Recording:
                 
                 print("Recording")
-                cell.latestPostBackground.layer.borderColor = colors.getAudioColor().cgColor
                 cell.latestPostImageButton.setBackgroundImage(UIImage(named:"audioWave"), for: .normal)
                 cell.playImageView.isHidden = false
 
@@ -691,7 +697,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             case .Text:
 
                 print("Text")
-                cell.latestPostBackground.layer.borderColor = colors.getTextPostColor().cgColor
                 self.imageCache.getImage(urlString: latestPostData.data, completion: { image in
                     
                     cell.latestPostImageButton.setBackgroundImage(image, for: .normal)

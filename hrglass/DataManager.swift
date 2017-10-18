@@ -271,7 +271,6 @@ class DataManager {
                             
                             if let postDict = snapshot.value as? NSDictionary{
                                 
-                                
                                 let postData: PostData = self.getPostDataFromDictionary(postDict: postDict, uid: key as! String)
                                 if (Double(postData.expireTime)! > Date().millisecondsSince1970) {
                                     
@@ -303,18 +302,12 @@ class DataManager {
     }
     
     
-    
-    
-    
     /******************************************************************************
      *
      *          GET POST DATA OBJECT FROM FIREBASE POST SNAPSHOT DICTIONARY
      *          - dictionary parameter: NSDictionary, uid parameter: String
      *          - returns a PostData object
      *******************************************************************************/
-    
-    
-    
     
     
     func getPostDataFromDictionary(postDict: NSDictionary, uid: String) -> PostData{
@@ -341,7 +334,7 @@ class DataManager {
 //            
 //        }else{
         
-        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "extraData") as! String)
+        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "songString") as! String)
             
 //        }
 

@@ -90,8 +90,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         self.likedCollectionView.delegate = self
         self.likedCollectionView.dataSource = self
         
-        
-        
     }
     
     
@@ -100,7 +98,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         if let latestPostBtnAction = self.latestContentSelected{
             
             latestPostBtnAction()
-            
         }
     }
     
@@ -172,7 +169,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             
             dataManager.addToFollowerList(userId: self.user.userID as String, privateAccount: self.user.isPrivate)
             
-            
         }else{
             
             followBtn.setTitle("Follow", for: .normal)
@@ -180,7 +176,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             followBtn.backgroundColor = colors.getMenuColor()
             
             dataManager.removeFromFollowerList(userId: self.user.userID as String)
-            
         }
     }
     
@@ -198,13 +193,12 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 currentlikedIndex = IndexPath(row: currentlikedIndex.row - 1, section: 0)
             }else{
                 currentlikedIndex = IndexPath(row: currentlikedIndex.row - 2, section: 0)
-                
             }
             
             self.likedCollectionView.scrollToItem(at: currentlikedIndex, at: .left, animated: true)
         }
-        
     }
+    
     
     
     @IBAction func likedViewAllAction(_ sender: Any) {
@@ -213,10 +207,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
     }
     
-    
-    
-    
-    
+
     
     
     @IBAction func likedNextAction(_ sender: Any) {
@@ -231,16 +222,10 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 currentlikedIndex = IndexPath(row: currentlikedIndex.row + 1, section: 0)
             }else{
                 currentlikedIndex = IndexPath(row: currentlikedIndex.row + 2, section: 0)
-                
             }
-            
             self.likedCollectionView.scrollToItem(at: currentlikedIndex, at: .left, animated: true)
         }
-        
     }
-    
-    
-    
     
     
     
@@ -293,7 +278,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             
             cell = likedCollectionView.dequeueReusableCell(withReuseIdentifier: "postCell", for: indexPath) as! ProfileCollectionViewCell
             
-            
             let image = UIImage(named: "clearPlaceholderImage")
             cell.imageButton.setImage(image, for: .normal)
             cell.loadingIndicator.startAnimating()
@@ -310,9 +294,10 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                     
                     self.selectedCellRow = indexPath.row
                     collectionContentSelected()
-                    
                 }
             }
+            
+            
             
             switch likedDataArray[indexPath.row].category {
                 
@@ -331,7 +316,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                     
                 })
                 
-                
             case .Photo:
                 
                 self.imageCache.getImage(urlString: likedDataArray[indexPath.row].data, completion: { image in
@@ -345,6 +329,17 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
 
             case .Music:
                 print("Music")
+                
+                cell.borderView.layer.borderColor = colors.getMusicColor().cgColor
+                
+                let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), uid)
+                self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
+                    
+                    cell.imageButton.setImage(image, for: .normal)
+                    cell.loadingIndicator.stopAnimating()
+                    cell.playImageView.isHidden = false
+                    
+                })
                 
             case .Text:
                 print("Text")

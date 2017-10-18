@@ -18,6 +18,7 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     let colors: Colors = Colors()
     var imageCache: ImageCache!
     var awsManager: AWSManager = AWSManager()
+    var dataManager: DataManager = DataManager()
     
     @IBOutlet weak var playImageView: UIImageView!
     /****************************************
@@ -70,11 +71,12 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         let user: NSDictionary = postsArray[indexPath.row].user
         let uid: String = user.value(forKey: "uid") as! String
         
+        cell.borderView.layer.borderColor = self.dataManager.getUIColorForCategory(category: postsArray[indexPath.row].category).cgColor
+        
         switch postsArray[indexPath.row].category {
             
         case .Video:
-                
-            cell.borderView.layer.borderColor = colors.getPurpleColor().cgColor
+            
 
             let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), uid)
             self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
@@ -93,15 +95,16 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
                 cell.loadingIndicator.stopAnimating()
             })
             //default is photo for now
-
-            cell.borderView.layer.borderColor = colors.getMenuColor().cgColor
             
         case .Recording:
             print("Recording")
+            
             cell.borderView.layer.borderColor = colors.getAudioColor().cgColor
+            cell.imageView.image = UIImage(named: "audioWave")
             
         case .Text:
             print("Text")
+            cell.borderView.layer.borderColor = colors.getTextPostColor().cgColor
             self.imageCache.getImage(urlString: postsArray[indexPath.row].data, completion: { image in
                 
                 cell.imageView.image = image
@@ -109,14 +112,40 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
             })
             //default is photo for now
             
-            cell.borderView.layer.borderColor = colors.getTextPostColor().cgColor
-            
+         
         case .Music:
             print("Music")
             
+            let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), uid)
+            self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
+                
+                cell.imageView.image = image
+                cell.loadingIndicator.stopAnimating()
+
+                
+            })
+            
         case .Link:
             print("Link")
+            
+            dataManager.setURLView(urlString: postsArray[indexPath.row].data as String, completion: { (image, label) in
                 
+                cell.imageView.image = image
+                
+                let linkLabel = UILabel(frame: CGRect(x: cell.imageView.bounds.minX, y:cell.imageView.bounds.midY, width: cell.imageView.frame.width ,height: cell.imageView.frame.height/3))
+                
+                linkLabel.adjustsFontSizeToFitWidth = true
+                linkLabel.numberOfLines = 2
+                linkLabel.backgroundColor = UIColor.darkGray
+                linkLabel.alpha = 0.7
+                linkLabel.text = label
+                linkLabel.textAlignment = .center
+                linkLabel.textColor = UIColor.white
+                
+                cell.imageView.addSubview(linkLabel)
+
+            })
+            
         default:
             print("Default")
             
@@ -144,7 +173,6 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //Do things
         
-    
         let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
         
         postVC.delegate = self

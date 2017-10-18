@@ -1377,7 +1377,7 @@ class SubmitPostViewController: UIViewController {
         let dictionaryKey: String = "savedPost"
         var dataKey: String = ""
         let thumbnailKey: String = "thumbnail"
-        let musicItemId: MPMediaEntityPersistentID = postData.value(forKey: "songString") as! MPMediaEntityPersistentID
+//        let musicItemId: MPMediaEntityPersistentID = postData.value(forKey: "songString") as! MPMediaEntityPersistentID
         
         if primary{
             

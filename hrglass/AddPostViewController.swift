@@ -2196,7 +2196,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
 
-        
         dismiss(animated: true, completion: {
             
            self.tabBar.selectedItem = self.tabBar.items?[4]
