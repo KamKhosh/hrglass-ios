@@ -1,10 +1,12 @@
 //
 //  Copyright © 2016年 xiAo_Ju. All rights reserved.
 //
+//
+// Code from RKNotificationHub swift translation on github
 
 import UIKit
 
-let RKNotificationHubDefaultDiameter: CGFloat = 30
+let RKNotificationHubDefaultDiameter: CGFloat = 20
 let kCountMagnitudeAdaptationRatio: CGFloat = 0.3
 
 let kPopStartRatio: CGFloat = 0.85

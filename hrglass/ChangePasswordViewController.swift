@@ -45,10 +45,24 @@ class ChangePasswordViewController: UIViewController {
      *
      *********************************/
     
+    
+    
+    
+    
+    /*****************************************
+     
+     Function - changeAction:
+     
+     Parameters - Any: sender
+     
+     Returns: NA
+     
+     On confirmation of old password, new password
+     
+     *********************************************************************************/
+    
     @IBAction func changeAction(_ sender: Any) {
-        
-        
-        
+
         if(oldPasswordField.text == ""){
             print("password Empty")
             let views: [UIView] = self.view.subviews

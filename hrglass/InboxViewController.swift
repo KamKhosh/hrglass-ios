@@ -4,32 +4,45 @@
 //
 //  Created by Justin Hershey on 7/31/17.
 //
-//
+// Retrieves data and configures view for InboxView
 
 import UIKit
 import Firebase
 
 class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITabBarDelegate {
     
+    //Storyboard outlets
     @IBOutlet weak var tableView: UITableView!
-    
-    var noReqLbl: UILabel! = nil
-    var loggedInUser: User!
-    
     @IBOutlet weak var navigationBar: UINavigationBar!
     
+    //table view data object
     var messagesInboxArray: NSMutableArray = []
     
+    //data set on table cell selection
     var selectedData: NSDictionary!
     var selectedUserId: String = ""
     
+    //Helper Classes
     var imageCache: ImageCache = ImageCache()
-    
     let dataManager: DataManager = DataManager()
     
+    //logged in user data
     let uid: String = (Auth.auth().currentUser?.uid)!
-    var tableData: NSArray!
+    var loggedInUser: User!
     
+    //not follow requests lable
+    var noReqLbl: UILabel! = nil
+
+    
+    
+    
+    
+    
+    /********************************************
+    
+     ------------- LIFECYCLE
+    
+    *********************************************/
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,7 +56,7 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.noReqLbl.isHidden = true
         self.view.addSubview(self.noReqLbl)
         
-        
+        //get inbox data
         self.getInboxData()
     }
     
@@ -130,9 +143,7 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        
         self.selectedData = self.messagesInboxArray[indexPath.row] as! NSDictionary
-        
         
         self.performSegue(withIdentifier: "toMessagesView", sender: self)
         
@@ -163,7 +174,7 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     
     
-    
+    //unwind here
     @IBAction func unwindToInbox(unwindSegue: UIStoryboardSegue) {
         
         
@@ -171,7 +182,11 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     
     
-    // MARK: - Navigation
+    /*****************************************
+     
+     ------------ NAVIGATION
+     
+     *****************************************/
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

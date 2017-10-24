@@ -750,8 +750,21 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.profilePhoto.layer.cornerRadius = cell.profilePhoto.frame.width / 2
             cell.profilePhoto.clipsToBounds = true
             
-            cell.followerLbl.text = String(currentlyViewingUser.followedByCount)
-            cell.followingLbl.text = String(currentlyViewingUser.followingCount)
+            let followedByCountRef: DatabaseReference = self.ref.child("FollowedBy").child(currentlyViewingUID).child("followed_by_count")
+            let followingCountRef: DatabaseReference = self.ref.child("Following").child(currentlyViewingUID).child("following_count")
+            
+            followedByCountRef.observeSingleEvent(of: .value, with: { (snapshot) in
+
+                cell.followerLbl.text = String(describing: snapshot.value as! NSInteger)
+            })
+            
+            
+            followingCountRef.observeSingleEvent(of: .value, with: { (snapshot) in
+
+                cell.followingLbl.text = String(describing: snapshot.value as! NSInteger)
+            })
+            
+
             
         }
         
@@ -768,6 +781,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             postVC.delegate = self
             postVC.imageCache = self.imageCache
             postVC.postData = collCellData
+            postVC.source = "Profile"
             
             self.addChildViewController(postVC)
             
@@ -788,6 +802,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             postVC.imageCache = self.imageCache
             postVC.postData = self.latestPostData
             
+            postVC.source = "Profile"
+            
             self.addChildViewController(postVC)
             
             postVC.view.frame = self.view.bounds
@@ -795,12 +811,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             self.view.addSubview(postVC.view)
             postVC.didMove(toParentViewController: self)
-            
         }
         
         return cell
-        
     }
+    
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -876,6 +891,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         //don't do anything
     }
     
+    func blockUserAction(){
+        
+
+        //don't do anything
+
+    }
     
     //Will play a video
 //    func playURLData(url: URL){
@@ -892,11 +913,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
 //    
 
     
-    /**********************
+    /******************************
      *
-     *  -- Text View --
+     *  -- Text View Delegates --
      *
-     **********************/
+     ****************************/
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         return true

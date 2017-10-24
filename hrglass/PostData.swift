@@ -13,6 +13,10 @@ import UIKit
 import URLEmbeddedView
 
 
+
+
+
+//Primary Post Category ENUM
 enum Category: String{
     
     case Video = "Video"
@@ -26,6 +30,7 @@ enum Category: String{
 }
 
 
+//Post Mood ENUM
 enum Mood: String {
     
     case Funny = "😂"
@@ -39,8 +44,10 @@ enum Mood: String {
 
 
 
+
+//Post Data, data object
+
 class PostData: NSObject{
-    
     
     let postId: String
     var likes: Int

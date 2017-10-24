@@ -16,6 +16,9 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     let currentUserId = Auth.auth().currentUser?.uid
     let ref = Database.database().reference()
     var parentView: String = "feedView"
+    var dataManager: DataManager = DataManager()
+    
+    
     @IBOutlet weak var submitBtn: UIButton!
     
     @IBOutlet weak var backBtn: UIButton!
@@ -64,27 +67,37 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
         //TODO: ADD Username Check so user's can't use an existing username
         if(self.usernameField.text != ""){
-            let username = self.usernameField.text!
             
-            let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
-            
-            let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
-            tempDict.setValue(username, forKey: "username")
-            
-            UserDefaults.standard.set(tempDict, forKey: "userdata")
-            UserDefaults.standard.synchronize()
-            
-            let usernameRef = ref.child("Users").child(currentUserId!).child("username")
-            usernameRef.setValue(self.usernameField.text!)
-
-            
-            if self.parentView == "feedView"{
-                performSegue(withIdentifier: "unwindToFeed", sender: nil)
-            }else if self.parentView == "accountView" {
-                performSegue(withIdentifier: "unwindToAccount", sender: nil)
-            }
-            
-            
+            dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
+                
+                if (exists){
+                    
+                    self.usernameExistsAlert()
+                    
+                }else{
+                    
+                    let username = self.usernameField.text!
+                    
+                    let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
+                    
+                    let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
+                    tempDict.setValue(username, forKey: "username")
+                    
+                    UserDefaults.standard.set(tempDict, forKey: "userdata")
+                    UserDefaults.standard.synchronize()
+                    
+                    let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
+                    let usernames = self.ref.child("Usernames")
+                    usernames.setValue("0", forKey: self.usernameField.text!)
+                    usernameRef.setValue(self.usernameField.text!)
+                    
+                    if self.parentView == "feedView"{
+                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                    }else if self.parentView == "accountView" {
+                        self.performSegue(withIdentifier: "unwindToAccount", sender: nil)
+                    }
+                }
+            })
         }else{
             let views: [UIView] = self.view.subviews
             for view in views {
@@ -107,6 +120,20 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
     }
 
+    
+    
+    func usernameExistsAlert(){
+        
+        let alert: UIAlertController = UIAlertController(title: "Username already take", message: "choose another", preferredStyle: .actionSheet)
+        
+        let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+    }
 
     
     

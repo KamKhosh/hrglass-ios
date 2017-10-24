@@ -11,6 +11,8 @@ import UIKit
 
 
 
+//Retrieve Application Colors with this class
+
 class Colors {
     
     let menuColor: String = "#F04863"

@@ -8,7 +8,7 @@
 
 
 
-// CLASS NOT CURRENTLY IN USE in any capacity
+// CLASS NOT CURRENTLY IN USE IN ANY CAPACITY
 
 import UIKit
 

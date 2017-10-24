@@ -23,6 +23,9 @@ public enum SearchError: Error {
 }
 
 
+
+
+//ENUM for song result.
 public enum SongResult<T, U> {
     case success(T)
     case failure(U)
@@ -117,7 +120,7 @@ class AppleMusicManager {
         
     }
     
-    
+    //Retrieve the trimmed user's storefront id based on the current user region
     func appleMusicFetchStorefrontRegion(completion: @escaping (String) -> ()){
         
         let serviceController = SKCloudServiceController()
@@ -151,7 +154,7 @@ class AppleMusicManager {
         
     }
     
-    
+    //builds a download task using the URL passed that contains the desired data
     func buildTask(withURL url: URL, completion: @escaping (NetworkResponse) -> Void) -> URLSessionDataTask {
         
         let session: URLSession = URLSession.shared
@@ -188,6 +191,8 @@ class AppleMusicManager {
     }
     
     
+    
+    //creates an itunes query based on the song data the user has selected
     func createItunesQuery(songData: String, completion: @escaping (_ storeId: String) -> ()){
         //song data is in format title:artist:album so we just separate by : and use those terms in our itunes search query
         
@@ -195,18 +200,14 @@ class AppleMusicManager {
         var title: String = ""
         var album: String = ""
         var storefrontId: String = ""
-        
-        //get storefrontId
 
-        
-        
         let strings = songData.components(separatedBy: ":")
         
         title = strings[0]
         artist = strings[1]
         album = strings[2]
 
-        
+        //joining search terms
         if(title != ""){
             title = title.replacingOccurrences(of: " ", with: "+")
         }
@@ -222,13 +223,16 @@ class AppleMusicManager {
         let termString: String = "term=" + title + artist + album
         
         
+        
+        //if the storefront id is saved locally use it
         if let id: String = UserDefaults.standard.value(forKey: "appleStorefrontId") as? String{
             storefrontId = id
         }
         
+        
+        //if no local storefront id, retrieve and use it
         if (storefrontId != ""){
             
-//            storeFrontId = UserDefaults.value(forKey: "appleStorefrontId") as! String
             let queryString: String = String(format: "https://itunes.apple.com/search?%@&entity=song&limit=1&s=%@", termString, storefrontId)
             completion(queryString)
             

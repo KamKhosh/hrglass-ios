@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "hrglass/SubmitPostViewController.swift"
-            timestampString = "529990313.284211"
+            timestampString = "530566512.593254"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "855"
-            endingLineNumber = "855"
+            startingLineNumber = "875"
+            endingLineNumber = "875"
             landmarkName = "postAction(_:)"
             landmarkType = "7">
          </BreakpointContent>

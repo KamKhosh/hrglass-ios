@@ -6,6 +6,12 @@
 //
 //
 
+
+/*
+ 
+    CustomRefreshControlView UNDER CONSTRUCTION -- NOT IN USE
+ 
+ */
 import UIKit
 
 class CustomRefreshControlView: UIView {

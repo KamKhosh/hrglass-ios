@@ -9,7 +9,7 @@
 import UIKit
 
 
-
+//menu direction ENUM
 enum Direction: String{
     
     case Up = "Up"
@@ -21,9 +21,8 @@ enum Direction: String{
 
 protocol MenuDelegate {
     
-    
-    
 }
+
 
 class MenuView: UIView{
     
@@ -43,6 +42,7 @@ class MenuView: UIView{
      *
      *********************************/
     
+    //init for FeedViewController
     init(buttonList: [UIButton], feedViewController: FeedViewController, offset: Bool, direction: Direction) {
         
         self.offset = offset
@@ -59,6 +59,7 @@ class MenuView: UIView{
         setupViews()
     }
     
+    // init for AddPostViewController
     init(buttonList: [UIButton], addPostViewController: AddPostViewController, offset: Bool, direction: Direction) {
         
         self.offset = offset
@@ -83,7 +84,7 @@ class MenuView: UIView{
     
     
     
-    
+    //configures button views passed from parent, they all start with the same center
     func setupViews(){
         
         var center: CGPoint = self.startCenter
@@ -96,7 +97,6 @@ class MenuView: UIView{
         
         for button in buttonList{
 
-            
             button.frame.size = CGSize(width:self.buttonSize.width * 0.7 , height: self.buttonSize.height * 0.7)
             button.center = center
             
@@ -154,6 +154,8 @@ class MenuView: UIView{
             
             let index: CGFloat = CGFloat(buttonList.index(of: button)!) + 1.0
 
+            //show buttons animation
+            //animate the button center movement on open, center is calculated base on the button index
             UIView.animate(withDuration: TimeInterval(index/10.0), animations: {
             
                 button.isHidden = false
@@ -174,10 +176,8 @@ class MenuView: UIView{
                     print("None")
                     
                 }
-                
             })
         }
-
     }
     
 
@@ -189,6 +189,7 @@ class MenuView: UIView{
         
         for button: UIButton in buttonList{
             
+            //move all buttons back to start center and hide
             UIView.animate(withDuration: TimeInterval(0.4 - CGFloat(i/10)), animations: {
                 
                 button.alpha = 0.0

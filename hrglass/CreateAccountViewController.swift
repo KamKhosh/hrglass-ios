@@ -26,6 +26,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     
     var ref: DatabaseReference!
     
+    let dataManager: DataManager = DataManager()
+    var usernameFlag: Bool = false;
     var currentUser: User!
     
     @IBOutlet weak var loginIndicatorView: UIActivityIndicatorView!
@@ -128,20 +130,42 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 let password: String = confirmPasswordField.text!
                 let fullname: String = fullnameField.text!
                 let username: String = usernameField.text!
-                let followedBy: NSDictionary = [:]
-                let following: NSDictionary = [:]
+
+                
                 
                 createAccountBtn.backgroundColor = UIColor.lightGray
+                
+                //if the typed username has already been taken, usernameflag will be true and this will return
+                if self.usernameFlag {
+                    self.dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
+                        if(exists){
+                            self.chooseDifferentUsernameAlert()
+                        }else{
+                            //set username for user
+                            let usernameRef = self.ref.child("Users").child((Auth.auth().currentUser!.uid)).child("username")
+                            usernameRef.setValue(self.usernameField.text!)
+                            
+                            //set username in username list
+                            let usernames = self.ref.child("Usernames")
+                            usernames.setValue("0", forKey: self.usernameField.text!)
+                            
+                            
+                            self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
+                        }
+                    })
+                    return
+                }
+                
+                
                 
                 //CREATE USER AND LOGIN
                 Auth.auth().createUser(withEmail: email , password: password) { (user, error) in
                     
                     if(error == nil){
                         
-                        let userData: NSDictionary = ["email":email,"username":username, "name":fullname, "followed_by_list":followedBy, "following_list": following, "followed_by_count": 0, "following_count": 0, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":""]
+                        let userData: NSDictionary = ["email":email,"username":username, "name":fullname, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":""]
                         
-                        
-                        
+
                         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
                             
                             let userRef = self.ref.child("Users").child((user?.uid)!)
@@ -150,16 +174,37 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             
                             if(error == nil){
                                 
-                                userRef.setValue(userData, withCompletionBlock: { (error, ref) in
+                                self.dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
                                     
-                                    if(error == nil){
+                                    if exists{
+                                        self.usernameFlag = true
+                                        userData.setValue("", forKey: "username")
+                                        userRef.setValue(userData, withCompletionBlock: { (error, ref) in
+                                            self.chooseDifferentUsernameAlert()
+                                        })
+                                    }else{
                                         
-                                        self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
-                                        
+                                        userRef.setValue(userData, withCompletionBlock: { (error, ref) in
+                                            
+                                            let usernames = self.ref.child("Usernames")
+                                            usernames.setValue("0", forKey: self.usernameField.text!)
+                                            
+                                            
+                                            //setup initial following -- auto follow hr.glass
+                                            let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                                            let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
+                                            
+                                            followingList.setValue(newFollowing)
+                                            let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
+                                            followingCount.setValue(1)
+                                            
+                                            
+                                            if(error == nil){
+                                                self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
+                                            }
+                                        })
                                     }
-                                    
                                 })
-                                
                             }
                         }
                     }
@@ -174,6 +219,20 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 }
             }
         }
+    }
+    
+    
+    func chooseDifferentUsernameAlert(){
+        
+        let alert: UIAlertController = UIAlertController(title: "Username already take", message: "choose another", preferredStyle: .actionSheet)
+        
+        let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
     }
 
     
@@ -258,8 +317,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 return
                 
             }else if error == nil {
-
-                //If the UID doesn't already exist in FireBase, 
+ 
                 let ref = Database.database().reference().child("Users").child((user?.uid)!)
                 
                 ref.observeSingleEvent(of: .value, with: { snapshot in
@@ -272,6 +330,17 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                     }else{
                         
                         self.getFBData(uid: (user?.uid)!, completion: { data in
+                            
+                            //setup initial following -- auto follow hr.glass
+                            let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                            let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
+                            
+                            followingList.setValue(newFollowing)
+                            let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
+                            followingCount.setValue(1)
+                            
+                            
+                            
                             
                             self.stopLoginIndicator(success: true)
                             self.performSegue(withIdentifier: "toFeedSegue", sender: nil)

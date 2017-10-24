@@ -152,6 +152,23 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     
     
     
+    
+    //Transition away from comments view
+    @IBAction func minimizeAction(_ sender: Any) {
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.view.transform = CGAffineTransform(translationX: 0, y: 100)
+            self.view.alpha = 0.0  
+        }) { (success) in
+            
+            self.performSegue(withIdentifier: "unwindToPostView", sender: self)
+        }
+    }
+
+    
+    
+    
+    
     @IBAction func postAction(_ sender: Any) {
         
         let comment = self.addCommentTextView.text

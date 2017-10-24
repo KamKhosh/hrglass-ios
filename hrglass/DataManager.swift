@@ -27,6 +27,8 @@ import AWSS3
  ***********************************************************************************/
 
 
+
+//Song Enum for post song
 struct Song {
     
     var title: String = ""
@@ -35,37 +37,42 @@ struct Song {
     var source: String = ""
 }
 
+
+//AV Exporter error enum
 enum ExporterError: Error {
     case unableToCreateExporter
 
 }
 
 
+
+
 class DataManager {
     
     
     
+    /***************************************************************************************
+     
+    Function - addToFollowerList:
     
+    Parameters - String: userId, Bool: privateAccount
     
+    Returns: NA
     
+    Adds the current user to the following list of the parameter userId
     
-    /******************************************
-     *
-     *  followedBy/following list update methods
-     *
-     ******************************************/
+    ***************************************************************************************/
     
     
     func addToFollowerList(userId: String, privateAccount: Bool){
         let currentUserId: String = (Auth.auth().currentUser?.uid)!
         
-        let followedByRef = Database.database().reference().child("Users").child(userId)
-        let followingRef = Database.database().reference().child("Users").child(currentUserId)
+        let followedByRef = Database.database().reference().child("FollowedBy").child(userId)
+        let followingRef = Database.database().reference().child("Following").child(currentUserId)
         
         
         //Add the current user to the parameter's userId followedBy Dictionary
         //dictioary value of 0 means user is approved to follow, 1 means that user has yet to be approved
-        
         
         followedByRef.observeSingleEvent(of: .value, with: { snapshot in
             
@@ -121,16 +128,94 @@ class DataManager {
         })
     }
     
-
     
-    //On UnFollow, remove user from corresponding dictionary's and update Firebase
+    
+    
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - getFollowingCounts:
+     
+     Parameters - String: userId
+     
+     Returns(completion): Int: FollowedByCount, Int: FollowingCount
+     
+     
+     ***************************************************************************************/
+    
+    
+    func getFollowingCount(userId: String, completion:@escaping (Int) -> ()){
+        
+        let followingRef = Database.database().reference().child("Following").child(userId).child("following_count")
+        
+        followingRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            if let followingCount: Int = snapshot.value as? Int{
+                
+                completion(followingCount)
+            }else{
+                completion(0)
+            }
+            
+            
+        })
+    }
+    
+    
+    /***************************************************************************************
+     
+     Function - getFollowedByCount:
+     
+     Parameters - String: userId
+     
+     Returns(completion): Int: FollowedByCount
+     
+     
+     ***************************************************************************************/
+    
+    
+    func getFollowedByCount(userId: String, completion:@escaping (Int) -> ()){
+        
+        let followedByRef = Database.database().reference().child("FollowedBy").child(userId).child("followed_by_count")
+        
+        followedByRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            if let followedByCount: Int = snapshot.value as? Int{
+                
+                completion(followedByCount)
+            }else{
+                completion(0)
+            }
+            
+        })
+    }
+    
+    
+    
+    
+    
+    
+    
+    /***************************************************************************************
+     
+    Function - addToFollowedByList:
+    
+    Parameters - String: userId
+    
+    Returns: NA
+    
+    ***************************************************************************************/
+    
     func removeFromFollowerList(userId: String){
         
         let currentUserId: String = (Auth.auth().currentUser?.uid)!
-        let followedByRef = Database.database().reference().child("Users").child(userId)
-        let followingRef = Database.database().reference().child("Users").child(currentUserId)
+        let followedByRef = Database.database().reference().child("FollowedBy").child(userId)
+        let followingRef = Database.database().reference().child("Following").child(currentUserId)
         
-        //Add the current user to the desired users' followedBy Dictionary
+
+        //observer who is following the userId and remove the current user, then write the new dictionary
         followedByRef.observeSingleEvent(of: .value, with: { snapshot in
             
             //decrement followed by count
@@ -150,7 +235,7 @@ class DataManager {
         })
         
         
-        //Add the user to the current users' following dictionary and save in Firebase
+
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
             let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
@@ -184,7 +269,7 @@ class DataManager {
     func isFollowedBy(userId: String, completion:@escaping (Bool) -> ()){
         let currentUserId: String = Auth.auth().currentUser!.uid
         
-        let followedByRef = Database.database().reference().child("Users").child(currentUserId).child("followed_by_list")
+        let followedByRef = Database.database().reference().child("FollowedBy").child(currentUserId)
         
         followedByRef.observeSingleEvent(of: .value, with: { snapshot in
             
@@ -197,7 +282,6 @@ class DataManager {
                     
                     completion(false)
                 }
-
             }else{
                 completion(false)
             }
@@ -206,10 +290,61 @@ class DataManager {
     
     
     
-    //Return Dicionary of Follow Requests
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - checkIfUsernameExists:
+     
+     Parameters - String: username -- usually the current user
+     
+     Returns(completion): Bool
+     
+     if the username exists already the completion will be true
+     
+     ***************************************************************************************/
+    
+    //Uses a Boolean Completion to determine if the current user is followed by the parameter userId
+    func checkIfUsernameExists(username: String, completion:@escaping (Bool) -> ()){
+        
+        let usernameRef = Database.database().reference().child("Usernames").child(username)
+        
+        usernameRef.observeSingleEvent(of: .value, with: { snapshot in
+            
+            if (snapshot.value as? NSString) != nil{
+
+                completion(true)
+                
+            }else{
+                completion(false)
+            }
+        })
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /***************************************************************************************
+    
+    Function - getFollowRequests:
+    
+    Parameters - String: userId -- usually the current user
+     
+    Returns(completion): NSDictionary of follow requests
+    
+    retrieves requests to follow
+     
+    ***************************************************************************************/
     func getFollowRequests(userId: String, completion:@escaping (NSDictionary) -> ()){
         
-        let followedByRef = Database.database().reference().child("Users").child(userId).child("followed_by_list")
+        let followedByRef = Database.database().reference().child("FollowedBy").child(userId)
         let requests: NSMutableDictionary = [:]
         
         
@@ -221,7 +356,6 @@ class DataManager {
                     
                     if (followedByDict.value(forKey: key as! String) as! Int == 1){
                         requests.setValue(1, forKey: key as! String)
-
                     }
                 }
                 
@@ -235,13 +369,17 @@ class DataManager {
     
     
     
+    /***************************************************************************************
+     
+    Function - addToFollowerList:
     
-    /****************************************************
-     *
-     *  Return Array of PostData
-     *  - checks for blocked users and removes
-     *
-     ***************************************************/
+    Parameters - String: userId, Bool: privateAccount
+    
+    Returns: NA
+    
+    Adds the current user to the following list of the parameter userId
+     
+    ***************************************************************************************/
     
     
     func getFeedPosts(userId: String, completion:@escaping (NSArray) -> ()){
@@ -302,13 +440,19 @@ class DataManager {
     }
     
     
-    /******************************************************************************
-     *
-     *          GET POST DATA OBJECT FROM FIREBASE POST SNAPSHOT DICTIONARY
-     *          - dictionary parameter: NSDictionary, uid parameter: String
-     *          - returns a PostData object
-     *******************************************************************************/
     
+    
+    /******************************************************************************
+
+    Function - getPostDataFromDictionary:
+    
+    Parameters - NSDictionary: postDict, String: uid
+    
+    Returns: PostData object
+    
+    Convert a dictionary of a post from firebase to a PostData object
+     
+    ***************************************************************************************/
     
     func getPostDataFromDictionary(postDict: NSDictionary, uid: String) -> PostData{
         
@@ -368,12 +512,17 @@ class DataManager {
     
     
     
-    /******************************************************************************
-     *
-     *  GET COMMENT DATA OBJECT FROM FIREBASE COMMENT SNAPSHOT DICTIONARY
-     *     - uid parameter
-     *     - completion yields a Dictionary of dictionary's containing comment data
-     *******************************************************************************/
+    /***************************************************************************************
+     
+     Function - getCommentDataFromFirebase:
+    
+     Parameters - String: uid
+    
+     Returns(completion): NSDictionary
+    
+     completion yields a Dictionary of dictionary's containing comment data from firebase
+     
+    ***************************************************************************************/
     
     func getCommentDataFromFirebase(uid: String, completion:@escaping (NSDictionary) -> ()){
         
@@ -392,12 +541,19 @@ class DataManager {
     
     
     
-    /******************************************************************************
-     *
-     *   GET X NUMBER OF COMMENT DATA OBJECT FROM FIREBASE COMMENT SNAPSHOT DICTIONARY
-     *          - dictionary parameter: num parameter: Int
-     *          - returns a Dictionary of dictionary's containing comment data
-     *******************************************************************************/
+    
+    
+    /***************************************************************************************
+    
+    Function - getXCommentFromFirebase:
+  
+    Parameters - String: uid, Int: num
+
+    Returns(completion): NSDictionary
+
+    completion yields a Dictionary of dictionary's containing only (num) comments from firebase
+     
+    ***************************************************************************************/
     
     func getXCommentsFromFirebase(uid: String, num: Int, completion:@escaping (NSDictionary) -> ()){
         
@@ -416,11 +572,20 @@ class DataManager {
     
     
     
-    /*************************************************
-     *
-     *     SAVE COMMENT DATA TO THREADID CHILD
-     *
-     *************************************************/
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - writeCommentData:
+    
+     Parameters - String: threadId, String: commentorUid, String: comment, String: created, String, username
+    
+     Returns: NA
+    
+     Writes comment data to firebase thread using threadId
+     
+    ***************************************************************************************/
     
     func writeCommentData(threadId: String, commentorUid: String, comment: String, created: String, username:String){
         
@@ -438,16 +603,22 @@ class DataManager {
     
     
     
-    /************************************************************
-     *
-     *     Get List of Users the Current User is Following
-     *
-     ***********************************************************/
+    
+    
+    /***************************************************************************************
+    // Function - getFollowingList:
+    //
+    // Parameters - String: userId
+    //
+    // Returns(completion): NSDictionary
+    //
+    // Gets following list for userId as a dictionary, if none, returns empty dictionary
+    ***************************************************************************************/
     
     func getFollowingList(userId: String, completion:@escaping (NSDictionary) -> ()){
         
         let currentUserId: String = Auth.auth().currentUser!.uid
-        let followingRef = Database.database().reference().child("Users").child(currentUserId).child("following_list")
+        let followingRef = Database.database().reference().child("Following").child(currentUserId).child("following_list")
         
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
@@ -463,15 +634,20 @@ class DataManager {
     
     
     
-    /*****************************************
-     *
-     *  Get Current List of Followers
-     *
-     ****************************************/
+    
+    /**************************************************************************************
+    // Function - getFollowedByList:
+    //
+    // Parameters - String: userId
+    //
+    // Returns: NA
+    //
+    // Gets followedby list for userId as a dictionary. if none, returns empty dictionary
+    ***************************************************************************************/
     
     func getFollowedByList(userId: String, completion:@escaping (NSDictionary) -> ()){
         
-        let followingRef = Database.database().reference().child("Users").child(userId).child("followed_by_list")
+        let followingRef = Database.database().reference().child("FollowedBy").child(userId).child("followed_by_list")
         
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
@@ -1180,13 +1356,13 @@ class DataManager {
             }
         }
         
-        if let followedByCount: Int = data.value(forKey: "followed_by_count") as? Int{
-            user.followedByCount = followedByCount
-        }
-        if let followingCount: Int = data.value(forKey: "following_count") as? Int{
-            user.followingCount = followingCount
-        }
-        
+//        if let followedByCount: Int = data.value(forKey: "followed_by_count") as? Int{
+//            user.followedByCount = followedByCount
+//        }
+//        if let followingCount: Int = data.value(forKey: "following_count") as? Int{
+//            user.followingCount = followingCount
+//        }
+//        
         if let bio: String = data.value(forKey: "bio") as? String{
             user.bio = bio
         }
@@ -1208,11 +1384,11 @@ class DataManager {
         }
         
         //GET FOLLOWING LIST CONSTANT
-        if let temp: NSDictionary = data.value(forKey: "following_list") as? NSDictionary{
-            user.followingDict = temp as! NSMutableDictionary
-        }else{
-            user.followingDict = [:]
-        }
+//        if let temp: NSDictionary = data.value(forKey: "following_list") as? NSDictionary{
+//            user.followingDict = temp as! NSMutableDictionary
+//        }else{
+//            user.followingDict = [:]
+//        }
         
         return user
         
@@ -1368,7 +1544,7 @@ class DataManager {
     func getRequests(completion:@escaping (NSArray) -> ()){
         
         let uid: String = (Auth.auth().currentUser?.uid)!
-        let requestRef: DatabaseReference = Database.database().reference().child("Users").child(uid).child("followed_by_list")
+        let requestRef: DatabaseReference = Database.database().reference().child("FollowedBy").child(uid).child("followed_by_list")
         let requestArray: NSMutableArray = []
         
         requestRef.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -1590,8 +1766,13 @@ class DataManager {
     }
     
     
-    
-    
+    // export - (Audio) - Export function for m4a filetypes. Local files to be uploaded will be exported first
+    //
+    // Parameters: assetURL, completion(URL, ERROR)
+    // assetURL -- local asset url to be exported
+    //
+    // Comletion (exported file url as URL, Error (nil if success))
+    //
     func export(_ assetURL: URL, completionHandler: @escaping (_ fileURL: URL?, _ error: Error?) -> ()) {
         
         let asset = AVURLAsset(url: assetURL)
@@ -1640,8 +1821,12 @@ class DataManager {
         })
     }
     
-    
-    
+    //extrapolate song data
+    //
+    // songData string in format "title:artist:album:source"
+    //
+    //  Return: Song enum with data
+    //
     func extrapolate(songData:String) -> Song{
         
         let strings = songData.components(separatedBy: ":")

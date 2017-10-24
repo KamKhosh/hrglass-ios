@@ -9,30 +9,32 @@
 import Foundation
 import UIKit
 
+
+//User Data Object
 class User
 {
     
     var name: String!
     var isPrivate: Bool
     var userID: String
-    var followedByCount: Int
+//    var followedByCount: Int
     var bio: String
-    var followingCount: Int
+//    var followingCount: Int
     var username: String!
     var profilePhoto: String!
     var coverPhoto: String!
 
     //followers dictionary's
-    var followedByDict: NSMutableDictionary!
-    var followingDict: NSMutableDictionary!
+//    var followedByDict: NSMutableDictionary!
+//    var followingDict: NSMutableDictionary!
     
     
-    init(withUserID:String, username: String, followedByCount:Int, followingCount:Int, bio:String, profilePhoto:String, coverPhoto:String, name: String, isPrivate: Bool){
+    init(withUserID:String, username: String, bio:String, profilePhoto:String, coverPhoto:String, name: String, isPrivate: Bool){
         
         self.userID = withUserID
-        self.followedByCount = followedByCount
+//        self.followedByCount = followedByCount
         self.bio = bio
-        self.followingCount = followingCount
+//        self.followingCount = followingCount
         self.profilePhoto = profilePhoto
         self.coverPhoto = coverPhoto
         self.name = name
@@ -40,15 +42,17 @@ class User
         self.username = username
         
         //empty for now
-        followedByDict = ["":""]
-        followingDict = ["":""]
+//        followedByDict = ["":""]
+//        followingDict = ["":""]
         
         
     }
     
+    
+    //initialize
     convenience init(){
         
-        self.init(withUserID: "", username: "", followedByCount: 0, followingCount: 0, bio: "", profilePhoto: "", coverPhoto: "", name: "", isPrivate: false)
+        self.init(withUserID: "", username: "", bio: "", profilePhoto: "", coverPhoto: "", name: "", isPrivate: false)
         
     }
     

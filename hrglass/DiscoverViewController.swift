@@ -144,8 +144,10 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         usersRef.observeSingleEvent(of: .value, with: { snapshot in
             
             let data: NSDictionary = snapshot.value as! NSDictionary
+            print(data)
+            let followingRef: DatabaseReference = self.ref.child("Following")
 
-            usersRef.child((Auth.auth().currentUser?.uid)!).child("following_list").observeSingleEvent(of: .value, with: { snapshot in
+            followingRef.child((Auth.auth().currentUser?.uid)!).child("following_list").observeSingleEvent(of: .value, with: { snapshot in
                 
                 if let followingDict: NSDictionary = snapshot.value as? NSDictionary {
                     
@@ -172,7 +174,6 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                         
                         let keyString = key as! String
 
-                        
                         //TODO: Removed the logged in User
                         if (keyString != self.currentUserId){
                             
@@ -199,14 +200,14 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         let theirUid: String = user.userID
         let myUid: String = (Auth.auth().currentUser?.uid)!
         
-        let ref: DatabaseReference = Database.database().reference().child("Users")
+        let ref: DatabaseReference = Database.database().reference()
         
         //set their uid value to 0 in my followed_by_list
-        let myFollowedByRef: DatabaseReference = ref.child(myUid).child("followed_by_list").child(theirUid)
+        let myFollowedByRef: DatabaseReference = ref.child("FollowedBy").child(myUid).child("followed_by_list").child(theirUid)
         myFollowedByRef.setValue(0)
         
         //set my uid value to 0 in their following_list
-        let theirFollowingRef: DatabaseReference = ref.child(theirUid).child("following_list").child(myUid)
+        let theirFollowingRef: DatabaseReference = ref.child("Following").child(theirUid).child("following_list").child(myUid)
         theirFollowingRef.setValue(0)
         
         self.requestArray.removeObject(at: row)
@@ -330,20 +331,24 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                 cell.activityInd.stopAnimating()
             }
             
-            let followersCount: Int = userdata.value(forKey: "followed_by_count") as! Int
-            let followingCount: Int = userdata.value(forKey: "following_count") as! Int
             
+            dataManager.getFollowingCount(userId: userId, completion: { (count) in
+                
+                cell.followingLbl.text = String(count)
+            })
+            
+            dataManager.getFollowedByCount(userId: userId, completion: { (count) in
+                
+                cell.followerLbl.text = String(count)
+            })
+
             cell.nameLbl.text = userdata.value(forKey: "name") as? String
-            cell.followerLbl.text = String(format: "%d followers", followersCount)
-            cell.followingLbl.text = String(format: "%d following", followingCount)
             
             finalCell = cell
-            
-            
         }
-
         return finalCell
     }
+    
     
     
     
@@ -370,7 +375,6 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             self.discoverUserData = NSMutableArray()
             self.userIdArray = NSMutableArray()
             
-            fvc.loggedInUser.followingCount = fvc.loggedInUser.followingCount + count;
             fvc.imageCache = self.imageCache
             self.imageCache = ImageCache()
         }

@@ -16,15 +16,23 @@ import AVFoundation
 class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate{
 
     
-    //side navigation bar, swipe to open
-//    var sideMenu: SideMenu!
+    //class objects
     var navigationMenu: MenuView!
     var dataManager = DataManager()
-    var imageCache: ImageCache = ImageCache()
-    var videoStore: VideoStore = VideoStore()
     var awsManager: AWSManager! = nil
     
+    
+    //Caches init
+    var imageCache: ImageCache = ImageCache()
+    var videoStore: VideoStore = VideoStore()
+    
+    
+    //post data of selected tableview cell
     var selectedPostData: PostData!
+    var selectedUserUID: String = ""
+
+     // More Menu data
+    var moreMenuPostData: PostData!
     
     //refresh control
     var refreshControl: UIRefreshControl!
@@ -32,44 +40,39 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     //Current User
     var loggedInUser: User!
-    var cachedImages: NSMutableDictionary!
         
-    @IBOutlet weak var initialLoadIndicator: UIActivityIndicatorView!
+    
+    
     /**************************
      * Navigation Menu Buttons
      *************************/
-    
     var profileBtn: UIButton!
     var homeBtn: UIButton!
     var discoverBtn: UIButton!
     var messagesBtn: UIButton!
-    @IBOutlet weak var noPostsLbl: UILabel!
+
     
-    /**************************
-     * More Menu
-     *************************/
-    
-    var moreMenuPostData: PostData!
-    
+
     /**************************
      * -- TABLE DATA SOURCE --
      **************************/
-    
     var feedData = [PostData]()
-    let ref: DatabaseReference =  Database.database().reference()
-    var selectedUserUID: String = ""
     var blockUserRow: Int = -1
+    
+    
+    /**************************************
+     *      -- Firebase Ref --
+     **************************************/
+    let ref: DatabaseReference =  Database.database().reference()
+    
     /**************************************
      *      -- STORYBOARD OUTLETS --
      **************************************/
-    
+    @IBOutlet weak var noPostsLbl: UILabel!
     @IBOutlet weak var menuButton: UIButton!
-    
     @IBOutlet weak var tableView: UITableView!
-    
     @IBOutlet weak var settingsButton: UIButton!
-    
-
+    @IBOutlet weak var initialLoadIndicator: UIActivityIndicatorView!
     
     
     
@@ -112,9 +115,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         DispatchQueue.global().async() {
            
             self.dataManager.deleteLocalVideosCache()
- 
         }
-        
 
         
         
@@ -140,35 +141,32 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }
             }
             
-            // For now we get nil because we're not saving lists, so pass something else
-            if (self.loggedInUser.followingDict.count != 0){
+            
+            if (self.loggedInUser != nil){
                 
                 self.getFeedData()
-                
             }else{
                 
                 self.getFeedData()
                 self.initialLoadIndicator.stopAnimating()
                 self.noPostsLbl.isHidden = false
-                
             }
             
             //If navigation menu is nil, set it up
             if (self.navigationMenu == nil){
-                
                 self.setupMenuView(profileURLString: "")
-                
             }
             
             //set menu photo
             self.setMenuPhoto(profPhoto: self.loggedInUser.profilePhoto)
-            
         
             
         }) { (error) in
             print(error.localizedDescription)
         }
     }
+    
+    
     
 
     override func viewWillAppear(_ animated: Bool) {
@@ -188,7 +186,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
+
     
+
     func loadCustomRefreshContents() {
         let refreshContents = Bundle.main.loadNibNamed("CustomRefreshControl", owner: self, options: nil)
         
@@ -242,7 +242,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         self.navigationMenu.close()
         performSegue(withIdentifier: "toInboxSegue", sender: nil)
-        
     }
     
     
@@ -259,22 +258,29 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         print(String(format:"Block User (%@) Action", self.moreMenuPostData))
         self.dataManager.blockUser(postData: self.moreMenuPostData)
         self.tableView.reloadData()
-        
     }
     
     
     func sendMessageAction(){
         
         self.performSegue(withIdentifier: "toMessagesView", sender: self)
-        
     }
     
     
-    /*******************************
-    *
-    *      FEED DATA RETRIEVAL
-    *
-    *********************************/
+    
+    
+    /***************************************************************************************
+     
+     Function - getFeedData:
+     
+     Parameters - NA
+     
+     Returns: NA
+     
+     Retrieves posts from users being followed, hides and shows indicators as needed. Refreshes
+        the tableview on when complete
+     
+     ***************************************************************************************/
     
     func getFeedData(){
         
@@ -299,11 +305,18 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
-    /*******************************
-     *
-     *      Refresh Control Selector
-     *
-     *********************************/
+    
+    /***************************************************************************************
+     
+     Function - refresh:
+     
+     Parameters - NA
+     
+     Returns: NA
+     
+     refreshes the current users following/followedby dictionaries, then calls getFeedData
+     
+     ***************************************************************************************/
     
     func refresh(){
         
@@ -328,16 +341,24 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 self.noPostsLbl.isHidden = false
                 self.getFeedData()
-                
             }
         })
     }
     
-    /*****************************
-     *
-     *      SETUP MENU METHODS
-     *
-     ******************************/
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - setupMenuView:
+     
+     Parameters - String: profileURLString
+     
+     Returns: NA
+     
+     confures the menuView with the menu buttons to be shown/hidden with menuButton
+     
+     ***************************************************************************************/
     
     func setupMenuView(profileURLString: String){
         
@@ -372,6 +393,18 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
+    
+    /***************************************************************************************
+     
+     Function - setMenuPhoto:
+     
+     Parameters - String: profPhoto
+     
+     Returns: NA
+     
+     using the profPhoto parameter string this will set the menuView's profile button picture
+     
+     ***************************************************************************************/
     
     func setMenuPhoto(profPhoto: String){
         
@@ -427,7 +460,11 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         let fullname: String = (user.value(forKey: "name") as? String)!
         
+        
+        
+        /*****************************
         //CELL BUTTON CALLBACKS
+         ****************************/
         cell.userProfile = {
             if let userPostDict: NSDictionary = self.feedData[indexPath.row].user{
                 self.selectedUserUID = userPostDict.value(forKey: "uid") as! String
@@ -454,6 +491,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.moreButtonPressed(data: cell.postData, indexPath: indexPath)
         }
 
+        
+        //setting cell content layout/appearance
         cell.contentImageBtn.layer.cornerRadius = cell.contentImageBtn.frame.height/2
         cell.previewContentView.layer.cornerRadius = cell.previewContentView.frame.height/2
         cell.previewContentView.layer.borderWidth = 5.0
@@ -471,6 +510,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.postData.creationDate = feedData[indexPath.row].creationDate
         
         
+        //setting profileImageBtn image
         let photoString: String = user.value(forKey: "profilePhoto") as! String
         if (photoString != ""){
             self.imageCache.getImage(urlString: photoString, completion: { image in
@@ -486,6 +526,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.playImageView.isHidden = true
         cell.timeRemainingLbl.text = dataManager.getTimeString(expireTime: feedData[indexPath.row].expireTime)
         
+        
+        //configuring data view based on post category
         switch feedData[indexPath.row].category {
             
         case .Music:
@@ -629,17 +671,27 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-//        let data: PostData = feedData[indexPath.row]
-//        
-//        var height: CGFloat = 300.0
-//        if (data.postShape == "square"){
-//            
-//            height = 400.0
-//        }
         
         return 300.0
     }
 
+    
+    
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - showPostPopUp:
+     
+     Parameters - PostData: postData, CGPoint: postCenter, IndexPath:indexPath
+     
+     Returns: NA
+     
+     using the indexPath of the selected tableView cell, this function configures and displays
+        the postPopupView
+     
+     ***************************************************************************************/
     
     func showPostPopUp(postData: PostData, postCenter: CGPoint, indexPath:IndexPath){
         
@@ -668,7 +720,21 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
-    //PostView Delegate Method
+    /****************************************************************************************
+
+     ------ POST POPUP DELEGATE METHODS -----
+    
+     *****************************************
+     
+     Function - likeButtonPressed:
+     
+     Parameters - Bool: liked, IndexPath: indexPath
+     
+     Returns: NA
+     
+     calls cell.likeAction for indexPath passed
+     
+     ***************************************************************************************/
     func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
         
         let cell: FeedTableViewCell = self.tableView.cellForRow(at: indexPath) as! FeedTableViewCell
@@ -677,6 +743,19 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
+    
+    
+   /*****************************************
+    
+    Function - moreButtonPressed:
+    
+    Parameters - PostData: data, IndexPath: indexPath
+    
+    Returns: NA
+    
+    Selector on more menu button pressed
+    
+    ***************************************************************************************/
     
     func moreButtonPressed(data: PostData, indexPath: IndexPath){
         
@@ -713,58 +792,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
 
     
-    
-    func didSelectTableCellContent(indexPath: IndexPath) {
-        
-        //increment the views count, incrementViewsCount handles it if the user already viewed
-        let post: PostData = self.feedData[indexPath.row]
-
-        switch feedData[indexPath.row].category {
-            
-        case .Music:
-            
-            print("Music")
-            
-        case .Link:
-            
-            print("link")
-            
-            let postData: PostData = feedData[indexPath.row]
-            let urlString = postData.data
-
-            //Image will already be cached so we shouldn't need to use a loading indicator
-            UIApplication.shared.open(URL(string: urlString)!)
-            
-        case .Video:
-            
-            self.playURLData(urlString: post.data)
-
-        case .Photo:
-            
-            let photoView: PhotoView = PhotoView.init(frame: self.view.frame)
-            self.view.addSubview(photoView)
-            
-            //Image will already be cached so we shouldn't need to use a loading indicator
-            self.imageCache.getImage(urlString: feedData[indexPath.row].data, completion: { image in
-                
-                photoView.setImage(image: image)
-                
-            })
-            
-        case .Recording:
-            
-            print("Recording Selected")
-            self.playURLData(urlString: post.data)
-            
-        case .Text:
-            
-            print("Text Selected")
-            
-        case .None:
-            
-            print("No Category")
-        }
-    }
     
     
 
@@ -809,11 +836,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 self.navigationMenu.close()
             }
             
-            
         }else if (segue.identifier == "toUserProfileSegue"){
             
-//            let destinationNavigationController = segue.destination as! UINavigationController
-//            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
             let profileVC = segue.destination as! ProfileViewController
             profileVC.imageCache = self.imageCache
             self.imageCache = ImageCache()
@@ -823,7 +847,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             if navigationMenu != nil{
                 self.navigationMenu.close()
-                
             }
             
         }else if (segue.identifier == "toDiscoverSegue"){

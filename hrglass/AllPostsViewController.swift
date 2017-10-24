@@ -178,7 +178,7 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         postVC.delegate = self
         postVC.imageCache = self.imageCache
         postVC.postData = postsArray[indexPath.row]
-        
+        postVC.source = "Profile"
         addChildViewController(postVC)
         
         postVC.view.frame = view.bounds

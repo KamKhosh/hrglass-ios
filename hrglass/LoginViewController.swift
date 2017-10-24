@@ -25,6 +25,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
 
     @IBOutlet weak var loginIndicationView: UIActivityIndicatorView!
     
+    let ref: DatabaseReference = Database.database().reference()
+    
     /*******************************
      *
      *  LIFECYCLE
@@ -176,6 +178,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                         }else{
                             
                             self.getFBData(uid: (user?.uid)!, completion: { data in
+                                
+                                
+                                //setup initial following -- auto follow hr.glass
+                                let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                                let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
+                                
+                                followingList.setValue(newFollowing)
+                                let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
+                                followingCount.setValue(1)
+                                
                                 
                                 self.stopLoginIndicator(success: true)
                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)

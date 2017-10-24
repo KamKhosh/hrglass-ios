@@ -4,7 +4,7 @@
 //
 //  Created by Justin Hershey on 8/16/17.
 //
-//
+// CLASS FOR DISPLAYING POST DATA
 
 import UIKit
 import AVFoundation
@@ -14,8 +14,8 @@ import MediaPlayer
 import StoreKit
 
 
+//Protocol for POST VIEW CONTROLLER
 protocol PostViewDelegate {
-    
     
     func likedButtonPressed(liked: Bool, indexPath: IndexPath)
     func  moreButtonPressed(data: PostData, indexPath: IndexPath)
@@ -28,12 +28,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     var postData: PostData!
  
-    //Managers
+    //Managers/ Helper Methods
     let appleMusicManager: AppleMusicManager = AppleMusicManager()
     let dataManager: DataManager = DataManager()
     var imageCache: ImageCache = ImageCache()
     var videoCache: VideoStore = VideoStore()
     let awsManager: AWSManager = AWSManager()
+    
+    //Audio/Video Players
     var avPlayerViewController: AVPlayerViewController!
     var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer()
     var avMusicPlayer: AVAudioPlayer!
@@ -80,7 +82,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     var songSource: String = ""
     var panGesture: UIPanGestureRecognizer!
     
-    //secondary view relevant variables and outlets
+    //secondary view relevant variables and outlets -- not currently being used
     @IBOutlet weak var showHideSecondaryView: UIButton!
     @IBOutlet weak var secondaryPostView: UIView!
     @IBOutlet weak var secondaryContentImageView: UIImageView!
@@ -98,9 +100,21 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var firstPostCircle: UIView!
     @IBOutlet weak var secondPostCircle: UIView!
     
+    
+    //Source of postViewController
+    var source: String = "Feed"
+    
+    
+    /****************************************
+     
+     -------------  LIFECYCLE
+     
+     ****************************************/
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //setup dismiss pan gesture
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         self.view.addGestureRecognizer(panGesture)
         panGesture.minimumNumberOfTouches = 1
@@ -108,9 +122,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.contentView.backgroundColor = UIColor.clear
         self.contentView.clipsToBounds = false
+        
+        //current user data
         self.currentUserId = Auth.auth().currentUser!.uid
         
+        //setup remaining views
         self.viewSetup()
+        
+        //setup data for post category
         self.dataSetup()
     }
     
@@ -121,10 +140,10 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.alphaView.frame.size = CGSize(width: self.contentView.frame.size.width * 3.0 , height: self.contentView.frame.size.height * 3.0)
         
-        
         //Auto play if content is of the following categories
         if self.postData.category == .Music{
             
+            //maximize music view
             self.maximizeMusicView()
             
         }else if self.postData.category == .Video{
@@ -168,7 +187,17 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.shadowView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.shadowView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
+        //initialize hub
         hub = RKNotificationHub(view: self.commentBtn)
+        
+        if (self.source == "Profile"){
+            
+            
+            //hide like, more buttons
+            self.likeBtn.isHidden = true
+            self.moreBtn.isHidden = true
+            
+        }
     }
     
     
@@ -235,9 +264,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             }
             
             
-            //if there is a song with this post extra data won't be empty/nil
+            //if there is a song with this post, extraData won't be empty/nil
             if (self.postData.songString != "" && self.postData.songString != nil){
                 
+                
+                //configure the music view with the song data
                 self.songLengthSlider.minimumValue = 0
                 self.songLengthSlider.isContinuous = false
                 self.songView.isHidden = false
@@ -254,7 +285,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 self.songTimeSpentLbl.text = "0.00"
                 
                 if (source == "apple"){
-                    //songs on apple music
+                    //songs from apple music
                     
                     self.getSongJson(completion: { (response) in
                         
@@ -286,9 +317,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                             }
                             
                             self.playPauseSongAction(self)
-                            
                         }
-                        
                         
                         let seconds = self.songLength / 1000
                         self.songLengthLbl.text = seconds.minuteSecond
@@ -296,7 +325,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     
                     
                 }else if (source == "local"){
-                    //play song.mp4 from s3
+                    //TODO: play song.mp4 from s3
                     
                     
                     
@@ -307,7 +336,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 }
                 
 
-
+                //set the song art as the background image adding a blur and gradient layer
                 imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
                     
                     self.songImageView.image = image
@@ -321,6 +350,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     currentFilter!.setValue(beginImage, forKey: kCIInputImageKey)
                     currentFilter!.setValue(10, forKey: kCIInputRadiusKey)
                     
+                    //add crop filter, otherwise returned blurred image is sized improperly
                     let cropFilter = CIFilter(name: "CICrop")
                     cropFilter!.setValue(currentFilter!.outputImage, forKey: kCIInputImageKey)
                     cropFilter!.setValue(CIVector(cgRect: beginImage!.extent), forKey: "inputRectangle")
@@ -338,6 +368,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     self.blurredMusicImageView.layer.insertSublayer(gradient, at: 0)
                 })
                 
+                
+                //add tap gesture to music view (disabled when maximized)
                 songTapGesture = UITapGestureRecognizer(target: self, action:  #selector (self.maximizeMusicView))
                 self.songView.addGestureRecognizer(songTapGesture)
                 
@@ -346,7 +378,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             }
             
             
-            //TODO: SETUP COMMENTS
+            
+            
+            //Confgiure the main content view based on category
             switch self.postData.category {
             
             case .Photo:
@@ -410,13 +444,20 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
+    /***********************************************
+     
+     ------------- SONG WITH POST METHODS
+     
+     ************************************************/
+    
+    //timer start for showing song progress with songLengthSlider
     func songProgressTimerStart (){
         
         self.songTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.updatePlaybackViews), userInfo: nil, repeats: true)
         
     }
     
-    //song timer selector
+    //song timer selector -- updates the songLegthSlider every 1 second
     func updatePlaybackViews(){
         if self.applicationMusicPlayer.playbackState == .playing{
             
@@ -438,17 +479,37 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    
+    //sets and plays the parameter array with the application music player
     func appleMusicPlayTrackId(ids:[String]) {
         
         applicationMusicPlayer.setQueueWithStoreIDs(ids)
         self.playPauseSongAction(self)
         
     }
+    
+    //task completion returns apple music song data as a JSON
+    func getSongJson(completion: @escaping (NetworkResponse) -> Void){
+        
+        var songQuery: String = ""
+        
+        appleMusicManager.createItunesQuery(songData: self.postData.songString) { (string) in
+            
+            songQuery = string;
+            print(songQuery)
+            
+            let url: URL = URL(string: songQuery)!
+            let task = self.appleMusicManager.buildTask(withURL: url, completion: completion)
+            
+            // start task
+            task.resume()
+            
+            return
+        }
+    }
 
     
     
-    //music view moving to center
+    //moves the music view moving to the center-ish
     func maximizeMusicView(){
         
         self.blurredMusicImageView.alpha = 0.0
@@ -457,7 +518,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.musicViewMinimized = false
         self.blurredMusicImageView.isHidden = false
         self.songTapGesture.isEnabled = false
-        
         
         self.moveBtnsDown()
         UIView.animate(withDuration: 0.5) {
@@ -479,7 +539,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         }
     }
     
-    
+    //moves music view to it's bottom position
     func minimizeMusicView() {
         
         self.songTapGesture.isEnabled = true
@@ -506,6 +566,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
+    //moves the likes, comments, more button down when music view is maximized
     func moveBtnsDown(){
         
         UIView.animate(withDuration: 0.5){
@@ -516,6 +577,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         }
     }
     
+    
+    //moves the likes, comments and moreButton up when the music view is minimized
     func moveBtnsUp(){
     
         UIView.animate(withDuration: 0.5){
@@ -616,25 +679,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    //task completion returns apple music song data as a JSON
-    func getSongJson(completion: @escaping (NetworkResponse) -> Void){
-        
-        var songQuery: String = ""
-        
-        appleMusicManager.createItunesQuery(songData: self.postData.songString) { (string) in
-            
-            songQuery = string;
-            print(songQuery)
-            
-            let url: URL = URL(string: songQuery)!
-            let task = self.appleMusicManager.buildTask(withURL: url, completion: completion)
-            
-            // start task
-            task.resume()
 
-            return
-        }
-    }
     
     
     
@@ -644,6 +689,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
      *
      **********************/
     
+    
+    
+    //should track/scrub with song -- not quite working yet
     @IBAction func songSliderAction(_ sender: Any) {
         
         print(self.songLengthSlider.value)
@@ -656,12 +704,13 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    
+    //Will Minimize the music view if it is showing and isn't the primary post
+    //    otherwise it will close the post view controller
     @IBAction func minimizeAction(_ sender: Any) {
         
         if musicViewMinimized || self.postData.category == .Music{
             
-            UIView.animate(withDuration: 0.2, animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                 
                 self.shadowView.transform = CGAffineTransform(translationX: 0, y: 1000)
                 self.popupView.transform = CGAffineTransform(translationX: 0, y: 1000)
@@ -679,6 +728,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     if self.applicationMusicPlayer.playbackState == .playing {
                         self.applicationMusicPlayer.stop()
                     }
+                    
+//                    UIView.transition(with: self.view, duration: 0.5, options: .transitionCurlDown, animations: {
+//                        self.view.addSubview(commentsVC.view)
+//                    }) { (success) in
+//                        commentsVC.didMove(toParentViewController: self)
+//                    }
                     self.willMove(toParentViewController: nil)
                     self.view.removeFromSuperview()
                     self.removeFromParentViewController()
@@ -693,10 +748,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    
+    //Like Button toggle
     @IBAction func likeAction(_ sender: Any) {
         
         let postId:String = self.postData.postId
+
 
         if(likedByUser){
             
@@ -709,7 +765,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 self.likeBtn.setImage(newImage, for: .normal)
                 
                 self.likedButtonPressed(liked: false, indexPath: self.selectedIndexPath)
-                
             }
             
         }else{
@@ -729,6 +784,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
+    //shows the comments view
     @IBAction func commentsAction(_ sender: Any) {
         
         let commentsVC: CommentViewController = storyboard!.instantiateViewController(withIdentifier: "commentViewController") as! CommentViewController
@@ -742,23 +798,27 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 
         addChildViewController(commentsVC)
         
-        commentsVC.view.frame = view.bounds
+        commentsVC.view.frame = self.popupView.bounds
+        commentsVC.view.center = self.popupView.center
         commentsVC.alphaView.backgroundColor = UIColor.clear
-        
-        view.addSubview(commentsVC.view)
-        commentsVC.didMove(toParentViewController: self)
+
+        UIView.transition(with: self.view, duration: 0.5, options: .transitionCurlDown, animations: {
+            self.view.addSubview(commentsVC.view)
+        }) { (success) in
+            commentsVC.didMove(toParentViewController: self)
+        }
     }
     
     
     
-    
+    //displays the more menu
     @IBAction func moreBtnAction(_ sender: Any) {
         
         self.moreButtonPressed(data: self.postData, indexPath: self.selectedIndexPath)
     }
     
     
-    
+    //Universal Play button, behavior changes based on category
     @IBAction func playContentBtn(_ sender: Any) {
         
         self.playContentBtn.isHidden = true
@@ -819,7 +879,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
 
     
-    
+    //SongView playPauseBtn action handler. If playing - pause, if paused - play
     @IBAction func playPauseSongAction(_ sender: Any) {
         
         
@@ -1008,7 +1068,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
-    //DELEGTE METHODS
+    //POSTVIEWCONTROLLER DELEGTE METHODS
     
     func likedButtonPressed(liked: Bool, indexPath: IndexPath){
         if self.delegate != nil{
@@ -1021,12 +1081,15 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         if self.delegate != nil{
             self.delegate.moreButtonPressed(data: data, indexPath: indexPath)
         }
-        
     }
     
     
     
     
+    
+    
+    
+    //NOTIFICATIONS OF COMPELETION
     func playerDidFinishPlayingPrimary(note: NSNotification) {
         
 //        self.avPlayerViewController.dismiss(animated: false, completion: nil)
@@ -1035,8 +1098,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.playContentBtn.isHidden = false
         NotificationCenter.default.removeObserver(self)
         print("Video Finished")
-        
     }
+    
     func playerDidFinishPlayingSeconadary(note: NSNotification) {
         
 //        self.avPlayerViewController.dismiss(animated: false, completion: nil)
@@ -1052,14 +1115,13 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     @IBAction func unwindToPostView(unwindSegue: UIStoryboardSegue) {
-        
-        
     }
     
         
     
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         
         if segue.identifier == "toCommentsView"{
             let commentsVC: CommentViewController = segue.destination as! CommentViewController

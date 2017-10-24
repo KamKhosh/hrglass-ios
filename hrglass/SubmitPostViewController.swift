@@ -658,60 +658,80 @@ class SubmitPostViewController: UIViewController {
                         }
                     })
                     
-                    
-                    let toExport: URL = item.assetURL!
+                    var toExport: URL!
+                    if let temp: URL = item.assetURL {
+                        toExport = temp
+                    }
 
-                    self.dataManager.export(toExport, completionHandler: { (url, error) in
+                    //if an assetURL exists
+                    if toExport != nil{
                         
-                        if error == nil{
+                        self.dataManager.export(toExport, completionHandler: { (url, error) in
                             
-                            if (url != nil){
-                                //if URL is not nil, upload the audio and save the url
-                                self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
-                                    if success{
-                                        
-                                        songString = songString + ":apple"
-                                        let downloadURL: String = String(format:"%@/%@/audio/music.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                                        
-                                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
-                                        
-                                        //                            if self.hasSecondaryPost{
-                                        //                                self.postSecondaryData(primaryData: dataDictionary)
-                                        //                            }else{
-                                        self.submitPost(dataDictionary: dataDictionary)
-                                        //                            }
-                                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                                        
-                                    }else{
-                                        
-                                        print("Failure, try again?")
-                                        self.postFailedAlert(title: "Post Failed", message: "try again")
-                                    }
-                                })
+                            if error == nil{
                                 
-                                self.progressUpdateTimer(category: .Recording)
+                                if (url != nil){
+                                    //if URL is not nil, upload the audio and save the url
+                                    self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
+                                        if success{
+                                            
+                                            songString = songString + ":apple"
+                                            let downloadURL: String = String(format:"%@/%@/audio/music.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+                                            
+                                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                                            
+                                            //                            if self.hasSecondaryPost{
+                                            //                                self.postSecondaryData(primaryData: dataDictionary)
+                                            //                            }else{
+                                            self.submitPost(dataDictionary: dataDictionary)
+                                            //                            }
+                                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                            
+                                        }else{
+                                            
+                                            print("Failure, try again?")
+                                            self.postFailedAlert(title: "Post Failed", message: "try again")
+                                        }
+                                    })
+                                    
+                                    self.progressUpdateTimer(category: .Recording)
+                                    
+                                }else {
+                                    //if URL is nil, the song is not exportable and we just need to write the itunes search criteria
+                                    
+                                    songString = songString + ":local"
+                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                                    
+                                    //                            if self.hasSecondaryPost{
+                                    //                                self.postSecondaryData(primaryData: dataDictionary)
+                                    //                            }else{
+                                    self.submitPost(dataDictionary: dataDictionary)
+                                    //                            }
+                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                }
                                 
-                            }else {
-                                //if URL is nil, the song is not exportable and we just need to write the itunes search criteria
+                            }else{
                                 
-                                songString = songString + ":local"
-                                let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                                print(error?.localizedDescription ?? "error exporting")
                                 
-                                //                            if self.hasSecondaryPost{
-                                //                                self.postSecondaryData(primaryData: dataDictionary)
-                                //                            }else{
-                                self.submitPost(dataDictionary: dataDictionary)
-                                //                            }
-                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                             }
                             
-                        }else{
-                            
-                            print(error?.localizedDescription ?? "error exporting")
-                            
-                        }
+                        })
+
+                    }else{
+                        //assetRUL doesn't exists, set source as apple by default so we can get a preview later
+                        songString = songString + ":apple"
+                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
                         
-                    })
+                        //                            if self.hasSecondaryPost{
+                        //                                self.postSecondaryData(primaryData: dataDictionary)
+                        //                            }else{
+                        self.submitPost(dataDictionary: dataDictionary)
+                        //                            }
+                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                        
+                        
+                    }
                     
                     
                     

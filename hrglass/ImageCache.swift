@@ -18,7 +18,7 @@ class ImageCache {
     var cache: NSCache<NSString, AnyObject>!
     
     
-    
+    //initialize
     init() {
 
         session = URLSession.shared
@@ -28,10 +28,14 @@ class ImageCache {
     }
  
 
-
+    //getImage
+    //
+    // --Parameters: url as String, Completion with UIImage
+    // -- if the image has been cached it will be returned, otherwise it will be dowloaded with a URLSession and returned
     func getImage(urlString:String, completion:@escaping (UIImage) -> ()){
         
         if (self.cache.object(forKey:urlString as NSString) != nil){
+            //if the image is cached
             
             print("Cached image used, no need to download it")
             let image = (self.cache.object(forKey:urlString as NSString) as? UIImage)!
@@ -41,6 +45,7 @@ class ImageCache {
             })
             
         }else{
+            //if the image is not cached
             
             if let url:URL = URL(string:urlString as String){
                 

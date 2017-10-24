@@ -58,14 +58,14 @@ class AWSManager {
     
     
     
-    /*******************************************
+    /*******************************************************
      *
      *     UPLOAD PHOTO TO S3
      *
-     *     - takes filename, filetype string parameters
+     *     - Paramenters: String: filename, String: filetype
      *      -resource URL is the local url location
      *
-     *******************************************/
+     *******************************************************/
 
     func uploadPhotoAction(resourceURL: URL, fileName: String, type: String, completion:@escaping(Bool) -> ()){
         
@@ -102,7 +102,7 @@ class AWSManager {
      *
      *     UPLOAD Video TO S3
      *
-     *     - takes filename, filetype string parameters
+     *     - Parameters: String: filename, String: filetype
      *      -resource URL is the local url location
      *
      *******************************************/
@@ -134,8 +134,6 @@ class AWSManager {
                 completion(true)
 
             }
-            
-        
             return nil
         }
     
@@ -250,16 +248,27 @@ class AWSManager {
     
     
     /*******************************************
-     *          CANCEL UPLOAD
+     *        CANCEL/PAUSE/RESUME UPLOADS
      *******************************************/
     func cancelRequest(){
             
         self.transferManager.cancelAll()
+    }
+    
+    func pauseRequest(){
+        self.transferManager.pauseAll()
+    }
+    
+    func resumeRequests(){
         
-        
+        self.transferManager.resumeAll { (request) in
+            
+            print(request)
+        }
     }
     
     
+    //returns the prefix of hrglass current S3 prefix
     func getS3Prefix() -> String{
         
         return "https://s3.us-east-2.amazonaws.com/hrglass.east"
