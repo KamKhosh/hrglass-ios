@@ -320,7 +320,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func refresh(){
         
-        ref.child("Users").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child("Following").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (snapshot) in
             
             //GET FOLLOWING LIST CONSTANT
             var followingList: NSDictionary!
