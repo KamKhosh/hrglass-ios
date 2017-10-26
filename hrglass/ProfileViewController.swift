@@ -185,6 +185,16 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.presentImagePicker()
         }
         
+        let editBioAction: UIAlertAction = UIAlertAction(title: "Edit Bio", style: .default) { (success) in
+            
+            print("chose to bio")
+            let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+            let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+            cell.bioTextView.becomeFirstResponder();
+            editAlert.dismiss(animated: true, completion: nil)
+            
+        }
+        
         let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { (success) in
             
             print("chose to edit profile picture")
@@ -193,6 +203,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         editAlert.addAction(profilePhotoAction)
         editAlert.addAction(coverPhotoAction)
+        editAlert.addAction(editBioAction)
         editAlert.addAction(cancel)
         
         self.present(editAlert, animated: true, completion: nil)
@@ -427,7 +438,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     
-    //CLImageEditor Functions
+    //CLImageEditor Delegate Functions
     func presentImageEditorWithImage(image:UIImage){
         
         guard let editor = CLImageEditor(image: image, delegate: self) else {
@@ -625,6 +636,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.noRecentPostsLbl.isHidden = true
         
             cell.latestPostBackground.layer.borderColor = self.dataManager.getUIColorForCategory(category: self.latestPostData.category).cgColor
+            
+            
             
             
             switch self.latestPostData.category {
@@ -831,6 +844,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     
+    
     /****************************
      *
      * LIKED POSTS DATA RETRIEVE
@@ -957,7 +971,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             textView.isScrollEnabled = true
         }
     }
-    
+
     
     
     func adjustUITextViewHeight(arg : UITextView)

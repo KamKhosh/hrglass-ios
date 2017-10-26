@@ -26,20 +26,14 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     @IBOutlet weak var bioTextView: UITextView!
     
     @IBOutlet weak var profilePictureIndicator: UIActivityIndicatorView!
+    
     @IBOutlet weak var postIndicator: UIActivityIndicatorView!
 
     @IBOutlet weak var latestPostImageButton: UIButton!
+    
     @IBOutlet weak var latestPostBackground: UIView!
-//    @IBOutlet weak var postsCollectionView: UICollectionView!
     
     @IBOutlet weak var likedCollectionView: UICollectionView!
-    
-//    @IBOutlet weak var postsBackBtn: UIButton!
-    
-//    @IBOutlet weak var postsViewAllBtn: UIButton!
-    
-//    @IBOutlet weak var postsNextBtn: UIButton!
-    
     
     @IBOutlet weak var bioTextHeight: NSLayoutConstraint!
     
@@ -61,14 +55,13 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
     @IBOutlet weak var playImageView: UIImageView!
     
-//    var currentPostsIndex: IndexPath = IndexPath(row: 0, section: 0)
     var currentlikedIndex: IndexPath = IndexPath(row: 0, section: 0)
+    
     var selectedCellRow: Int = -1
     
     let ref: DatabaseReference = Database.database().reference()
     
     var user: User!
-    
     
     @IBOutlet weak var noRecentPostsLbl: UILabel!
     
@@ -109,55 +102,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
      *
      ******************************************/
     
-    
-    //    @IBAction func postsBackAction(_ sender: Any) {
-    //
-    //        //scroll left on posts collectionView by subtracting 2 to currentIndex (if not at beginning) then scroll to current index and get more data if necessary
-    //
-    //        let scrollDistance = (currentPostsIndex.row - 2)
-    //
-    //        if(scrollDistance >= -1){
-    //
-    //            if(scrollDistance == -1){
-    //
-    //                currentPostsIndex = IndexPath(row: currentPostsIndex.row - 1, section: 0)
-    //            }else{
-    //                currentPostsIndex = IndexPath(row: currentPostsIndex.row - 2, section: 0)
-    //
-    //            }
-    //
-    //            self.postsCollectionView.scrollToItem(at: currentPostsIndex, at: .left, animated: true)
-    //        }
-    //    }
-    //
-    //
-    //
-    //    @IBAction func postsViewAllAction(_ sender: Any) {
-    //        //goto view-all posts view
-    //
-    //    }
-    //
-    //
-    //    @IBAction func postsNextAction(_ sender: Any) {
-    //
-    //
-    //        let scrollDistance = self.postDataArray.count - (currentPostsIndex.row + 2)
-    //
-    //        if(scrollDistance >= 1){
-    //
-    //            if(scrollDistance == 1){
-    //
-    //                currentPostsIndex = IndexPath(row: currentPostsIndex.row + 1, section: 0)
-    //            }else{
-    //                currentPostsIndex = IndexPath(row: currentPostsIndex.row + 2, section: 0)
-    //
-    //            }
-    //
-    //            self.postsCollectionView.scrollToItem(at: currentPostsIndex, at: .left, animated: true)
-    //        }
-    //
-    //    }
-    
+
     
     @IBAction func followBtnAction(_ sender: Any) {
         
@@ -240,39 +185,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
         var cell: ProfileCollectionViewCell = ProfileCollectionViewCell()
         
-        //        if(collectionView == postsCollectionView){
-        //
-        //            cell = postsCollectionView.dequeueReusableCell(withReuseIdentifier: "postCell", for: indexPath) as! ProfileCollectionViewCell
-        //
-        //            let image = UIImage(named: "clearPlaceholderImage")
-        //            self.imageCache.getImage(urlString: postDataArray[indexPath.row].photo, completion: { image in
-        //
-        //                cell.imageButton.setImage(image, for: .normal)
-        //                self.postsCollectionView.reloadData()
-        //            })
-        //
-        //
-        //
-        //            switch postDataArray[indexPath.row].category {
-        //            case .Video:
-        //
-        //                //just set the photo for now until we get video stuff setup
-        //                cell.imageButton.setImage(image, for: .normal)
-        //                cell.borderView.layer.borderColor = UIColor.purple.cgColor
-        //
-        //            default:
-        //
-        //                //default is photo for now
-        //
-        //                cell.imageButton.setImage(image, for: .normal)
-        //                cell.borderView.layer.borderColor = colors.getMenuColor().cgColor
-        //
-        //            }
-        //
-        //
-        //
-        //
-        //        }
         
         if (collectionView == likedCollectionView){
             
@@ -296,6 +208,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                     collectionContentSelected()
                 }
             }
+            
             
             
             
@@ -380,12 +293,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         var items: Int = 0
-        //        if(collectionView == postsCollectionView){
-        //
-        //            items = postDataArray.count
-        //
-        //
-        //        }else
+
         
         if (collectionView == likedCollectionView){
             
