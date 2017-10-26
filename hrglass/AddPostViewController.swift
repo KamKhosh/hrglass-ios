@@ -170,32 +170,14 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
-    
+    //remove keyboard notif on de-init
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
     
-    @objc func keyboardNotification(notification: NSNotification) {
-        if let userInfo = notification.userInfo {
-            let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
-            let duration:TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
-            let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
-            let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIViewAnimationOptions.curveEaseInOut.rawValue
-            let animationCurve:UIViewAnimationOptions = UIViewAnimationOptions(rawValue: animationCurveRaw)
-            if (endFrame?.origin.y)! >= UIScreen.main.bounds.size.height {
-                self.keyboardHeightLayoutConstraint?.constant = 0.0
-            } else {
-                self.keyboardHeightLayoutConstraint?.constant = endFrame?.size.height ?? 0.0
-            }
-        
-            UIView.animate(withDuration: duration,
-                           delay: TimeInterval(0),
-                           options: animationCurve,
-                           animations: { self.view.layoutIfNeeded() },
-                           completion: nil)
-        }
-    }
+    
+
     
     
     
@@ -304,6 +286,37 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
+    
+    
+    
+    //keyboard notifications
+    @objc func keyboardNotification(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+            let duration:TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+            let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
+            let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIViewAnimationOptions.curveEaseInOut.rawValue
+            let animationCurve:UIViewAnimationOptions = UIViewAnimationOptions(rawValue: animationCurveRaw)
+            if (endFrame?.origin.y)! >= UIScreen.main.bounds.size.height {
+                self.keyboardHeightLayoutConstraint?.constant = 0.0
+            } else {
+                self.keyboardHeightLayoutConstraint?.constant = endFrame?.size.height ?? 0.0
+            }
+            
+            UIView.animate(withDuration: duration,
+                           delay: TimeInterval(0),
+                           options: animationCurve,
+                           animations: { self.view.layoutIfNeeded() },
+                           completion: nil)
+        }
+    }
+    
+    
+    
+    
+    
+    
+    //Swipe Gesture to resign first responder
     func swipeDownAction(){
         
         if self.linkTextField.isFirstResponder{
@@ -479,6 +492,15 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         }
     }
     
+    
+    
+    
+    
+    /*****************************
+     *
+     *    VIDEO EDITING
+     *
+     ****************************/
 
     @IBAction func editThumbnailAction(_ sender: Any) {
         
@@ -541,12 +563,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
-    
     /*****************************
      *
      *    POST ACTIONS/METHODS
      *
      ****************************/
+
 
     
     @IBAction func nextAction(_ sender: Any) {
@@ -556,6 +578,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             performSegue(withIdentifier: "toSubmitPostSegue", sender: self)
         }
     }
+    
+    
+    
+    
     
     
     @IBAction func squareImageAction(_ sender: Any) {
@@ -602,7 +628,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     /**************************
+     *
      *    RECORDING METHODS
+     *
      **************************/
     func startRecording() {
         
@@ -716,6 +744,17 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         }
     }
     
+    
+    
+    
+    
+    
+    
+    /************************************
+     *
+     *  VIDEO PROCESSING LOADING VIEW
+     *
+     **********************************/
     
     func showLoadingView(){
         
@@ -907,17 +946,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.moodMenu.close()
     }
     
-    /**************************************
-     *  Application Music Player
-     **************************************/
-    
-    func playSong(){
-        
 
-        
-        
-    }
-    
     
 
     
@@ -997,6 +1026,24 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    /******************************************
+     *
+     *    LOADING INDICATORS SHOW/HIDE
+     *
+     *******************************************/
+    
+    
+    
+    
+    
     func showLoadingIndicator(){
         self.playBtn.isHidden = true
         self.loadingIndicator.startAnimating()
@@ -1020,6 +1067,18 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 //        
 //    }
 //    
+    
+    
+    
+    
+    
+    
+    /********************************
+     *
+     *    MEDIA ACCESS/ ALERTS
+     *
+     *********************************/
+    
     
     func setupMusicAccess(){
         
@@ -1069,8 +1128,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         present(songPicker, animated: true, completion:nil)
     }
     
-    
-    
+
     func setupMediaAccess(){
         
         if (PHPhotoLibrary.authorizationStatus() == .authorized) {
@@ -1161,11 +1219,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
-    /********************************
-     *
-     *    CONTENT PREVIEW VIEWS
-     *
-     *********************************/
+
     
     func setPhotoView(image: UIImage){
         
@@ -1175,6 +1229,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.showResizeButtons()
     }
     
+    
+    /********************************
+     *
+     *    Hide/Show views
+     *
+     *********************************/
     
     func hideResizeButtons(){
         
@@ -1231,6 +1291,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
+    
     func setURLView(urlString: String){
         
         dataManager.setURLView(urlString: urlString, completion: { (image, label) in
@@ -1249,8 +1310,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         })
     }
     
-    
-    
+    /********************************
+     *
+     *    CONTENT VIEWS Center Setup
+     *
+     *********************************/
     func recenterResize(){
         
         self.currentTabView.frame = CGRect(x: 0,y: self.tabBar.frame.maxY, width: self.view.frame.width, height: self.view.frame.height -  self.tabBar.frame.maxY)
@@ -1455,6 +1519,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         
 
+        //music search bar setup, not currently used
         
 //        self.musicSearch = UISearchBar(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicView.bounds.minY, width:self.musicView.bounds.width, height: 44))
 //        self.musicSearch.showsCancelButton = true;
@@ -1694,11 +1759,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
 
-    /*****************************
+    /******************************************
      *
-     *   CollectionView Methods
+     *   CollectionView Delegate Methods
      *
-     ****************************/
+     *****************************************/
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         

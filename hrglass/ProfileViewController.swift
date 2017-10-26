@@ -950,6 +950,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         
         textView.backgroundColor = UIColor.clear
