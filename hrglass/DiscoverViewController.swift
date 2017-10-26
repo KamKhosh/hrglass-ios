@@ -138,7 +138,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     
     func getUsers(){
         
-        //For now just grab all users
+        //For now just grab all users -- TODO: Develope Algorithm for pulling in more relevant users to your discover list
         let usersRef: DatabaseReference = ref.child("Users")
 
         usersRef.observeSingleEvent(of: .value, with: { snapshot in

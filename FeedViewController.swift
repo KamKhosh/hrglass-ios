@@ -453,6 +453,20 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //USER DATA DICTIONARY
         let user: NSDictionary = feedData[indexPath.row].user
         
+        
+        //setting profileImageBtn image
+        let photoString: String = user.value(forKey: "profilePhoto") as! String
+        if (photoString != ""){
+            self.imageCache.getImage(urlString: photoString, completion: { image in
+                cell.profileImageBtn.setImage(image, for: .normal)
+                cell.loadingIndication.stopAnimating()
+            })
+        }else{
+            cell.profileImageBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
+        }
+        
+        
+        
         //PostData update for feedData callback
         cell.newUsersDict = {
             
@@ -473,13 +487,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         cell.contentSelected = {
+            
             UIView.animate(withDuration: 0.4, animations: { 
                 self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
                 
             })
             
-        
-            self.dataManager.incrementViewsCount(post: cell.postData, completion: { views in
+            
+            self.dataManager.udpateViewsList(post: cell.postData, completion: { views in
                 cell.viewCountLbl.text = String(views)
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
             })
@@ -510,16 +525,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.postData.creationDate = feedData[indexPath.row].creationDate
         
         
-        //setting profileImageBtn image
-        let photoString: String = user.value(forKey: "profilePhoto") as! String
-        if (photoString != ""){
-            self.imageCache.getImage(urlString: photoString, completion: { image in
-                cell.profileImageBtn.setImage(image, for: .normal)
-                cell.loadingIndication.stopAnimating()
-            })
-        }else{
-            cell.profileImageBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
-        }
+
         
         
         cell.posterNameLbl.text = fullname
@@ -630,7 +636,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             print("No Category")
         }
         
-        
+        //check if already liked this post
         if let likedDict: NSDictionary = feedData[indexPath.row].usersWhoLiked {
             
             let newImage: UIImage = UIImage.init(named: "thumbs up")!
@@ -649,8 +655,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         //TODO check view posts lists and set border color to seen
-        
+        if let viewedDict: NSDictionary = feedData[indexPath.row].usersWhoViewed{
+            
+            if (viewedDict.value(forKey: self.loggedInUser.userID) != nil){
+                
+                cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
+                cell.likedByUser = true
+                
+            }
+        }
 
+        
         //rounded Profile Image
         cell.profileImageBtn.layer.cornerRadius = cell.profileImageBtn.frame.height / 2
         cell.profileImageBtn.clipsToBounds = true
@@ -661,7 +676,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.moodLbl.isHidden = true
             
         }else{
-            
+            cell.moodLbl.isHidden = false
             cell.moodLbl.text = feedData[indexPath.row].mood
         }
 

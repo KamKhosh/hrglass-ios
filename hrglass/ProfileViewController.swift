@@ -755,17 +755,23 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             followedByCountRef.observeSingleEvent(of: .value, with: { (snapshot) in
 
-                cell.followerLbl.text = String(describing: snapshot.value as! NSInteger)
+                if (snapshot.exists()){
+                    cell.followerLbl.text = String(describing: snapshot.value as! NSInteger)
+                }else{
+                    cell.followerLbl.text = "0"
+                }
+                
             })
             
             
             followingCountRef.observeSingleEvent(of: .value, with: { (snapshot) in
-
-                cell.followingLbl.text = String(describing: snapshot.value as! NSInteger)
+                if (snapshot.exists()){
+                    cell.followingLbl.text = String(describing: snapshot.value as! NSInteger)
+                }else{
+                    cell.followingLbl.text = "0"
+                }
+                
             })
-            
-
-            
         }
         
         

@@ -126,7 +126,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBAction func likeAction(_ sender: Any) {
         
         if(likedByUser){
-            
+            //the post was previously liked by the users, set likedByUser to false
             if (postId != ""){
                 self.likedByUser = false
                 
@@ -164,7 +164,7 @@ class FeedTableViewCell: UITableViewCell {
                                 let newdata: NSMutableDictionary = self.dataManager.postsCleanup(dictionary: data).mutableCopy() as! NSMutableDictionary
                                 
                                 newdata.removeObject(forKey: self.postUserId)
-                                likedDictRef.setValue(newdata)
+                                likedDictRef.setValue(data)
                                 
                                 
                                 let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
@@ -191,7 +191,7 @@ class FeedTableViewCell: UITableViewCell {
             
             
         }else{
-            
+            //post previously not liked by user, set likedByUser to true
             
             if (postId != ""){
                 
@@ -213,7 +213,9 @@ class FeedTableViewCell: UITableViewCell {
                 
                 
                 //increment views and update list
-                dataManager.incrementViewsCount(post: self.postData, completion: { views in
+                
+                
+                self.dataManager.udpateViewsList(post: self.postData, completion: { views in
                     
                     DispatchQueue.main.async {
                         self.viewCountLbl.text = String(views)

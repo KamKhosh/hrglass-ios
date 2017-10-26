@@ -60,12 +60,13 @@ class PostData: NSObject{
     var creationDate: String!
     var expireTime: String!
 //    var secondaryPost: NSDictionary!
+    var usersWhoViewed: NSDictionary!
     var commentThread: String!
     var songString: String!
     
     
 
-    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, commentThread: String!, songString: String!){
+    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, commentThread: String!, songString: String!, usersWhoViewed: NSDictionary!){
         
         self.postId = postId
         self.likes = likes
@@ -78,6 +79,7 @@ class PostData: NSObject{
         self.creationDate = creationDate
         self.expireTime = expireTime
 //        self.secondaryPost = nil
+        self.usersWhoViewed = usersWhoViewed
         self.commentThread = commentThread
         self.songString = songString
         

@@ -691,7 +691,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     
-    //should track/scrub with song -- not quite working yet
+    //should track/seek with song -- not quite working yet
     @IBAction func songSliderAction(_ sender: Any) {
         
         print(self.songLengthSlider.value)
@@ -748,7 +748,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    //Like Button toggle
+    //Like Button toggle -- Like button only shows when this is called from FeedVC
     @IBAction func likeAction(_ sender: Any) {
         
         let postId:String = self.postData.postId
@@ -1018,14 +1018,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         loadingView.startAnimating()
         
-        self.videoCache.getFileWith(stringUrl: urlString) { (result) in
-            
+//        self.videoCache.getFileWith(stringUrl: urlString) { (result) in
+        
             loadingView.stopAnimating()
 //            self.avPlayerViewController.load
-            switch result {
-            case .success(let url):
-                
-                let player = AVPlayer(url: url)
+//            switch result {
+//            case .success(let url):
+        
+        let player = AVPlayer(url: URL(string:urlString)!)
                 self.avPlayerViewController = AVPlayerViewController()
                 self.avPlayerViewController.player = player
                 self.avPlayerViewController.view.frame = self.contentImageView.bounds
@@ -1047,19 +1047,19 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 
                 
                 
-            case .failure(let error):
-                // handle errror
-                
-                print("Video could not be retrieved")
-                print(error.localizedCapitalized)
-            }
-            
-            
-            
-            
-            
-            
-        }
+//            case .failure(let error):
+//                // handle errror
+//                
+//                print("Video could not be retrieved")
+//                print(error.localizedCapitalized)
+//            }
+//            
+//            
+//            
+//            
+//            
+//            
+//        }
         
 //        let url: URL = URL(string: urlString)!
         

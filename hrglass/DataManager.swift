@@ -41,7 +41,7 @@ struct Song {
 //AV Exporter error enum
 enum ExporterError: Error {
     case unableToCreateExporter
-
+    
 }
 
 
@@ -53,15 +53,15 @@ class DataManager {
     
     /***************************************************************************************
      
-    Function - addToFollowerList:
-    
-    Parameters - String: userId, Bool: privateAccount
-    
-    Returns: NA
-    
-    Adds the current user to the following list of the parameter userId
-    
-    ***************************************************************************************/
+     Function - addToFollowerList:
+     
+     Parameters - String: userId, Bool: privateAccount
+     
+     Returns: NA
+     
+     Adds the current user to the following list of the parameter userId
+     
+     ***************************************************************************************/
     
     
     func addToFollowerList(userId: String, privateAccount: Bool){
@@ -77,52 +77,78 @@ class DataManager {
         followedByRef.observeSingleEvent(of: .value, with: { snapshot in
             
             //increment followed by count
-            let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
-            let count: Int = userDict.value(forKey: "followed_by_count") as! Int
-            let followedByCount: NSNumber = count + 1 as NSNumber
-            
-            userDict.setValue(followedByCount, forKey: "followed_by_count")
-            
-            if let followedByDict: NSMutableDictionary = userDict.value(forKey: "followed_by_list") as? NSMutableDictionary{
+            if snapshot.exists(){
+                
+                let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
+                
+                if let count: Int = userDict.value(forKey: "followed_by_count") as? Int{
                     
-                followedByDict.setObject(privateAccount ? 1 : 0, forKey: currentUserId as NSCopying)
-                userDict.setValue(followedByDict, forKey: "followed_by_list")
-                followedByRef.setValue(userDict)
+                    let followedByCount: NSNumber = count + 1 as NSNumber
+                    userDict.setValue(followedByCount, forKey: "followed_by_count")
+                }
+                
+                if let followedByDict: NSMutableDictionary = userDict.value(forKey: "followed_by_list") as? NSMutableDictionary{
+                    
+                    followedByDict.setObject(privateAccount ? 1 : 0, forKey: currentUserId as NSCopying)
+                    userDict.setValue(followedByDict, forKey: "followed_by_list")
+                    followedByRef.setValue(userDict)
+                }
                 
             }else{
                 
+                //TODO: user doesn't have a followedBy Entry yet, create one
                 print("FollowedBy dict doesn't yet exist, create it")
-    
+                let userDict: NSMutableDictionary = NSMutableDictionary();
                 let followedByDict: NSDictionary = [currentUserId:privateAccount ? 1 : 0]
                 userDict.setValue(followedByDict, forKey: "followed_by_list")
+                userDict.setValue(privateAccount ? 0 : 1, forKey: "followed_by_count")
                 followedByRef.setValue(userDict)
                 
+                
             }
+            
         })
-        
         
         //Add the user to the current users' following dictionary and save in Firebase
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
-            //increment following by count
-            let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
-            let count: Int = userDict.value(forKey: "following_count") as! Int
-            let followingCount: NSNumber = count + 1 as NSNumber
             
-            userDict.setValue(followingCount, forKey: "following_count")
-            
-            if let followingDict: NSMutableDictionary = userDict.value(forKey: "following_list") as? NSMutableDictionary{
+            if snapshot.exists(){
+                //increment following by count
+                let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
                 
-                followingDict.setObject(privateAccount ? 1 : 0, forKey: userId as NSCopying)
-                userDict.setValue(followingDict, forKey: "following_list")
-                followingRef.setValue(userDict)
                 
-            }else{
+                if let count: Int = userDict.value(forKey: "following_count") as? Int{
+                    
+                    let followingCount: NSNumber = count + 1 as NSNumber
+                    
+                    userDict.setValue(followingCount, forKey: "following_count")
+                    
+                }else{
+                    //not following anyone yet
+                    userDict.setValue(privateAccount ? 0 : 1, forKey: "following_count")
+                }
+                
+                
+                if let followingDict: NSMutableDictionary = userDict.value(forKey: "following_list") as? NSMutableDictionary{
+                    
+                    followingDict.setObject(privateAccount ? 1 : 0, forKey: userId as NSCopying)
+                    userDict.setValue(followingDict, forKey: "following_list")
+                    followingRef.setValue(userDict)
+                    
+                }
+                
+            }else {
+                //User doesn't have a followingRef yet, create one
+                let userDict: NSMutableDictionary = NSMutableDictionary();
+                
                 print("Following dict doesn't yet exist, create it")
                 
                 let followingDict: NSDictionary = [userId:privateAccount ? 1 : 0]
+                userDict.setValue(privateAccount ? 0 : 1, forKey: "following_count")
                 userDict.setValue(followingDict, forKey: "following_list")
                 followingRef.setValue(userDict)
+                
                 
             }
         })
@@ -200,13 +226,13 @@ class DataManager {
     
     /***************************************************************************************
      
-    Function - addToFollowedByList:
-    
-    Parameters - String: userId
-    
-    Returns: NA
-    
-    ***************************************************************************************/
+     Function - addToFollowedByList:
+     
+     Parameters - String: userId
+     
+     Returns: NA
+     
+     ***************************************************************************************/
     
     func removeFromFollowerList(userId: String){
         
@@ -214,42 +240,53 @@ class DataManager {
         let followedByRef = Database.database().reference().child("FollowedBy").child(userId)
         let followingRef = Database.database().reference().child("Following").child(currentUserId)
         
-
+        
         //observer who is following the userId and remove the current user, then write the new dictionary
         followedByRef.observeSingleEvent(of: .value, with: { snapshot in
             
-            //decrement followed by count
-            let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
-            let count: Int = userDict.value(forKey: "followed_by_count") as! Int
-            let followedCount: NSNumber = count - 1 as NSNumber
             
-            userDict.setValue(followedCount, forKey: "followed_by_count")
-            
-            if let followedByDict: NSMutableDictionary = userDict.value(forKey: "followed_by_list") as? NSMutableDictionary{
+            if snapshot.exists(){
                 
-                followedByDict.removeObject(forKey: currentUserId)
-                userDict.setValue(followedByDict, forKey: "followed_by_list")
-                followedByRef.setValue(userDict)
+                //decrement followed by count
+                let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
+                let count: Int = userDict.value(forKey: "followed_by_count") as! Int
+                let followedCount: NSNumber = count - 1 as NSNumber
+                
+                userDict.setValue(followedCount, forKey: "followed_by_count")
+                
+                if let followedByDict: NSMutableDictionary = userDict.value(forKey: "followed_by_list") as? NSMutableDictionary{
+                    
+                    followedByDict.removeObject(forKey: currentUserId)
+                    userDict.setValue(followedByDict, forKey: "followed_by_list")
+                    followedByRef.setValue(userDict)
+                    
+                }
+                
                 
             }
+            
         })
         
         
-
+        
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
-            let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
-            let count: Int = userDict.value(forKey: "following_count") as! Int
-            let followingCount: NSNumber = count - 1 as NSNumber
             
-            userDict.setValue(followingCount, forKey: "following_count")
-            
-            if let followingDict: NSMutableDictionary = userDict.value(forKey: "following_list") as? NSMutableDictionary{
+            if snapshot.exists(){
                 
-                followingDict.removeObject(forKey: userId)
-                userDict.setValue(followingDict, forKey: "following_list")
-                followingRef.setValue(userDict)
+                let userDict: NSMutableDictionary = (snapshot.value as? NSMutableDictionary)!
+                let count: Int = userDict.value(forKey: "following_count") as! Int
+                let followingCount: NSNumber = count - 1 as NSNumber
                 
+                userDict.setValue(followingCount, forKey: "following_count")
+                
+                if let followingDict: NSMutableDictionary = userDict.value(forKey: "following_list") as? NSMutableDictionary{
+                    
+                    followingDict.removeObject(forKey: userId)
+                    userDict.setValue(followingDict, forKey: "following_list")
+                    followingRef.setValue(userDict)
+                    
+                }
             }
         })
     }
@@ -313,7 +350,7 @@ class DataManager {
         usernameRef.observeSingleEvent(of: .value, with: { snapshot in
             
             if (snapshot.value as? NSString) != nil{
-
+                
                 completion(true)
                 
             }else{
@@ -332,16 +369,16 @@ class DataManager {
     
     
     /***************************************************************************************
-    
-    Function - getFollowRequests:
-    
-    Parameters - String: userId -- usually the current user
      
-    Returns(completion): NSDictionary of follow requests
-    
-    retrieves requests to follow
+     Function - getFollowRequests:
      
-    ***************************************************************************************/
+     Parameters - String: userId -- usually the current user
+     
+     Returns(completion): NSDictionary of follow requests
+     
+     retrieves requests to follow
+     
+     ***************************************************************************************/
     func getFollowRequests(userId: String, completion:@escaping (NSDictionary) -> ()){
         
         let followedByRef = Database.database().reference().child("FollowedBy").child(userId)
@@ -371,15 +408,16 @@ class DataManager {
     
     /***************************************************************************************
      
-    Function - addToFollowerList:
-    
-    Parameters - String: userId, Bool: privateAccount
-    
-    Returns: NA
-    
-    Adds the current user to the following list of the parameter userId
+     Function - getFeedPosts:
      
-    ***************************************************************************************/
+     Parameters - String: userId
+     
+     Returns: NA
+     
+     Gets the current users following list and returns posts from those users that
+     that are active
+     
+     ***************************************************************************************/
     
     
     func getFeedPosts(userId: String, completion:@escaping (NSArray) -> ()){
@@ -433,7 +471,7 @@ class DataManager {
                     }
                     
                 }
-
+                
             })
             
         })
@@ -443,45 +481,49 @@ class DataManager {
     
     
     /******************************************************************************
-
-    Function - getPostDataFromDictionary:
-    
-    Parameters - NSDictionary: postDict, String: uid
-    
-    Returns: PostData object
-    
-    Convert a dictionary of a post from firebase to a PostData object
      
-    ***************************************************************************************/
+     Function - getPostDataFromDictionary:
+     
+     Parameters - NSDictionary: postDict, String: uid
+     
+     Returns: PostData object
+     
+     Convert a dictionary of a post from firebase to a PostData object
+     
+     ***************************************************************************************/
     
     func getPostDataFromDictionary(postDict: NSDictionary, uid: String) -> PostData{
         
         let category: Category = Category(rawValue: postDict.value(forKey: "category") as! String)!
         let mood: Mood = Mood(rawValue: postDict.value(forKey: "mood") as! String)!
         var usersWhoLiked: NSDictionary = [:]
+        var usersWhoViewed: NSDictionary = [:]
         
         if let likedDict: NSDictionary = postDict.value(forKey: "users_who_liked") as? NSDictionary{
             usersWhoLiked = likedDict;
         }
         
+        if let viewedDict: NSDictionary = postDict.value(forKey: "users_who_viewed") as? NSDictionary{
+            usersWhoViewed = viewedDict;
+        }
         
         let cd: String = postDict.value(forKey: "creation_date") as! String
         let et: String = postDict.value(forKey: "expire_time") as! String
         let creationDate: String = NSString(format: "%@", cd as CVarArg) as String
         let expireTime: String = NSString(format: "%@", et as CVarArg) as String
         
-//        var postData: PostData!
+        //        var postData: PostData!
         
-//        if let secondDict: NSDictionary = postDict.value(forKey: "secondaryPost") as? NSDictionary{
-//            
-//            postData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, secondaryPost: secondDict,commentThread: postDict.value(forKey: "postID") as! String)
-//            
-//        }else{
+        //        if let secondDict: NSDictionary = postDict.value(forKey: "secondaryPost") as? NSDictionary{
+        //
+        //            postData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, postShape: postDict.value(forKey: "post_shape") as! String, secondaryPost: secondDict,commentThread: postDict.value(forKey: "postID") as! String)
+        //
+        //        }else{
         
-        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "songString") as! String)
-            
-//        }
-
+        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "songString") as! String, usersWhoViewed: usersWhoViewed)
+        
+        //        }
+        
         print(postDict.value(forKey: "likes") as! Int)
         print(postDict.value(forKey: "views") as! Int)
         print(postDict.value(forKey: "user")  as! NSDictionary)
@@ -492,7 +534,7 @@ class DataManager {
     
     
     
-    //Removes Key/Object Pair from dictionary where the object(milliseconds since 1970)that is passed now  
+    //Removes Key/Object Pair from dictionary where the object(milliseconds since 1970)that is passed now
     func postsCleanup(dictionary: NSDictionary) -> NSDictionary{
         
         let mutDict: NSMutableDictionary = dictionary.mutableCopy() as! NSMutableDictionary
@@ -506,7 +548,7 @@ class DataManager {
                 mutDict.removeObject(forKey: key)
             }
         }
-
+        
         return mutDict
     }
     
@@ -515,14 +557,14 @@ class DataManager {
     /***************************************************************************************
      
      Function - getCommentDataFromFirebase:
-    
+     
      Parameters - String: uid
-    
+     
      Returns(completion): NSDictionary
-    
+     
      completion yields a Dictionary of dictionary's containing comment data from firebase
      
-    ***************************************************************************************/
+     ***************************************************************************************/
     
     func getCommentDataFromFirebase(uid: String, completion:@escaping (NSDictionary) -> ()){
         
@@ -544,21 +586,21 @@ class DataManager {
     
     
     /***************************************************************************************
-    
-    Function - getXCommentFromFirebase:
-  
-    Parameters - String: uid, Int: num
-
-    Returns(completion): NSDictionary
-
-    completion yields a Dictionary of dictionary's containing only (num) comments from firebase
      
-    ***************************************************************************************/
+     Function - getXCommentFromFirebase:
+     
+     Parameters - String: uid, Int: num
+     
+     Returns(completion): NSDictionary
+     
+     completion yields a Dictionary of dictionary's containing only (num) comments from firebase
+     
+     ***************************************************************************************/
     
     func getXCommentsFromFirebase(uid: String, num: Int, completion:@escaping (NSDictionary) -> ()){
         
         let commentsRef: DatabaseReference = Database.database().reference().child("Comments").child(uid)
-
+        
         commentsRef.queryLimited(toLast: UInt(num)).observeSingleEvent(of: .value, with: { (snapshot) in
             
             if let commentDict = snapshot.value as? NSDictionary{
@@ -578,14 +620,14 @@ class DataManager {
     /***************************************************************************************
      
      Function - writeCommentData:
-    
+     
      Parameters - String: threadId, String: commentorUid, String: comment, String: created, String, username
-    
+     
      Returns: NA
-    
+     
      Writes comment data to firebase thread using threadId
      
-    ***************************************************************************************/
+     ***************************************************************************************/
     
     func writeCommentData(threadId: String, commentorUid: String, comment: String, created: String, username:String){
         
@@ -606,14 +648,14 @@ class DataManager {
     
     
     /***************************************************************************************
-    // Function - getFollowingList:
-    //
-    // Parameters - String: userId
-    //
-    // Returns(completion): NSDictionary
-    //
-    // Gets following list for userId as a dictionary, if none, returns empty dictionary
-    ***************************************************************************************/
+     // Function - getFollowingList:
+     //
+     // Parameters - String: userId
+     //
+     // Returns(completion): NSDictionary
+     //
+     // Gets following list for userId as a dictionary, if none, returns empty dictionary
+     ***************************************************************************************/
     
     func getFollowingList(userId: String, completion:@escaping (NSDictionary) -> ()){
         
@@ -623,7 +665,7 @@ class DataManager {
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
             if let followingDict = snapshot.value as? NSDictionary{
-        
+                
                 completion(followingDict)
             }else{
                 completion([:])
@@ -636,14 +678,14 @@ class DataManager {
     
     
     /**************************************************************************************
-    // Function - getFollowedByList:
-    //
-    // Parameters - String: userId
-    //
-    // Returns: NA
-    //
-    // Gets followedby list for userId as a dictionary. if none, returns empty dictionary
-    ***************************************************************************************/
+     // Function - getFollowedByList:
+     //
+     // Parameters - String: userId
+     //
+     // Returns: NA
+     //
+     // Gets followedby list for userId as a dictionary. if none, returns empty dictionary
+     ***************************************************************************************/
     
     func getFollowedByList(userId: String, completion:@escaping (NSDictionary) -> ()){
         
@@ -668,7 +710,7 @@ class DataManager {
     /***********************************************************
      *
      *    Get Liked Posts Dictionary
-     *  userId(uid) as parameter, 
+     *  userId(uid) as parameter,
      *  completion: yields a dictionary of post dictionaries
      **********************************************************/
     
@@ -695,24 +737,23 @@ class DataManager {
     
     /*****************************************
      *
-     *    MARK: INCREMENT VIEWS METHODS
+     *    MARK: UdpateViewsList
      *  -- IncrementViewsCount, adds 1 to post view count
      *  -- addToDidViewList, add postID to my view list
      
      *  IncrementViewsCount()
-     *  --Will update and maintain view list 
+     *  --Will update and maintain view list
      *  -- Won't increment if user has already viewed
      *************************************************/
     
-    func incrementViewsCount(post:PostData, completion:@escaping(Int) -> ()){
+    func udpateViewsList(post:PostData, completion:@escaping(Int) -> ()){
         
         let uid = post.user.value(forKey: "uid") as! String
         let postId = post.postId
-        let postExpireDate = post.expireTime!
         
-        let viewsRef: DatabaseReference = Database.database().reference().child("Posts").child(uid).child("views")
+        let viewsRef: DatabaseReference = Database.database().reference().child("Posts").child(uid)
         
-        self.getViewedPostList(completion: { dict in
+        self.getViewedPostList(uid:uid, completion: { dict in
             
             if let _ = dict.value(forKey: postId){
                 
@@ -721,11 +762,11 @@ class DataManager {
                 
             }else{
                 
-                self.addToDidViewList(postId: postId, postExpireDate: postExpireDate)
+                viewsRef.child("users_who_viewed").child((Auth.auth().currentUser?.uid)!).setValue(true)
                 
                 let views = post.views
                 let tempNum = views + 1
-                viewsRef.setValue(tempNum)
+                viewsRef.child("views").setValue(tempNum)
                 completion(tempNum)
             }
         })
@@ -733,27 +774,7 @@ class DataManager {
     
     
     
-    /*****************************************
-     *  Add Current Post to Viewed Post List
-     ****************************************/
-    func addToDidViewList (postId: String, postExpireDate: String){
-        
-        self.getViewedPostList(completion: { dict in
-            
-            if let _ = dict.value(forKey: postId){
-                
-                //do nothing, postId is already in the list
-            }else{
-                let uid = Auth.auth().currentUser?.uid
-                let viewsRef: DatabaseReference = Database.database().reference().child("Users").child(uid!).child("viewed_posts_list")
-                let mutDict: NSMutableDictionary = dict.mutableCopy() as! NSMutableDictionary
-                
-                
-                mutDict.setValue(postExpireDate, forKey: postId)
-                viewsRef.setValue(mutDict)
-            }
-        })
-    }
+
     
     
     
@@ -761,16 +782,16 @@ class DataManager {
      *  Get Current Viewed Post List
      ****************************************/
     
-    func getViewedPostList(completion:@escaping(NSDictionary) -> ()){
+    func getViewedPostList(uid: String, completion:@escaping(NSDictionary) -> ()){
         
-        let followingRef = Database.database().reference().child("Users").child((Auth.auth().currentUser?.uid)!).child("viewed_posts_list")
+        let followingRef = Database.database().reference().child("Posts").child(uid).child("users_who_viewed")
         
         followingRef.observeSingleEvent(of: .value, with: { snapshot in
             
             if let viewedDict: NSMutableDictionary = snapshot.value as? NSMutableDictionary{
                 
-                let temp: NSDictionary = self.postsCleanup(dictionary: viewedDict)
-                completion(temp)
+                
+                completion(viewedDict)
                 
             }else{
                 
@@ -802,6 +823,7 @@ class DataManager {
             }
         })
     }
+    
     
     /*****************************************
      *  Update Inbox List
@@ -837,9 +859,9 @@ class DataManager {
                     theirInboxRef.setValue(me)
                     
                     completion(objectId)
-                
+                    
                 })
-
+                
             }
         }
     }
@@ -856,7 +878,7 @@ class DataManager {
         
         OGDataProvider.shared.fetchOGData(urlString: urlString, completion: { data, error in
             let urlData: OGData = data
-
+            
             if error == nil{
                 
                 _ = OGImageProvider.shared.loadImage(urlString: urlData.imageUrl, completion: { image, error in
@@ -905,7 +927,7 @@ class DataManager {
         
         let fm = FileManager()
         let error: NSErrorPointer = nil
-
+        
         let dirPath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let tempDirPath = dirPath.appendingPathComponent("videos")
         
@@ -1006,7 +1028,7 @@ class DataManager {
         }
     }
     
-
+    
     func saveImageForPath(imageData: Data, name: String){
         
         
@@ -1022,7 +1044,7 @@ class DataManager {
         UserDefaults.standard.synchronize()
     }
     
-
+    
     
     
     
@@ -1033,7 +1055,7 @@ class DataManager {
      ************************************/
     
     
-
+    
     func documentsPathForFileName(name: String) -> URL {
         
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -1107,13 +1129,13 @@ class DataManager {
         var dataKey: String = ""
         let assetIdKey: String = "localVideoAssetId"
         
-//        if primary{
-            dataKey = "savedPostData"
-//        }
+        //        if primary{
+        dataKey = "savedPostData"
+        //        }
         
-//        else{
-//            dataKey = "secondarySavedPostData"
-//        }
+        //        else{
+        //            dataKey = "secondarySavedPostData"
+        //        }
         
         switch category{
             
@@ -1132,7 +1154,7 @@ class DataManager {
             UserDefaults.standard.set(identifier, forKey: assetIdKey)
             UserDefaults.standard.synchronize()
             completion(identifier)
-
+            
         case .Recording:
             
             saveAudioForPath(audioData: data as! Data, name: dataKey)
@@ -1171,11 +1193,11 @@ class DataManager {
         let assetIdKey: String = "localVideoAssetId"
         let postKey: String = "savedPost"
         
-//        if primary{
-            dataKey = "savedPostData"
-//        }else{
-//            dataKey = "secondarySavedPostData"
-//        }
+        //        if primary{
+        dataKey = "savedPostData"
+        //        }else{
+        //            dataKey = "secondarySavedPostData"
+        //        }
         
         switch category{
         case .Photo:
@@ -1186,17 +1208,17 @@ class DataManager {
             let id: String = UserDefaults.standard.string(forKey: assetIdKey)!
             let assets = PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil)
             object = assets[0] as PHAsset
-        
+            
         case .Recording:
             
             object = getAudioForPath(path: dataKey)
             
         case .Text:
-
+            
             object = getImageForPath(path: dataKey)
             
         case .Link:
-
+            
             let postDict: NSDictionary = UserDefaults.standard.dictionary(forKey: postKey)! as NSDictionary
             let text: String = postDict.value(forKey: "data") as! String
             
@@ -1241,7 +1263,7 @@ class DataManager {
         
         if !(localPhotoExists(atPath: path)){
             //do nothing
-
+            
             if (imagePathString != ""){
                 
                 imageCache.getImage(urlString: imagePathString, completion: { image in
@@ -1356,13 +1378,13 @@ class DataManager {
             }
         }
         
-//        if let followedByCount: Int = data.value(forKey: "followed_by_count") as? Int{
-//            user.followedByCount = followedByCount
-//        }
-//        if let followingCount: Int = data.value(forKey: "following_count") as? Int{
-//            user.followingCount = followingCount
-//        }
-//        
+        //        if let followedByCount: Int = data.value(forKey: "followed_by_count") as? Int{
+        //            user.followedByCount = followedByCount
+        //        }
+        //        if let followingCount: Int = data.value(forKey: "following_count") as? Int{
+        //            user.followingCount = followingCount
+        //        }
+        //
         if let bio: String = data.value(forKey: "bio") as? String{
             user.bio = bio
         }
@@ -1384,11 +1406,11 @@ class DataManager {
         }
         
         //GET FOLLOWING LIST CONSTANT
-//        if let temp: NSDictionary = data.value(forKey: "following_list") as? NSDictionary{
-//            user.followingDict = temp as! NSMutableDictionary
-//        }else{
-//            user.followingDict = [:]
-//        }
+        //        if let temp: NSDictionary = data.value(forKey: "following_list") as? NSDictionary{
+        //            user.followingDict = temp as! NSMutableDictionary
+        //        }else{
+        //            user.followingDict = [:]
+        //        }
         
         return user
         
@@ -1404,7 +1426,7 @@ class DataManager {
      *
      ******************************************************************************/
     
-
+    
     func getURLForPHAsset(videoAsset: PHAsset, name: String, completion:@escaping (URL) -> ()){
         
         let dataManager = DataManager()
@@ -1412,7 +1434,7 @@ class DataManager {
         PHImageManager().requestAVAsset(forVideo: videoAsset, options: nil) { (asset, audioMix, args) in
             
             if let vAsset: AVURLAsset = asset as? AVURLAsset{
-
+                
                 let fileManager = FileManager()
                 let path = dataManager.documentsPathForFileName(name: name)
                 
@@ -1446,8 +1468,8 @@ class DataManager {
                     }
                 })
                 
-
-            //Handle Slow-Mo Video
+                
+                //Handle Slow-Mo Video
             }else if let vAsset: AVComposition = asset as? AVComposition{
                 
                 //Output URL
@@ -1633,22 +1655,22 @@ class DataManager {
                     let dict: NSDictionary = users.value(forKey: key as! String) as! NSDictionary
                     completion(dict.value(forKey: "body") as! String)
                 }
-            
+                
             }else{
                 
                 completion("")
             }
         })
     }
-
     
-  
     
-/****************************************************
- *
- *  NON - FIREBASE
- *
- ****************************************************/
+    
+    
+    /****************************************************
+     *
+     *  NON - FIREBASE
+     *
+     ****************************************************/
     
     func getUIColorForCategory(category: Category) -> UIColor{
         let colors: Colors = Colors()
@@ -1665,19 +1687,19 @@ class DataManager {
             color = colors.getPurpleColor()
             
         case .Text:
-
+            
             color = UIColor.black
             
         case .Recording:
-
+            
             color = colors.getAudioColor()
             
         case .Music:
             
-             color = colors.getMusicColor()
+            color = colors.getMusicColor()
             
         case .Link:
-
+            
             color = UIColor.black
             
         default:
@@ -1706,7 +1728,7 @@ class DataManager {
         return names[count - 1]
         
     }
-
+    
     
     //get now in millis, returns double
     func nowInMillis() -> Double{
@@ -1720,11 +1742,11 @@ class DataManager {
     
     //gets one day from now in millis, returns double
     func oneDayFromNow() -> Double {
-    
+        
         let date: Date = Date.init()
         let expireTime = date.addingTimeInterval(24.0 * 60.0 * 60.0)
         let millis = expireTime.timeIntervalSince1970
-    
+        
         return millis
     }
     
@@ -1761,7 +1783,7 @@ class DataManager {
             
             finalString = "expired"
         }
-
+        
         return finalString
     }
     
@@ -1843,7 +1865,7 @@ class DataManager {
         
         return songInfo
     }
-
+    
     
 }
 
@@ -1925,9 +1947,9 @@ extension UIImage {
         return resized!
     }
     
-
+    
     convenience init(view: UIView) {
-            
+        
         UIGraphicsBeginImageContext(view.frame.size)
         view.layer.render(in: UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
