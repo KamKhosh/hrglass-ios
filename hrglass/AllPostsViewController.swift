@@ -189,7 +189,7 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         
     }
     
-    //Post View Delegates
+    //Post View Delegates -- these are currently hidden from this view since all the posts here have already been liked
     func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
         //don't do anything
         

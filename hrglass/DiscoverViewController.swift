@@ -12,9 +12,7 @@ import Firebase
 class DiscoverViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var navigationBar: UINavigationBar!
-    
     @IBOutlet weak var backItemBtn: UIButton!
-    
     @IBOutlet weak var tableView: UITableView!
     
     var discoverUserData: NSMutableArray = NSMutableArray()
@@ -31,6 +29,8 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     var noReqLbl: UILabel!
     var count: Int = 0
     var hub: RKNotificationHub!
+    var selectedUser: User!
+
     
     @IBOutlet weak var requestsBtn: UIButton!
 
@@ -72,6 +72,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     
     
@@ -138,7 +139,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     
     func getUsers(){
         
-        //For now just grab all users -- TODO: Develope Algorithm for pulling in more relevant users to your discover list
+        //For now just grab all users -- TODO: Develop Algorithm for pulling in more relevant users to your discover list
         let usersRef: DatabaseReference = ref.child("Users")
 
         usersRef.observeSingleEvent(of: .value, with: { snapshot in
@@ -160,8 +161,9 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                         //TODO: REMOVE EXISTING USERS followed by the logged in User
                         if (keyString != self.currentUserId && followingDict.value(forKey: keyString) == nil){
                             
-                            self.discoverUserData.add(data.value(forKey: keyString) as! NSDictionary)
-                            self.userIdArray.add(keyString)
+                            
+                            self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+//                            self.userIdArray.add(keyString)
                             
                         }
                     }
@@ -177,8 +179,8 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                         //TODO: Removed the logged in User
                         if (keyString != self.currentUserId){
                             
-                            self.discoverUserData.add(data.value(forKey: keyString) as! NSDictionary)
-                            self.userIdArray.add(keyString)
+                            self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+//                            self.userIdArray.add(keyString)
                             
                         }
                     }
@@ -287,9 +289,9 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             
             let cell: DiscoverTableViewCell = tableView.dequeueReusableCell(withIdentifier: "discoverCell") as! DiscoverTableViewCell
             
-            let userdata:NSDictionary = self.discoverUserData[indexPath.row] as! NSDictionary
-            let userId: String = self.userIdArray[indexPath.row] as! String
-            let _: User = self.dataManager.setupUserData(data: userdata.mutableCopy() as! NSMutableDictionary, uid: userId)
+            let userdata:User = self.discoverUserData[indexPath.row] as! User
+            let userId: String = userdata.userID
+//            let _: User = self.dataManager.setupUserData(data: userdata.mutableCopy() as! NSMutableDictionary, uid: userId)
             
             cell.activityInd.hidesWhenStopped = true
             cell.activityInd.startAnimating()
@@ -315,14 +317,12 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             }
             
             
-            if (userdata.value(forKey:"profilePhoto") as! String != ""){
+            if (userdata.profilePhoto != ""){
                 
-                
-                self.imageCache.getImage(urlString: userdata.value(forKey:"profilePhoto") as! String, completion: { image in
+                self.imageCache.getImage(urlString: userdata.profilePhoto as! String, completion: { image in
                     
                     cell.profilePhotoImageView.image = image
                     cell.activityInd.stopAnimating()
-                    
                 })
                 
             }else{
@@ -342,7 +342,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                 cell.followerLbl.text = String(count)
             })
 
-            cell.nameLbl.text = userdata.value(forKey: "name") as? String
+            cell.nameLbl.text = userdata.name as? String
             
             finalCell = cell
         }
@@ -356,7 +356,13 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Show User Profile")
         
-        
+        if !showRequestData{
+            let user: User = self.discoverUserData[indexPath.row] as! User
+            
+            self.selectedUser = user
+            
+            self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
+        }
     }
     
     
@@ -365,6 +371,13 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
      *      NAVIGATION
      *
      ************************/
+    
+    @IBAction func unwindToDiscover(unwindSegue: UIStoryboardSegue) {
+        
+        
+        
+    }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -377,6 +390,16 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             
             fvc.imageCache = self.imageCache
             self.imageCache = ImageCache()
+            
+        }else if (segue.identifier == "toUserProfileSegue"){
+            
+            let destinationNavigationController = segue.destination as! UINavigationController
+            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
+            profileVC.imageCache = self.imageCache
+            profileVC.parentView = "discover"
+            
+            profileVC.currentlyViewingUID = self.selectedUser.userID
+            profileVC.follwBtnIsUnfollow = true
         }
     }
 

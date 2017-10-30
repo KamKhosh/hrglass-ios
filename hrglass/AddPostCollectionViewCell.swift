@@ -18,6 +18,7 @@ class AddPostCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         playImage.isHidden = true
         
     }

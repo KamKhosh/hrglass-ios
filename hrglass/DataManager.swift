@@ -746,16 +746,16 @@ class DataManager {
      *  -- Won't increment if user has already viewed
      *************************************************/
     
-    func udpateViewsList(post:PostData, completion:@escaping(Int) -> ()){
+    func updateViewsList(post:PostData, completion:@escaping(Int) -> ()){
         
         let uid = post.user.value(forKey: "uid") as! String
-        let postId = post.postId
+        let currentUid: String = (Auth.auth().currentUser?.uid)!
         
         let viewsRef: DatabaseReference = Database.database().reference().child("Posts").child(uid)
         
         self.getViewedPostList(uid:uid, completion: { dict in
             
-            if let _ = dict.value(forKey: postId){
+            if let _ = dict.value(forKey: currentUid){
                 
                 //do nothing -- completion with same number of views
                 completion(post.views)
@@ -790,7 +790,7 @@ class DataManager {
             
             if let viewedDict: NSMutableDictionary = snapshot.value as? NSMutableDictionary{
                 
-                
+                //pass back dictionary of viewers
                 completion(viewedDict)
                 
             }else{
@@ -812,13 +812,14 @@ class DataManager {
         
         inboxRef.observeSingleEvent(of: .value, with: { snapshot in
             
-            if let viewedDict: NSMutableDictionary = snapshot.value as? NSMutableDictionary{
+            if let inboxDict: NSMutableDictionary = snapshot.value as? NSMutableDictionary{
                 
-                completion(viewedDict)
+                //pass back inbox dictioanry
+                completion(inboxDict)
                 
             }else{
                 
-                // if no viewed posts, pass back empty Dictionary
+                // if no-one in inbox, pass back empty Dictionary
                 completion([:])
             }
         })
@@ -878,13 +879,17 @@ class DataManager {
         
         OGDataProvider.shared.fetchOGData(urlString: urlString, completion: { data, error in
             let urlData: OGData = data
-            
+            //if OGData returns data
             if error == nil{
                 
                 _ = OGImageProvider.shared.loadImage(urlString: urlData.imageUrl, completion: { image, error in
-                    
+                    //get url preview image
                     if error == nil{
+                        //no error
                         if (image != nil){
+                            //image not nil
+                            
+                            //update label on main thread
                             DispatchQueue.main.async {
                                 var label: String = ""
                                 
@@ -902,13 +907,16 @@ class DataManager {
                                 completion(image!, label)
                             }
                         }else{
+                            //image nil
                             print("Website Preview Cannot be retrieved")
                         }
                     }else{
+                        //error retrieving image
                         print(error?.localizedDescription ?? "")
                     }
                 })
             }else{
+                //error retrieving OGData
                 print(error?.localizedDescription ?? "")
             }
         })
@@ -934,6 +942,7 @@ class DataManager {
         
         var directoryContents: NSArray? = nil
         
+        //delete videos directory if there
         do{
             
             directoryContents = try fm.contentsOfDirectory(atPath: tempDirPath.absoluteString) as NSArray
@@ -962,7 +971,7 @@ class DataManager {
         }
     }
     
-    
+    //delete file in local documents path, string path parameter
     func deleteFileAt(path: String){
         
         let fileManager = FileManager()
@@ -1353,6 +1362,8 @@ class DataManager {
     }
     
     
+    
+    
     /*******************************************************************************
      *
      *  SETUP USER DATA METHOD
@@ -1378,13 +1389,6 @@ class DataManager {
             }
         }
         
-        //        if let followedByCount: Int = data.value(forKey: "followed_by_count") as? Int{
-        //            user.followedByCount = followedByCount
-        //        }
-        //        if let followingCount: Int = data.value(forKey: "following_count") as? Int{
-        //            user.followingCount = followingCount
-        //        }
-        //
         if let bio: String = data.value(forKey: "bio") as? String{
             user.bio = bio
         }
@@ -1405,12 +1409,6 @@ class DataManager {
             user.coverPhoto = coverPhotoURLString
         }
         
-        //GET FOLLOWING LIST CONSTANT
-        //        if let temp: NSDictionary = data.value(forKey: "following_list") as? NSDictionary{
-        //            user.followingDict = temp as! NSMutableDictionary
-        //        }else{
-        //            user.followingDict = [:]
-        //        }
         
         return user
         

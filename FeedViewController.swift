@@ -73,7 +73,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var initialLoadIndicator: UIActivityIndicatorView!
-    
+    @IBOutlet weak var addPostButton: UIButton!
     
     
     /*********************************
@@ -98,8 +98,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         self.refreshControl = UIRefreshControl()
         
-        refreshControl.backgroundColor = UIColor.white
-        refreshControl.tintColor = UIColor.gray
+        refreshControl.backgroundColor = UIColor.black
+        refreshControl.tintColor = UIColor.white
         self.refreshControl.addTarget(self, action: #selector (refresh), for: .valueChanged)
         self.tableView.addSubview(self.refreshControl)
         
@@ -111,13 +111,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
         
         
+        //set button colors
+        self.settingsButton.setImage(UIImage(named:"settings")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.menuButton.setImage(UIImage(named:"menu")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.addPostButton.setImage(UIImage(named:"plus_circle")?.transform(withNewColor: UIColor.white), for: .normal)
+        
         //delete the videos cache
         DispatchQueue.global().async() {
            
             self.dataManager.deleteLocalVideosCache()
         }
 
-        
         
         ref.child("Users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
             
@@ -376,13 +380,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.profileBtn.addTarget(self, action: #selector(self.profileButtonAction), for: .touchUpInside)
         
         self.discoverBtn = UIButton(frame: CGRect.zero)
-        self.discoverBtn.setImage(UIImage(named:"users"), for: .normal)
+        self.discoverBtn.setImage(UIImage(named:"users")?.transform(withNewColor: UIColor.white), for: .normal)
         self.discoverBtn.center = center
         self.discoverBtn.addTarget(self, action: #selector(self.discoverButtonAction), for: .touchUpInside)
         
         
         self.messagesBtn = UIButton(frame: CGRect.zero)
-        self.messagesBtn.setImage(UIImage(named:"mail"), for: .normal)
+        self.messagesBtn.setImage(UIImage(named:"mail")?.transform(withNewColor: UIColor.white), for: .normal)
         self.messagesBtn.center = center
         self.messagesBtn.addTarget(self, action: #selector(self.messagesButtonAction), for: .touchUpInside)
         
@@ -490,11 +494,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             UIView.animate(withDuration: 0.4, animations: { 
                 self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
-                
             })
-            
-            
-            self.dataManager.udpateViewsList(post: cell.postData, completion: { views in
+
+            self.dataManager.updateViewsList(post: cell.postData, completion: { views in
                 cell.viewCountLbl.text = String(views)
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
             })
@@ -523,11 +525,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.loadingIndication.startAnimating()
         cell.postUserId = user.value(forKey: "uid") as! String
         cell.postData.creationDate = feedData[indexPath.row].creationDate
-        
-        
-
-        
-        
         cell.posterNameLbl.text = fullname
         cell.playImageView.isHidden = true
         cell.timeRemainingLbl.text = dataManager.getTimeString(expireTime: feedData[indexPath.row].expireTime)
@@ -636,11 +633,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             print("No Category")
         }
         
+        //set like button to white icon
+        let newImage: UIImage = UIImage.init(named: "thumbs up")!
+        cell.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
+        
+        
         //check if already liked this post
         if let likedDict: NSDictionary = feedData[indexPath.row].usersWhoLiked {
-            
-            let newImage: UIImage = UIImage.init(named: "thumbs up")!
-            
+
+            //if not in dict, set thumb to red
             if (likedDict.value(forKey: self.loggedInUser.userID) != nil){
                 
                 cell.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
@@ -649,7 +650,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
             }else{
                 
-                cell.likeBtn.setImage(newImage, for: .normal)
                 cell.likedByUser = false
             }
         }
@@ -660,8 +660,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             if (viewedDict.value(forKey: self.loggedInUser.userID) != nil){
                 
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
-                cell.likedByUser = true
-                
             }
         }
 
@@ -669,6 +667,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //rounded Profile Image
         cell.profileImageBtn.layer.cornerRadius = cell.profileImageBtn.frame.height / 2
         cell.profileImageBtn.clipsToBounds = true
+        
+        cell.moreBtn.setImage(UIImage(named:"more")?.transform(withNewColor: UIColor.white), for: .normal)
+        cell.viewsBtn.setImage(UIImage(named:"eye")?.transform(withNewColor: UIColor.white), for: .normal)
         
         
         //Hide the mood lbl if none is selected
@@ -723,7 +724,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         addChildViewController(postVC)
         
         postVC.view.frame = view.bounds
-        postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         
         UIView.transition(with: self.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
             self.view.addSubview(postVC.view)
@@ -735,7 +736,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
-    /****************************************************************************************
+    /******************************************************
 
      ------ POST POPUP DELEGATE METHODS -----
     
@@ -822,11 +823,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         if(segue.identifier == "toMyProfileSegue"){
             
-            
-            
-//            let destinationNavigationController = segue.destination as! UINavigationController
-//            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
-            let profileVC = segue.destination as! ProfileViewController
+            let destinationNavigationController = segue.destination as! UINavigationController
+            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
+//            let profileVC = segue.destination as! ProfileViewController
             
             profileVC.imageCache = self.imageCache
             self.imageCache = ImageCache()
@@ -836,11 +835,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             if navigationMenu != nil{
                 self.navigationMenu.close()
-                
             }
-            
-            
         }
+            
         else if (segue.identifier == "toCreatePostSegue"){
             
             let destinationNavigationController = segue.destination as! UINavigationController
@@ -853,7 +850,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
         }else if (segue.identifier == "toUserProfileSegue"){
             
-            let profileVC = segue.destination as! ProfileViewController
+            let destinationNavigationController = segue.destination as! UINavigationController
+            let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
             profileVC.imageCache = self.imageCache
             self.imageCache = ImageCache()
             

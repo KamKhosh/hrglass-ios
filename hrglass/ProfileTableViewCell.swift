@@ -103,7 +103,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
      ******************************************/
     
 
-    
+    // follow or unfollow user
     @IBAction func followBtnAction(_ sender: Any) {
         
         if (followBtn.titleLabel?.text == "Follow"){
@@ -148,7 +148,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
     @IBAction func likedViewAllAction(_ sender: Any) {
         
-        //goto Viewall liked content view
+        //goto Viewall liked content view -> storyboard segue
         
     }
     
@@ -194,7 +194,9 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             cell.imageButton.setImage(image, for: .normal)
             cell.loadingIndicator.startAnimating()
             
+            //user of liked data
             let user: NSDictionary = likedDataArray[indexPath.row].user
+            //uid of user
             let uid: String = user.value(forKey: "uid") as! String
             
             cell.playImageView.isHidden = true
@@ -294,7 +296,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
         var items: Int = 0
 
-        
         if (collectionView == likedCollectionView){
             
             items = likedDataArray.count
@@ -307,12 +308,12 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 self.showLikedContentBtns()
             }
         }
-        
         return items
     }
     
     
     
+    //shows the liked content buttons
     func showLikedContentBtns(){
         self.likedBackBtn.isHidden = false
         self.likedNextBtn.isHidden = false
@@ -320,6 +321,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
     }
     
+    //hides liked contents buttons when there is no liked content
     func hideLikedContentBtns(){
         self.likedBackBtn.isHidden = true
         self.likedNextBtn.isHidden = true

@@ -162,6 +162,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     func viewSetup(){
         
+        self.moreBtn.setImage(UIImage(named: "moreVertical")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.minimizeBtn.setImage(UIImage(named: "chevronDown")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.commentBtn.setImage(UIImage(named: "comments")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.likeBtn.setImage(UIImage(named: "thumbs up")?.transform(withNewColor: UIColor.white), for: .normal)
+        
         self.songImageView.layer.cornerRadius = self.songImageView.frame.width/2
         self.songImageView.clipsToBounds = true
         self.songImageView.contentMode = .scaleAspectFill
@@ -258,7 +263,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     
                 }else{
                     
-                    self.likeBtn.setImage(newImage, for: .normal)
+                    self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
                     self.likedByUser = false
                 }
             }
@@ -725,7 +730,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                         self.songTimer.invalidate()
                     }
                     
-                    if self.applicationMusicPlayer.playbackState == .playing {
+                    if (self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused){
                         self.applicationMusicPlayer.stop()
                     }
                     
@@ -753,7 +758,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         let postId:String = self.postData.postId
 
-
         if(likedByUser){
             
             if (postId != ""){
@@ -762,6 +766,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 
                 //set image to normal color
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
+                self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
                 self.likeBtn.setImage(newImage, for: .normal)
                 
                 self.likedButtonPressed(liked: false, indexPath: self.selectedIndexPath)
@@ -970,8 +975,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     
                 }){ (success) in
                     if success{
+                        if self.songTimer != nil{
+                            self.songTimer.invalidate()
+                        }
                         
-                        if self.applicationMusicPlayer.playbackState == .playing {
+                        if self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused{
                             self.applicationMusicPlayer.stop()
                         }
                         self.willMove(toParentViewController: nil)

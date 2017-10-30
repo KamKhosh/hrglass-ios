@@ -120,6 +120,7 @@ class AppleMusicManager {
         
     }
     
+    
     //Retrieve the trimmed user's storefront id based on the current user region
     func appleMusicFetchStorefrontRegion(completion: @escaping (String) -> ()){
         
@@ -138,6 +139,7 @@ class AppleMusicManager {
                 return
             }
             
+            //trim string to get storefrontID
             let startIndex = storefrontId.startIndex
             let stopIndex = storefrontId.index(startIndex, offsetBy: 5)
             let indexRange = Range(uncheckedBounds: (startIndex, stopIndex))

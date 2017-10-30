@@ -18,11 +18,10 @@ class DiscoverTableViewCell: UITableViewCell {
     @IBOutlet weak var followerLbl: UILabel!
     @IBOutlet weak var followingLbl: UILabel!
     
-    
     let dataManager: DataManager = DataManager()
     let colors: Colors = Colors()
     
-    var userdata: NSDictionary!
+    var userdata: User!
     var userId: String = ""
     
     var countObj : (() -> Void)? = nil
@@ -45,13 +44,13 @@ class DiscoverTableViewCell: UITableViewCell {
     
     @IBAction func followAction(_ sender: Any) {
         
-        let userData: User = dataManager.setupUserData(data: self.userdata.mutableCopy() as! NSMutableDictionary, uid: self.userId)
+//        let userData: User = dataManager.setupUserData(data: self.userdata.mutableCopy() as! NSMutableDictionary, uid: self.userId)
         
         if (self.followBtn.titleLabel?.text == "Follow" ){
             
-            dataManager.addToFollowerList(userId: self.userId, privateAccount: userData.isPrivate)
+            dataManager.addToFollowerList(userId: self.userdata.userID, privateAccount: self.userdata.isPrivate)
             
-            if (userData.isPrivate){
+            if (self.userdata.isPrivate){
                 followBtn.setTitle("Unrequest", for: .normal)
             }else{
                 
@@ -69,7 +68,7 @@ class DiscoverTableViewCell: UITableViewCell {
             
         }else if (self.followBtn.titleLabel?.text == "Unfollow" || self.followBtn.titleLabel?.text == "Unrequest"){
             
-            dataManager.removeFromFollowerList(userId: userId)
+            dataManager.removeFromFollowerList(userId: self.userdata.userID)
 
             followBtn.setTitle("Follow", for: .normal)
             

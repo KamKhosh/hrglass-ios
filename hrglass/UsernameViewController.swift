@@ -28,6 +28,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         self.usernameField.delegate = self
         self.addBottomLine(forView: usernameField, tag: 1)
         
+        //if parent view is from account, show back button and change button title
         if parentView == "accountView"{
             
             self.submitBtn.setTitle("Change Username", for: .normal)
@@ -35,7 +36,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         }
         
         
-        
+        //swipe down gesture setup -- to dismiss keyboard
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismisskeyboard))
         swipeDown.direction = .down
         swipeDown.delegate = self
@@ -71,11 +72,11 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
             dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
                 
                 if (exists){
-                    
+                    //username already exists
                     self.usernameExistsAlert()
                     
                 }else{
-                    
+                    //set new usename
                     let username = self.usernameField.text!
                     
                     let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
@@ -109,6 +110,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     }
     
     
+    //add textfield bottom lines
     func addBottomLine(forView: UITextField, tag: Int){
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
@@ -121,7 +123,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     }
 
     
-    
+    //username exitst alert
     func usernameExistsAlert(){
         
         let alert: UIAlertController = UIAlertController(title: "Username already take", message: "choose another", preferredStyle: .actionSheet)
@@ -156,12 +158,11 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         return true
     }
     
+    
+    
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+
         
         if segue.identifier == "unwindToAccounts"{
             

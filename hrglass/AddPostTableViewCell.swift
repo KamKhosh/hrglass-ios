@@ -10,7 +10,7 @@ import UIKit
 
 class AddPostTableViewCell: UITableViewCell {
 
-    
+    //cell storyboard outlets
     @IBOutlet weak var songImageView: UIImageView!
     @IBOutlet weak var songNameLbl: UILabel!
     @IBOutlet weak var artistLbl: UILabel!

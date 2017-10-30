@@ -67,7 +67,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
      ************/
     @IBAction func loginAction(_ sender: Any) {
         
-        //LOGIN W/OUT FACEBOOK
+        //login without facebook
         
         if(usernameField.text == ""){
             print("Fullname Empty")

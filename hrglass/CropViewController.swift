@@ -4,7 +4,7 @@
 //
 //  Created by Justin Hershey on 8/20/17.
 //
-//
+// -- NOT CURRENTLY BEING USED. CLIMAGEDITOR INCLUDES A CROP OPTION
 
 import UIKit
 

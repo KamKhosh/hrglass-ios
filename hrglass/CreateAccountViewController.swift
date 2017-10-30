@@ -32,8 +32,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     
     @IBOutlet weak var loginIndicatorView: UIActivityIndicatorView!
     
-    
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +59,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         super.viewDidAppear(animated)
         
+        //init fb login button
         let fbLoginBtn = LoginButton.init(readPermissions: [.publicProfile, .email])
         fbLoginBtn.delegate = self
         
@@ -69,6 +68,11 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         self.scrollContentView.addSubview(fbLoginBtn)
     }
     
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
     
     
     
@@ -80,6 +84,9 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     @IBAction func createAccountAction(_ sender: Any) {
         
         //CREATE ACCOUNT W/ Email and Password
+        
+        //if any of the fields are black the underline will be changed to red
+        
         
         if(fullnameField.text == ""){
             print("Fullname Empty")
@@ -98,6 +105,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 }
             }
         }else if(emailField.text == ""){
+            //TODO: add validator to make sure this is infact an email
+            
             print("email Empty")
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
@@ -122,6 +131,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 }
             }
         }else{
+            //all fields are filled out
+            
             if (confirmPasswordField.text == passwordField.text){
                 
                 //TODO: ADD Username Check so user's can't use an existing username, same with e-mail
@@ -162,7 +173,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 Auth.auth().createUser(withEmail: email , password: password) { (user, error) in
                     
                     if(error == nil){
-                        
+                        // if success, set default userdata
                         let userData: NSDictionary = ["email":email,"username":username, "name":fullname, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":""]
                         
 
@@ -173,12 +184,14 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             print(user?.uid ?? "")
                             
                             if(error == nil){
+                                //on login success, check if username is taken
                                 
                                 self.dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
                                     
                                     if exists{
                                         self.usernameFlag = true
                                         userData.setValue("", forKey: "username")
+                                        //show invalid username alert
                                         userRef.setValue(userData, withCompletionBlock: { (error, ref) in
                                             self.chooseDifferentUsernameAlert()
                                         })
@@ -221,7 +234,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         }
     }
     
-    
+    //username in use alert
     func chooseDifferentUsernameAlert(){
         
         let alert: UIAlertController = UIAlertController(title: "Username already take", message: "choose another", preferredStyle: .actionSheet)
@@ -237,6 +250,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
 
     
 
+    //setup textField delegates
     func textFieldDelegateSetup(){
         
         self.fullnameField.delegate = self
@@ -248,7 +262,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     }
     
     
-    
+    //add bottom lines to textFields
     func setupView(){
         
         self.addBottomLine(forView: fullnameField, tag: 1)
@@ -260,7 +274,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     }
 
     
-    
+    //add bottom line method
     func addBottomLine(forView: UITextField, tag: Int){
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
@@ -274,11 +288,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     
     
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+
     
     /**************************
      * FACEBOOK LOGIN DELEGATE
@@ -358,15 +368,22 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     func getFBData(uid: String, completion:@escaping (NSDictionary) -> ()){
         
         let connection = GraphRequestConnection()
+        
+        //basic data request, by default approved by FB
         let params = ["fields" : "id, email, name"]
+        
+//        request
         connection.add(GraphRequest(graphPath: "/me", parameters:params)) { httpResponse, result in
             switch result {
             case .success(let response):
+                
+                //request success
                 print("Graph Request Succeeded: \(response)")
                 
                 let email: String = response.dictionaryValue?["email"] as! String
                 let name: String = response.dictionaryValue?["name"] as! String
                 
+                //set firebase userdata dicrionary and save
                 let userData: NSDictionary = ["email":email,"username":"", "name":name, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":"", "followed_by_count":0, "following_count": 0, ]
                 
                 let userRef = self.ref.child("Users").child(uid)
@@ -379,6 +396,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 print("Graph Request Failed: \(error)")
             }
         }
+        
+        //start connection request
         connection.start()
         
     }
@@ -393,6 +412,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
      * TEXT FIELD DELEGATE
      ***********************/
     
+    //sets border colors to black
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let views: [UIView] = self.view.subviews
         for view in views {
@@ -409,11 +429,11 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
 //    }
     
     
-    /*******************************
+    /**********************************
      *
      *  KEYBOARD NOTIFICATION FUNCTIONS
      *
-     *******************************/
+     **********************************/
     
     func keyboardWillShow(notification: NSNotification) {
 
@@ -445,7 +465,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
      *  INDICATOR METHODS
      *
      *******************************/
-    
     
     
     func startLoginIndicator() {

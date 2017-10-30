@@ -23,6 +23,7 @@ class ProfileCollectionViewCell: UICollectionViewCell {
     
     var contentSelected: (() -> Void)? = nil
     
+    //contents action
     @IBAction func contentBtnAction(_ sender: Any) {
         
         if let contentBtnAction = self.contentSelected{
