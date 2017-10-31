@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         
         SDKApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
-        
+        UIApplication.shared.statusBarStyle = .lightContent
         Instabug.start(withToken: "27a08143d8d90ae625d668c2087beecf", invocationEvent: .shake)
         
         return true

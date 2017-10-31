@@ -42,11 +42,5 @@ class BlockedUserCell: UITableViewCell {
             moreBtnAction()
             
         }
-        
-        
     }
-    
-    
-    
-    
 }

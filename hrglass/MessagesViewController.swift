@@ -50,9 +50,10 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         //Keyboard Observer
          NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
         
-        self.messageTextView.textColor = UIColor(white: 0.0, alpha: 0.5)
+        self.messageTextView.textColor = UIColor(white: 0.0, alpha: 0.7)
+        self.messageTextView.tintColor = UIColor.white
         self.messageTextView.text = self.placeholderText
-        self.messageTextView.layer.borderColor = UIColor.lightGray.cgColor
+        self.messageTextView.layer.borderColor = UIColor.white.cgColor
         self.messageTextView.layer.borderWidth = 0.5
         self.messageTextView.layer.cornerRadius = 3.0
         
@@ -63,9 +64,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.collectionView.dataSource = self
         
         
-        
-        
-        //when coming from the Feed view, messagesId will need to be obtained from Firebae. Not from the inbox
+        //when coming from the Feed view, messagesId will need to be obtained from Firebae. messageId will already be set when coming from the inbox view
         if messagesId == ""{
             
             self.getMessageThreadId()
@@ -83,7 +82,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
     
     
     func keyboardNotification(notification: NSNotification) {
@@ -130,8 +128,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         })
     }
     
-    
-    
+
     
     func getMessages(){
         
@@ -156,7 +153,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     
     //will create a new inbox entry/Messages Thread if the receipient is new or just send the message to an existing user in the inbox
-
     @IBAction func sendBtnAction(_ sender: Any) {
         
         //make sure user has entered text before sending
@@ -178,7 +174,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
                     
                     self.messagesId = convoId as String
                     self.postMessage(messageData: messageData)
-                    
                 })
             }else{
                 
@@ -319,7 +314,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         if(textView.text == self.placeholderText){
             textView.text = ""
-            textView.textColor = UIColor.black
+            textView.textColor = UIColor.white
         }
     }
     
@@ -329,7 +324,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         if(textView.text == ""){
             textView.text = self.placeholderText
-            textView.textColor = UIColor.lightGray
+            textView.textColor = UIColor.black
         }
         
         self.messageTextView.frame.size = CGSize (width: self.view.frame.width - sendBtn.frame.width, height: 40)

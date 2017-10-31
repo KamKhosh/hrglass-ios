@@ -30,13 +30,25 @@ class ChangePasswordViewController: UIViewController {
         self.addBottomLine(forView: newPasswordField, tag: 2)
         self.addBottomLine(forView: confirmPasswordField, tag: 3)
 
-        // Do any additional setup after loading the view.
+        
+        confirmPasswordField.attributedPlaceholder =
+            NSAttributedString(string: "Confirm Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        newPasswordField.attributedPlaceholder =
+            NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        oldPasswordField.attributedPlaceholder =
+            NSAttributedString(string: "Old Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
     }
 
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     
     
@@ -47,10 +59,7 @@ class ChangePasswordViewController: UIViewController {
      * ---------- ACTIONS ---------
      *
      *********************************/
-    
-    
-    
-    
+
     
     /*****************************************
      
@@ -154,9 +163,9 @@ class ChangePasswordViewController: UIViewController {
     func addBottomLine(forView: UITextField, tag: Int){
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
-        view.layer.borderColor = UIColor.black.cgColor
+        view.layer.borderColor = UIColor.white.cgColor
         view.layer.borderWidth = 1.0
-        view.alpha = 0.2
+        view.alpha = 0.5
         view.tag = tag
         self.view.addSubview(view)
         

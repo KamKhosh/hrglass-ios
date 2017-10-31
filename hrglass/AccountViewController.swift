@@ -17,7 +17,9 @@ class AccountViewController: UIViewController {
     @IBOutlet weak var nameView: UIView!
     @IBOutlet weak var nameLbl: UILabel!
     
-
+    @IBOutlet weak var blockedChevron: UIImageView!
+    @IBOutlet weak var changePasswordChevron: UIImageView!
+    
     @IBOutlet weak var usernameBtn: UIButton!
     @IBOutlet weak var usernameView: UIView!
     
@@ -56,10 +58,9 @@ class AccountViewController: UIViewController {
         currentUserRef = ref.child("Users").child((self.user?.uid)!)
         
         self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
-        self.navigationBar.backgroundColor = UIColor.white
+        self.navigationBar.backgroundColor = UIColor.black
         
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        
         self.navigationBar.shadowImage = UIImage()
 
         let changePasswordTap = UITapGestureRecognizer(target: self, action:  #selector (self.changePasswordAction))
@@ -216,9 +217,12 @@ class AccountViewController: UIViewController {
         self.addBottomLine(forView: privateView)
         self.addBottomLine(forView: blockedUsersView)
         
+        //set chevron colors
+        self.blockedChevron.image = UIImage(named: "chevron")?.transform(withNewColor: UIColor.white)
+        self.changePasswordChevron.image = UIImage(named: "chevron")?.transform(withNewColor: UIColor.white)
+        
         self.nameLbl.text = self.user?.displayName
 
-        
     }
     
     

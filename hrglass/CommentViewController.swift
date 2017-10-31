@@ -37,15 +37,13 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         //Keyboard Observer
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
         
-        
-        let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-        self.view.addGestureRecognizer(panGesture)
-        panGesture.minimumNumberOfTouches = 1
-        panGesture.delegate = self
+//        let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+//        self.view.addGestureRecognizer(panGesture)
+//        panGesture.minimumNumberOfTouches = 1
+//        panGesture.delegate = self
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        
         
         self.addCommentTextView.text = placeholderText
         self.addCommentTextView.delegate = self
@@ -55,7 +53,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         self.viewSetup()
         self.getMyUserData()
-        
         self.setCommentData()
         
         self.tableView.tableFooterView =  UIView.init(frame:CGRect(x:0, y:0, width:self.tableView.frame.size.width, height:1))
@@ -108,6 +105,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     
     func keyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
+            
             let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
             let duration:TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
             let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
@@ -171,24 +169,30 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     
     @IBAction func postAction(_ sender: Any) {
         
-        let comment = self.addCommentTextView.text
-        var commentorUid = ""
-        var username = ""
-        let created = String(format:"%.0f",dataManager.nowInMillis())
         
-        if currentUserData != nil{
-            commentorUid = currentUserData.userID
-            username = currentUserData.username
+        if (self.addCommentTextView.text != "" && self.addCommentTextView.text != "Say something..."){
+            //if the user has entered text other an the placeholder text or nothing
+            
+            let comment = self.addCommentTextView.text
+            var commentorUid = ""
+            var username = ""
+            let created = String(format:"%.0f",dataManager.nowInMillis())
+            
+            if currentUserData != nil{
+                commentorUid = currentUserData.userID
+                username = currentUserData.username
+            }
+            
+            let newCommentDict:NSMutableDictionary = ["comment":comment ?? "", "username":username, "commentorUid":commentorUid, "created":created]
+            
+            dataManager.writeCommentData(threadId: self.viewingUserId, commentorUid: commentorUid, comment: comment!, created: created, username: username)
+            
+            self.commentsArray.add(newCommentDict)
+            self.addCommentTextView.text = ""
+            self.addCommentTextView.resignFirstResponder()
+            self.tableView.reloadData()
         }
         
-        let newCommentDict:NSMutableDictionary = ["comment":comment ?? "", "username":username, "commentorUid":commentorUid, "created":created]
-        
-        dataManager.writeCommentData(threadId: self.viewingUserId, commentorUid: commentorUid, comment: comment!, created: created, username: username)
-        
-        self.commentsArray.add(newCommentDict)
-        self.addCommentTextView.text = ""
-        self.addCommentTextView.resignFirstResponder()
-        self.tableView.reloadData()
     }
     
     

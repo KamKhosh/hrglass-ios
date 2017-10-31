@@ -36,6 +36,8 @@ class MenuView: UIView{
     var offset: Bool = false
     var direction: Direction = .None
     
+    var spacing: CGFloat = 0.0
+    
     /*********************************
      *
      * -------- INITIALIZE -------
@@ -161,17 +163,18 @@ class MenuView: UIView{
                 button.isHidden = false
                 button.alpha = 1.0
                 
+                let newSpacing = (self.spacing * index)
                 
                 switch self.direction{
                     
                 case .Up:
-                    button.center = CGPoint(x: center.x ,y: center.y - (index * height))
+                    button.center = CGPoint(x: center.x ,y: center.y - (index * height) + newSpacing)
                 case .Down:
-                    button.center = CGPoint(x: center.x ,y: center.y + (index * height))
+                    button.center = CGPoint(x: center.x ,y: center.y + (index * height) + newSpacing)
                 case .Left:
-                    button.center = CGPoint(x: center.x - (index * width) ,y: center.y )
+                    button.center = CGPoint(x: center.x - (index * width) + newSpacing ,y: center.y )
                 case .Right:
-                    button.center = CGPoint(x: center.x + (index * width) ,y: center.y)
+                    button.center = CGPoint(x: center.x + (index * width) + newSpacing ,y: center.y)
                 case .None:
                     print("None")
                     

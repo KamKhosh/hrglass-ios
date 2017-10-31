@@ -57,6 +57,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
+        usernameField.attributedPlaceholder =
+            NSAttributedString(string: "Email", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        passwordField.attributedPlaceholder =
+            NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+    
         
     }
     
@@ -165,7 +171,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                 }else if error == nil {
                     
                     //Check if firebase Userdata exists, if not create user
-                    
                     let ref = Database.database().reference().child("Users").child((user?.uid)!)
                     
                     ref.observeSingleEvent(of: .value, with: { snapshot in

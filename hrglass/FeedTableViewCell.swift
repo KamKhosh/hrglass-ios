@@ -166,9 +166,7 @@ class FeedTableViewCell: UITableViewCell {
                                 
                                 //Liked Dictionary Cleanup
                                 let newdata: NSMutableDictionary = self.dataManager.postsCleanup(dictionary: data).mutableCopy() as! NSMutableDictionary
-                                
                                 newdata.removeObject(forKey: self.postUserId)
-                                
                                 
                                 let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
                                 
@@ -232,7 +230,6 @@ class FeedTableViewCell: UITableViewCell {
                     if likes == nil{
                         likes = 0;
                     }
-                
                     
                     let tempNum = likes! + 1
                     postLikesRef.setValue(tempNum)

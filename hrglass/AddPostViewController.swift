@@ -156,7 +156,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         //In case phone is in silent mode
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
 
-        self.view?.backgroundColor = UIColor(white: 1, alpha: 1.0)
+//        self.view?.backgroundColor = UIColor(white: 1, alpha: 1.0)
         
         //set nav bar
         self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
@@ -215,6 +215,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             print("Selected Tab Value")
             print(self.selectedTab)
             self.tabPassedFromParent = 0
+        }else{
+            self.tabBar.selectedItem = self.tabBar.items?[0]
+            
         }
         
         
@@ -440,6 +443,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         shockedBtn.addTarget(self, action: #selector(self.shockedAction), for: .touchUpInside)
         
         moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, offset: false, direction: .Down)
+        
+        //tighten the buttons
+        moodMenu.spacing = -10.0
         
         self.view.addSubview(moodMenu)
         moodMenu.isHidden = true
@@ -756,7 +762,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func loadRecordingUI() {
         recordButton = UIButton(frame: CGRect(x: 0, y: 0, width: self.recordingView.bounds.width, height: self.recordingView.bounds.height))
         recordButton.setTitle("Tap to Record", for: .normal)
-        recordButton.setTitleColor(UIColor.black, for: .normal)
+        recordButton.setTitleColor(UIColor.white, for: .normal)
         recordButton.titleLabel?.textAlignment = .center
         recordButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
         recordButton.addTarget(self, action: #selector(recordTapped), for: .touchUpInside)
@@ -1381,6 +1387,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 
     func setupTabViews(){
         
+        
+        
+        
         //Start all views other than the PhotoView off to the right of the Screen
         self.recenterResize()
         
@@ -1421,7 +1430,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.photoCollectionView.allowsSelection = true
         self.photoCollectionView.allowsMultipleSelection = false
         self.photoCollectionView.center = self.currentTabView.center
-        self.photoCollectionView.backgroundColor = UIColor.white
+        self.photoCollectionView.backgroundColor = UIColor.black
         self.photoCollectionView.delegate = self
         self.photoCollectionView.dataSource = self
         
@@ -1446,7 +1455,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.videoCollectionView.allowsSelection = true
         self.videoCollectionView.allowsMultipleSelection = false
         self.videoCollectionView.center = center
-        self.videoCollectionView.backgroundColor = UIColor.white
+        self.videoCollectionView.backgroundColor = UIColor.black
         self.videoCollectionView.delegate = self
         self.videoCollectionView.dataSource = self
         
@@ -1462,7 +1471,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textPostView = UITextField(frame:CGRect.zero)
         self.textPostView.frame.size = self.currentTabView.frame.size
         self.textPostView.placeholder = "What's on your mind?"
-        self.textPostView.backgroundColor = UIColor.white
+        textPostView.attributedPlaceholder =
+            NSAttributedString(string: "What's on your mind?", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        self.textPostView.backgroundColor = UIColor.black
+        self.textPostView.tintColor = UIColor.white
+        self.textPostView.textColor = UIColor.white
         self.textPostView.center = center
         self.textPostView.tag = 3
         self.textPostView.delegate = self
@@ -1472,8 +1485,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundColorBtn = UIButton(frame: CGRect(x: 15,y: self.tabBar.frame.minY - 50, width: 30,height: 30))
         self.backgroundColorBtn.clipsToBounds = true
         self.backgroundColorBtn.layer.cornerRadius = backgroundColorBtn.frame.width / 2
-        self.backgroundColorBtn.backgroundColor = UIColor.white
-        self.backgroundColorBtn.layer.borderColor = UIColor.black.cgColor
+        self.backgroundColorBtn.backgroundColor = UIColor.black
+        self.backgroundColorBtn.layer.borderColor = UIColor.white.cgColor
         self.backgroundColorBtn.layer.borderWidth = 1.0
         self.backgroundColorBtn.addTarget(self, action: #selector(toggleBackgroundColorSliderVisibility), for: .touchUpInside)
         
@@ -1481,7 +1494,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textColorBtn.clipsToBounds = true
         self.textColorBtn.layer.cornerRadius = textColorBtn.frame.width / 2
         self.textColorBtn.backgroundColor = UIColor.black
-        self.textColorBtn.layer.borderColor = UIColor.black.cgColor
+        self.textColorBtn.layer.borderColor = UIColor.white.cgColor
         self.textColorBtn.layer.borderWidth = 1.0
         self.textColorBtn.addTarget(self, action: #selector(toggleTextColorSliderVisibility), for: .touchUpInside)
         self.textColorBtn.setTitle("T", for: .normal)
@@ -1496,7 +1509,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundSlider = ColorSlider(frame: CGRect(x: 55, y: self.backgroundColorBtn.frame.minY + 5,width:self.currentTabView.frame.width * 0.6, height:20))
         self.backgroundSlider.orientation = .horizontal
         self.backgroundSlider.borderWidth = 2.0
-        self.backgroundSlider.borderColor = UIColor.black
+        self.backgroundSlider.borderColor = UIColor.white
         self.backgroundSlider.previewEnabled = true
         self.backgroundSlider.addTarget(self, action: #selector(changedBackgroundColor(_:)), for: .valueChanged)
         self.backgroundSlider.isHidden = true
@@ -1505,7 +1518,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.textSlider.orientation = .vertical
         self.textSlider.borderWidth = 2.0
-        self.textSlider.borderColor = UIColor.black
+        self.textSlider.borderColor = UIColor.white
         self.textSlider.previewEnabled = true
         self.textSlider.addTarget(self, action: #selector(changedTextColor(_:)), for: .valueChanged)
         self.textSlider.isHidden = true
@@ -1528,7 +1541,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.recordingView = UIView(frame:CGRect.zero)
         self.recordingView.frame.size = self.currentTabView.frame.size
-        self.recordingView.backgroundColor = UIColor.white
+        self.recordingView.backgroundColor = UIColor.black
         self.recordingView.center = center
         self.recordingView.tag = 4
         
@@ -1542,19 +1555,19 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.musicView = UIView(frame:CGRect.zero)
         self.musicView.frame.size = self.currentTabView.frame.size
-        self.musicView.backgroundColor = UIColor.white
+        self.musicView.backgroundColor = UIColor.black
         self.musicView.center = center
         self.musicView.tag = 5
         
         //choose music lable setup
         let label: UILabel = UILabel(frame: CGRect(x: self.musicView.frame.width / 2 - 100,y: 10 ,width: 200, height:30))
         label.text = "Choose a music library"
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor.white
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
         
         let appleLibraryBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 - self.musicView.frame.width / 4  - 10,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
-        appleLibraryBtn.setImage(UIImage(named:"appleMusicIcon"), for: .normal)
+        appleLibraryBtn.setImage(UIImage(named:"appleMusicIcon")?.transform(withNewColor: UIColor.white), for: .normal)
         appleLibraryBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
         appleLibraryBtn.contentMode = .scaleAspectFill
         
@@ -1570,12 +1583,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         //only add localMusic Button for now
         musicView.addSubview(localMusicBtn)
         
-       
         
-        
-
         //music search bar setup, not currently used
-        
 //        self.musicSearch = UISearchBar(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicView.bounds.minY, width:self.musicView.bounds.width, height: 44))
 //        self.musicSearch.showsCancelButton = true;
 //        self.musicSearch.barStyle = .default
@@ -1609,23 +1618,26 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.linkTextField = UITextField(frame: CGRect.zero)
         self.linkTextField.frame.size = CGSize(width: self.currentTabView.frame.width - 20, height: self.currentTabView.frame.height/4)
         self.linkTextField.center = center
-        self.linkTextField.backgroundColor = UIColor.white
+        self.linkTextField.backgroundColor = UIColor.black
         self.linkTextField.adjustsFontSizeToFitWidth = true
         self.linkTextField.clearButtonMode = .whileEditing
         self.linkTextField.returnKeyType = .done
         self.linkTextField.tag = 6
-        self.linkTextField.textColor = UIColor.darkGray
-        self.linkTextField.backgroundColor = UIColor.init(white: 1, alpha: 0.8)
+        self.linkTextField.textColor = UIColor.white
+        self.linkTextField.tintColor = UIColor.white
+//        self.linkTextField.backgroundColor = UIColor.init(white: 1, alpha: 0.8)
         
         let bottomLine = UIView(frame: CGRect(x: self.linkContentView.bounds.minX, y:self.linkContentView.bounds.maxY, width: self.currentTabView.frame.width - 20, height: 1))
         bottomLine.backgroundColor = UIColor.white
         
         self.linkTextField.delegate = self
-        self.linkTextField.placeholder = "Paste a link"
+        linkTextField.attributedPlaceholder =
+            NSAttributedString(string: "Paste a link", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
         self.linkTextField.addSubview(bottomLine)
         self.linkTextField.textAlignment = .center
-        
     }
+    
 
     //CAMERA VIEW, TAG 7
     func setupCameraView(center: CGPoint){
@@ -1635,7 +1647,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.cameraView.frame.size = self.currentTabView.frame.size
         self.cameraView.center = center
         self.cameraView.tag = 7
-        self.cameraView.layer.backgroundColor = UIColor.white.cgColor
+        self.cameraView.layer.backgroundColor = UIColor.black.cgColor
         self.cameraView.contentMode = .scaleAspectFit
         
     }
@@ -1647,6 +1659,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         tabBar.delegate = self
         UITabBar.appearance().layer.borderWidth = 0.0
         UITabBar.appearance().clipsToBounds = true
+        
+        for item: UITabBarItem in tabBar.items!{
+            let newImage = item.image?.transform(withNewColor: UIColor.white)
+            item.image = newImage
+        }
+        
 //        self.tabBar.selectedItem = tabBar.items?[0]
 
     }
@@ -1693,6 +1711,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 moveViews(newView: self.linkTextField)
                 
             case 7:
+                
                 print("Camera Chosen")
                 moveViews(newView: self.cameraView)
                 
@@ -1702,11 +1721,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
                 present(imagePicker, animated: true, completion: {
                     
-                    
                     self.tabBar(self.tabBar, didSelect: (self.tabBar.items?[0])!)
                     self.tabBar.selectedItem = self.tabBar.items?[0]
 //                    self.moveViews(newView: self.photoCollectionView)
-                
                 })
                 
             default:

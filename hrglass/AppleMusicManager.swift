@@ -129,7 +129,8 @@ class AppleMusicManager {
             
             guard err == nil else {
                 
-                print("An error occured. Handle it here.")
+                print(err?.localizedDescription ?? "An error occured")
+            
                 return
             }
             
@@ -191,6 +192,8 @@ class AppleMusicManager {
             }
         }
     }
+    
+    
     
     
     

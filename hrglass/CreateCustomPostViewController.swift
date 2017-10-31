@@ -42,6 +42,15 @@ class CreateCustomPostViewController: UIViewController {
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationBar.shadowImage = UIImage()
         
+        
+        self.newsBtn.setImage(UIImage(named: "news")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.videoBtn.setImage(UIImage(named: "videocall")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.textBtn.setImage(UIImage(named: "pencil")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.recordingBtn.setImage(UIImage(named: "microphone")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.musicBtn.setImage(UIImage(named: "music")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.galleryBtn.setImage(UIImage(named: "gallery")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.cameraBtn.setImage(UIImage(named: "camera")?.transform(withNewColor: UIColor.white), for: .normal)
+        
         self.checkForSavedPost()
     }
     

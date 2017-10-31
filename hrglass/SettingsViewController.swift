@@ -93,7 +93,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         if tableOptions[indexPath.row] != .nothing{
             
             cell.title?.text = tableOptions[indexPath.row].rawValue
-            cell.title?.textColor = UIColor.black
+            cell.title?.textColor = UIColor.white
             cell.title?.textAlignment = .left
         }
         

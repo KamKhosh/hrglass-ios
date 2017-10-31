@@ -52,6 +52,22 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
+        //set placeholder's and text color
+        fullnameField.attributedPlaceholder =
+            NSAttributedString(string: "Fullname", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        passwordField.attributedPlaceholder =
+            NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        confirmPasswordField.attributedPlaceholder =
+            NSAttributedString(string: "Confirm Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        emailField.attributedPlaceholder =
+            NSAttributedString(string: "Email", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
+        usernameField.attributedPlaceholder =
+            NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+        
         
     }
     

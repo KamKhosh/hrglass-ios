@@ -120,6 +120,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         panGesture.minimumNumberOfTouches = 1
         panGesture.delegate = self
         
+        
         self.contentView.backgroundColor = UIColor.clear
         self.contentView.clipsToBounds = false
         
@@ -140,41 +141,47 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.alphaView.frame.size = CGSize(width: self.contentView.frame.size.width * 3.0 , height: self.contentView.frame.size.height * 3.0)
         
+        //add Blur Effect to alpha view -- not quite the right blur effect
+        
+//        let blur:UIBlurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+//        let effect = UIVisualEffectView(frame: CGRect(x:0,y:0,width:alphaView.layer.frame.width, height:alphaView.layer.frame.height))
+//        effect.effect = blur
+//        alphaView.addSubview(effect)
+
         //Auto play if content is of the following categories
         if self.postData.category == .Music{
-            
+        
             //maximize music view
             self.maximizeMusicView()
-            
         }else if self.postData.category == .Video{
             
             self.playContentBtn(self)
-            
         }else if self.postData.category == .Recording{
             
             self.playContentBtn(self)
-            
         }
     }
     
     
-
-    
     func viewSetup(){
         
+        //set icons to white
         self.moreBtn.setImage(UIImage(named: "moreVertical")?.transform(withNewColor: UIColor.white), for: .normal)
         self.minimizeBtn.setImage(UIImage(named: "chevronDown")?.transform(withNewColor: UIColor.white), for: .normal)
         self.commentBtn.setImage(UIImage(named: "comments")?.transform(withNewColor: UIColor.white), for: .normal)
         self.likeBtn.setImage(UIImage(named: "thumbs up")?.transform(withNewColor: UIColor.white), for: .normal)
         
+        //song image view setup
         self.songImageView.layer.cornerRadius = self.songImageView.frame.width/2
         self.songImageView.clipsToBounds = true
         self.songImageView.contentMode = .scaleAspectFill
         
+        //profile photo image view
         self.profilePhotoImageView.layer.cornerRadius = self.profilePhotoImageView.frame.width/2
         self.profilePhotoImageView.clipsToBounds = true
         self.profilePhotoImageView.contentMode = .scaleAspectFill
         
+        //popup view setup
         self.popupView.layer.cornerRadius = 8.0
         self.popupView.layer.masksToBounds = true
         self.popupView.clipsToBounds = true
@@ -184,6 +191,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.popupView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.popupView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
+        //shadow view setup
         self.shadowView.layer.cornerRadius = 8.0
         self.shadowView.layer.masksToBounds = false
         self.shadowView.layer.shadowColor = UIColor.black.cgColor
@@ -197,11 +205,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         if (self.source == "Profile"){
             
-            
             //hide like, more buttons
             self.likeBtn.isHidden = true
             self.moreBtn.isHidden = true
-            
         }
     }
     
@@ -224,7 +230,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //                self.setupViewingStackView()
 //                self.setupSecondaryPostView(user: user, secondaryPostData: self.postData.secondaryPost)
 //            }
-            
 
             let name: String = user.value(forKey: "name") as! String
             
@@ -250,7 +255,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             })
         
             
-            
             //SETUP LIKES
             if let likedDict: NSDictionary = self.postData.usersWhoLiked {
                 
@@ -268,10 +272,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 }
             }
             
-            
             //if there is a song with this post, extraData won't be empty/nil
             if (self.postData.songString != "" && self.postData.songString != nil){
-                
                 
                 //configure the music view with the song data
                 self.songLengthSlider.minimumValue = 0
@@ -287,46 +289,57 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
                 
                 self.songLengthSlider.value = 0.0
-                self.songTimeSpentLbl.text = "0.00"
+                self.songTimeSpentLbl.text = "0:00"
                 
                 if (source == "apple"){
-                    //songs from apple music
+                    //song is from apple music
                     
-                    self.getSongJson(completion: { (response) in
+                    self.setupMusicAccess(completion: { (authorized) in
+                        //check if apple music is authorized
                         
-                        let data = response.value as! NSDictionary
-                        let array = data.value(forKey: "results") as! NSArray
-
-                        let songData: NSDictionary = array[0] as! NSDictionary
-                        print(songData)
-                        let previewString: String = songData.value(forKey: "previewUrl") as! String
-                        let trackId: NSInteger = songData.value(forKey: "trackId") as! NSInteger
-                        let millis = songData.value(forKey: "trackTimeMillis") as! NSInteger
-                        self.songLength = TimeInterval(millis)
-                        print(self.songLength)
-                        
-                        
-                        self.appleMusicManager.appleMusicRequestPermission()
-
-                        if (SKCloudServiceController.authorizationStatus() == .authorized){
-                            //play song
-                            self.appleMusicPlayTrackId(ids: [String(trackId)])
+                        if authorized{
+                            //apple music access authorized
                             
-                        }else{
-                            //play preview -- 30 seconds in millis
-                            self.songLength = 30 * 1000
-                            
-                            do {
+                            self.getSongJson(completion: { (response) in
+                                //get song data using the PostData song string
                                 
-                               self.avMusicPlayer = try? AVAudioPlayer(contentsOf: URL(string: previewString)!)
-                            }
-                            
-                            self.playPauseSongAction(self)
+                                let data = response.value as! NSDictionary
+                                let array = data.value(forKey: "results") as! NSArray
+                                
+                                let songData: NSDictionary = array[0] as! NSDictionary
+                                print(songData)
+                                let previewString: String = songData.value(forKey: "previewUrl") as! String
+                                let trackId: NSInteger = songData.value(forKey: "trackId") as! NSInteger
+                                let millis = songData.value(forKey: "trackTimeMillis") as! NSInteger
+                                self.songLength = TimeInterval(millis)
+                                print(self.songLength)
+                                
+                                self.appleMusicManager.appleMusicRequestPermission()
+                                
+                                if (SKCloudServiceController.authorizationStatus() == .authorized){
+                                    //play song
+                                    self.appleMusicPlayTrackId(ids: [String(trackId)])
+                                    
+                                }else{
+                                    //play preview -- 30 seconds in millis
+                                    self.songLength = 30 * 1000
+                                    
+                                    do {
+                                        self.avMusicPlayer = try? AVAudioPlayer(contentsOf: URL(string: previewString)!)
+                                    }
+                                    
+                                    self.playPauseSongAction(self)
+                                }
+                                
+                                let seconds = self.songLength / 1000
+                                self.songLengthLbl.text = seconds.minuteSecond
+                            })
+                        }else{
+                            //apple music not authorized
                         }
-                        
-                        let seconds = self.songLength / 1000
-                        self.songLengthLbl.text = seconds.minuteSecond
                     })
+                    
+                    
                     
                     
                 }else if (source == "local"){
@@ -335,12 +348,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     
                     
                 }else{
-                    
-                    
+                
                     //add other sources later
                 }
                 
 
+                
                 //set the song art as the background image adding a blur and gradient layer
                 imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
                     
@@ -368,7 +381,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     //Adding Gradient Sublayer
                     let gradient: CAGradientLayer = CAGradientLayer()
                     gradient.frame = self.blurredMusicImageView.frame
-                    gradient.colors = [UIColor.clear.cgColor, UIColor.white.cgColor]
+                    gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
                     gradient.locations = [0.0, 1.0]
                     self.blurredMusicImageView.layer.insertSublayer(gradient, at: 0)
                 })
@@ -472,6 +485,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             self.songLengthSlider.setValue(Float(millis/self.songLength * 100), animated: true)
             
+            //if the song reaches the end. Stop the player
+            if (millis == self.songLength){
+                
+                //pause actions
+                self.playPauseSongAction(self)
+                self.applicationMusicPlayer.stop()
+            }
+            
         }else if(avMusicPlayer != nil){
             
             
@@ -509,6 +530,34 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             task.resume()
             
             return
+        }
+    }
+    
+    
+    //check if apple music/local music is authorized. If not, ask. Completion returns true if authorized
+    func setupMusicAccess(completion: @escaping (Bool) -> Void){
+        
+        if (MPMediaLibrary.authorizationStatus() == .authorized){
+            
+            //authorized, complete true
+            completion(true)
+            
+        }else{
+            //if not authorized, ask for it
+            MPMediaLibrary.requestAuthorization { (status) in
+                
+                switch status
+                {
+                case .authorized:
+                    //user allowed
+                    completion(true)
+                    
+                case .denied, .restricted, .notDetermined:
+                    //can't access music, completion yields false
+                    print("Not allowed")
+                    completion(false)
+                }
+            }
         }
     }
 
@@ -658,7 +707,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //            self.dataManager.setURLView(urlString: secondaryPostData.value(forKey: "secondaryData") as! String, completion: { (image, label) in
 //                
 //                self.secondaryContentImageView.image = image
-//                
 //                self.secondaryLinkLbl.adjustsFontSizeToFitWidth = true
 //                self.secondaryLinkLbl.numberOfLines = 3
 //                self.secondaryLinkLbl.backgroundColor = UIColor.darkGray
@@ -806,6 +854,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         commentsVC.view.frame = self.popupView.bounds
         commentsVC.view.center = self.popupView.center
         commentsVC.alphaView.backgroundColor = UIColor.clear
+        
 
         UIView.transition(with: self.view, duration: 0.5, options: .transitionCurlDown, animations: {
             self.view.addSubview(commentsVC.view)
@@ -889,6 +938,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         
         if self.songIsPlaying{
+            //if song was playing, set icon to play and pause the music player
             self.songIsPlaying = false
             self.playMusicBtn.setImage(UIImage(named: "play"), for: .normal)
             
@@ -902,6 +952,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             
         }else{
+            //if song was paused, set icon to pause image and play the music player
             self.songIsPlaying = true
             self.playMusicBtn.setImage(UIImage(named: "pause"), for: .normal)
 

@@ -182,7 +182,7 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         addChildViewController(postVC)
         
         postVC.view.frame = view.bounds
-        postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         
         view.addSubview(postVC.view)
         postVC.didMove(toParentViewController: self)

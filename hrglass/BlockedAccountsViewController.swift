@@ -38,7 +38,7 @@ class BlockedAccountsViewController: UIViewController, UITableViewDelegate, UITa
         
         //nav bar setup
         self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
-        self.navigationBar.backgroundColor = UIColor.white
+        self.navigationBar.backgroundColor = UIColor.black
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationBar.shadowImage = UIImage()
         
@@ -68,13 +68,8 @@ class BlockedAccountsViewController: UIViewController, UITableViewDelegate, UITa
                 })
                 alert.addAction(ok)
                 self.present(alert, animated: true, completion:nil)
-                
-                
             }
-            
         })
-        
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -115,7 +110,7 @@ class BlockedAccountsViewController: UIViewController, UITableViewDelegate, UITa
         let name: String = blockedUserDict.value(forKey: "name") as! String
 
         cell.userDictionary = blockedUserDict
-        cell.userImageView.backgroundColor = UIColor.white
+        cell.userImageView.backgroundColor = UIColor.black
         
         cell.moreBtn.layer.borderColor = colors.getOrangeRedColor().cgColor
         cell.moreBtn.layer.borderWidth = 1.0

@@ -15,6 +15,7 @@
 		5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */; };
 		5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403661F3101370024EBFF /* RequestTableViewCell.swift */; };
 		5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403681F3101500024EBFF /* InboxTableViewCell.swift */; };
+		5E174AAB1FA91ED90034B33E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E174AAA1FA91ED90034B33E /* Images.xcassets */; };
 		5E2032251EFB17740006D2CE /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2032241EFB17740006D2CE /* UsernameViewController.swift */; };
 		5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */; };
 		5E23089D1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E23089B1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift */; };
@@ -66,7 +67,6 @@
 		5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E60F5371F42270900569F74 /* ColorSlider.swift */; };
 		5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */; };
 		5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7197AD1F1D502900411A08 /* AWSManager.swift */; };
-		5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E74F1EE1F4626A300B40293 /* Images.xcassets */; };
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
 		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
 		5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */; };
@@ -85,6 +85,7 @@
 		5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		5E1403661F3101370024EBFF /* RequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTableViewCell.swift; sourceTree = "<group>"; };
 		5E1403681F3101500024EBFF /* InboxTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxTableViewCell.swift; sourceTree = "<group>"; };
+		5E174AAA1FA91ED90034B33E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5E2032231EFB07BD0006D2CE /* hrglass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = hrglass.entitlements; sourceTree = "<group>"; };
 		5E2032241EFB17740006D2CE /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
 		5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateCustomPostViewController.swift; sourceTree = "<group>"; };
@@ -149,7 +150,6 @@
 		5E60F5371F42270900569F74 /* ColorSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSlider.swift; sourceTree = "<group>"; };
 		5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedUserCell.swift; sourceTree = "<group>"; };
 		5E7197AD1F1D502900411A08 /* AWSManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
-		5E74F1EE1F4626A300B40293 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
 		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostTableViewCell.swift; sourceTree = "<group>"; };
@@ -211,7 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */,
-				5E74F1EE1F4626A300B40293 /* Images.xcassets */,
+				5E174AAA1FA91ED90034B33E /* Images.xcassets */,
 				5E24BD7C1EB275800047ED50 /* hrglass */,
 				5E24BD7B1EB275800047ED50 /* Products */,
 				4AD7672E33FE95F97E22C1D4 /* Pods */,
@@ -489,8 +489,8 @@
 			files = (
 				5E24BD881EB275800047ED50 /* LaunchScreen.storyboard in Resources */,
 				5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */,
+				5E174AAB1FA91ED90034B33E /* Images.xcassets in Resources */,
 				5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */,
-				5E74F1EF1F4626A300B40293 /* Images.xcassets in Resources */,
 				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
 				5E0D9FD71F89588D006AFB18 /* CustomRefreshControl.xib in Resources */,
 				5E24BD831EB275800047ED50 /* Main.storyboard in Resources */,
