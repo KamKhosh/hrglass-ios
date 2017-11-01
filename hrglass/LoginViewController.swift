@@ -302,7 +302,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         //adds a line beneath the view in the parameters
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
-        view.layer.borderColor = UIColor.black.cgColor
+        view.layer.borderColor = UIColor.white.cgColor
         view.layer.borderWidth = 1.0
         view.alpha = 0.2
         view.tag = tag
@@ -316,7 +316,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         let views: [UIView] = self.view.subviews
         for view in views {
             if (view.tag == 1 || view.tag == 2){
-                view.layer.borderColor = UIColor.black.cgColor
+                view.layer.borderColor = UIColor.white.cgColor
             }
         }
     }

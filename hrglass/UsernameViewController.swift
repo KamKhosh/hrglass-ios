@@ -22,6 +22,10 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     @IBOutlet weak var submitBtn: UIButton!
     
     @IBOutlet weak var backBtn: UIButton!
+    
+    
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -35,6 +39,9 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
             self.backBtn.isHidden = false
         }
         
+        
+        usernameField.attributedPlaceholder =
+            NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
         
         //swipe down gesture setup -- to dismiss keyboard
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismisskeyboard))
@@ -88,8 +95,8 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
                     UserDefaults.standard.synchronize()
                     
                     let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
-                    let usernames = self.ref.child("Usernames")
-                    usernames.setValue("0", forKey: self.usernameField.text!)
+                    let usernames = self.ref.child("Usernames").child(self.currentUserId!)
+                    usernames.setValue(self.usernameField.text!)
                     usernameRef.setValue(self.usernameField.text!)
                     
                     if self.parentView == "feedView"{
@@ -114,7 +121,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     func addBottomLine(forView: UITextField, tag: Int){
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
-        view.layer.borderColor = UIColor.black.cgColor
+        view.layer.borderColor = UIColor.white.cgColor
         view.layer.borderWidth = 1.0
         view.alpha = 0.3
         view.tag = tag
@@ -126,7 +133,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     //username exitst alert
     func usernameExistsAlert(){
         
-        let alert: UIAlertController = UIAlertController(title: "Username already take", message: "choose another", preferredStyle: .actionSheet)
+        let alert: UIAlertController = UIAlertController(title: "Username already taken", message: "choose another", preferredStyle: .actionSheet)
         
         let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
@@ -147,7 +154,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         let views: [UIView] = self.view.subviews
         for view in views {
             if (view.tag == 1){
-                view.layer.borderColor = UIColor.black.cgColor
+                view.layer.borderColor = UIColor.white.cgColor
             }
         }
     }
@@ -163,7 +170,6 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
-        
         if segue.identifier == "unwindToAccounts"{
             
             let vc: AccountViewController = segue.destination as! AccountViewController

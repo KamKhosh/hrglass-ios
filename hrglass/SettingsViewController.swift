@@ -18,18 +18,17 @@ enum Options: String {
     case help = "Help/Support"
     case logout = "Logout"
     case nothing = ""
-    
 }
 
-class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+
+class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    let dataManager: DataManager = DataManager()
     var tableOptions = [Options]()
     
     @IBOutlet weak var navigationBar: UINavigationBar!
-    let dataManager: DataManager = DataManager()
-    
 
-    
     @IBOutlet weak var tableView: UITableView!
     
     

@@ -173,8 +173,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             usernameRef.setValue(self.usernameField.text!)
                             
                             //set username in username list
-                            let usernames = self.ref.child("Usernames")
-                            usernames.setValue("0", forKey: self.usernameField.text!)
+                            let usernames = self.ref.child("Usernames").child(Auth.auth().currentUser!.uid)
+                            usernames.setValue(self.usernameField.text!)
                             
                             
                             self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
@@ -294,7 +294,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     func addBottomLine(forView: UITextField, tag: Int){
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
-        view.layer.borderColor = UIColor.black.cgColor
+        view.layer.borderColor = UIColor.white.cgColor
         view.layer.borderWidth = 1.0
         view.alpha = 0.2
         view.tag = tag
@@ -433,7 +433,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         let views: [UIView] = self.view.subviews
         for view in views {
             if (view.tag == 1 || view.tag == 2 || view.tag == 3 || view.tag == 4 || view.tag == 5 ){
-                view.layer.borderColor = UIColor.black.cgColor
+                view.layer.borderColor = UIColor.white.cgColor
             }
         }
     }

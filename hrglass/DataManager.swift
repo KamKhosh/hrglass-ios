@@ -342,7 +342,7 @@ class DataManager {
      
      ***************************************************************************************/
     
-    //Uses a Boolean Completion to determine if the current user is followed by the parameter userId
+    //Uses a Boolean Completion to determine if the current username exists
     func checkIfUsernameExists(username: String, completion:@escaping (Bool) -> ()){
         
         let usernameRef = Database.database().reference().child("Usernames").child(username)

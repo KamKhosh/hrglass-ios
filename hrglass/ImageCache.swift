@@ -24,7 +24,6 @@ class ImageCache {
         session = URLSession.shared
         task = URLSessionDownloadTask()
         self.cache = NSCache()
-        
     }
  
 
@@ -46,7 +45,6 @@ class ImageCache {
             
         }else{
             //if the image is not cached
-            
             if let url:URL = URL(string:urlString as String){
                 
                 task = session.downloadTask(with: url, completionHandler: { (location, response, error) -> Void in
@@ -54,7 +52,6 @@ class ImageCache {
                     if let data = try? Data(contentsOf: url){
                         
                         let img:UIImage! = UIImage(data: data)
-                        
                         self.cache.setObject(img, forKey:urlString as NSString)
                         
                         DispatchQueue.main.async(execute: { () -> Void in
@@ -62,9 +59,7 @@ class ImageCache {
                         })
                     }
                 })
-                
                 task.resume()
-                
             }else{
                 
                 let img:UIImage! = UIImage(named: "clearPlaceholderImage")
@@ -82,9 +77,7 @@ class ImageCache {
     
     func replacePhotoForKey(url: String, image: UIImage){
         
-        
         self.cache.setObject(image, forKey: url as NSString)
-        
         
     }
 }

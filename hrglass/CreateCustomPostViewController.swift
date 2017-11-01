@@ -42,7 +42,6 @@ class CreateCustomPostViewController: UIViewController {
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationBar.shadowImage = UIImage()
         
-        
         self.newsBtn.setImage(UIImage(named: "news")?.transform(withNewColor: UIColor.white), for: .normal)
         self.videoBtn.setImage(UIImage(named: "videocall")?.transform(withNewColor: UIColor.white), for: .normal)
         self.textBtn.setImage(UIImage(named: "pencil")?.transform(withNewColor: UIColor.white), for: .normal)
@@ -60,6 +59,7 @@ class CreateCustomPostViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    
     func checkForSavedPost(){
         
         if let savedPost: NSDictionary = UserDefaults.standard.dictionary(forKey: "savedPost") as NSDictionary?{
@@ -72,14 +72,14 @@ class CreateCustomPostViewController: UIViewController {
                 let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) {(_) -> Void in
                     
                     alert.dismiss(animated: true, completion: nil)
-                    
                 }
+                
                 let delete: UIAlertAction = UIAlertAction(title: "Delete Saved Post", style: .default) {(_) -> Void in
                     
                     UserDefaults.standard.set([:], forKey: "savedPost")
                     alert.dismiss(animated: true, completion: nil)
-                    
                 }
+                
                 delete.setValue(UIColor.red, forKey: "titleTextColor")
                 
                 let view: UIAlertAction = UIAlertAction(title: "View Post", style: .default) {(_) -> Void in
