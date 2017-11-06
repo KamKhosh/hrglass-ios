@@ -323,6 +323,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        self.loginAction(self)
+        
+        return true
+    }
+    
+    
     func keyboardWillShow(notification: NSNotification) {
         
         self.scrollView.isScrollEnabled = true

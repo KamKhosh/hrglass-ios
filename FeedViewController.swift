@@ -36,7 +36,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     //refresh control
     var refreshControl: UIRefreshControl!
-    var customRefreshView: CustomRefreshControlView!
     
     //Current User
     var loggedInUser: User!
@@ -193,14 +192,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     
 
-    func loadCustomRefreshContents() {
-        let refreshContents = Bundle.main.loadNibNamed("CustomRefreshControl", owner: self, options: nil)
-        
-        customRefreshView = refreshContents?.first as! CustomRefreshControlView
-        customRefreshView.frame = refreshControl.bounds
-        customRefreshView.spinView.startAnimating()
-        refreshControl.addSubview(customRefreshView)
-    }
+//    func loadCustomRefreshContents() {
+//        let refreshContents = Bundle.main.loadNibNamed("CustomRefreshControl", owner: self, options: nil)
+//
+//        customRefreshView = refreshContents?.first as! CustomRefreshControlView
+//        customRefreshView.frame = refreshControl.bounds
+//        customRefreshView.spinView.startAnimating()
+//        refreshControl.addSubview(customRefreshView)
+//    }
     
     /*********************************
      *

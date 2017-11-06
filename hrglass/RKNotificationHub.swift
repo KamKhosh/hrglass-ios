@@ -31,7 +31,6 @@ class RKNotificationHub: NSObject {
             checkZero()
             expandToFitLargerDigits()
         }
-
         get {
             return storeCount
         }

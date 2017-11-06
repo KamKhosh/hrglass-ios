@@ -22,6 +22,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     @IBOutlet weak var noCommentsLbl: UILabel!
     @IBOutlet weak var postBtn: UIButton!
     @IBOutlet weak var keyboardHeightLayoutConstraint: NSLayoutConstraint!
+    @IBOutlet weak var minimizeBtn: UIButton!
     
     var dataManager: DataManager = DataManager()
     var commentData: NSDictionary!
@@ -55,10 +56,10 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         self.getMyUserData()
         self.setCommentData()
         
+        // Do any additional setup after loading the view.
         self.tableView.tableFooterView =  UIView.init(frame:CGRect(x:0, y:0, width:self.tableView.frame.size.width, height:1))
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 140
-        // Do any additional setup after loading the view.
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -72,6 +73,8 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -91,6 +94,8 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         self.addCommentTextView.layer.borderWidth = 1.0
         self.addCommentTextView.layer.borderColor = UIColor.lightGray.cgColor
         self.addCommentTextView.layer.cornerRadius = 5.0
+        
+        self.minimizeBtn.setImage(UIImage(named:"chevronDown")?.transform(withNewColor: UIColor.white), for: .normal)
     }
     
     
@@ -133,7 +138,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             }
             self.tableView.reloadData()
         }else{
-            
             
             self.dataManager.getCommentDataFromFirebase(uid: self.viewingUserId, completion: { (snapshot) in
                 
@@ -284,24 +288,18 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         }else{
             self.noCommentsLbl.isHidden = true
         }
-        
         return self.commentsArray.count
     }
     
     
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        
-//        let cell: CommentTableViewCell = tableView.dequeueReusableCell(withIdentifier: "commentCell") as! CommentTableViewCell
-        
+
         let data: NSDictionary = self.commentsArray[indexPath.row] as! NSDictionary
         let text = getAttributedCellText(username: data.value(forKey: "username") as! String, comment: data.value(forKey: "comment") as! String)
-//
+
         let height: CGFloat = findHeightForText(text: text.string, havingWidth: self.popupView.frame.width - 40, andFont: UIFont.systemFont(ofSize: 14.0))
         
-//
-//        cell.commentlbl.frame = cell.contentView.frame
-//        print(String(format:"cell height %f",height))
         return height
         
     }
@@ -314,12 +312,12 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         cell.commentlbl.numberOfLines = 0;
         cell.commentlbl.lineBreakMode = NSLineBreakMode.byWordWrapping
+        cell.commentlbl.backgroundColor = UIColor.black
         let commentDict:NSDictionary = self.commentsArray[indexPath.row] as! NSDictionary
         let username: String = commentDict.value(forKey: "username") as! String
         let comment: String = commentDict.value(forKey: "comment") as! String
         
         cell.commentlbl.attributedText = getAttributedCellText(username: username, comment: comment)
-        
         
         print(String(format:"Label height %f",cell.commentlbl.frame.height))
         print(String(format:"Cell Content height %f",cell.contentView.frame.height))
@@ -339,19 +337,18 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         let fullString = String(format:"%@ : %@",username, comment)
         
+        
         //Use Attributed text to bold the username
         let attributedString = NSMutableAttributedString(string: fullString, attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 14.0)])
-        let boldFontAttribute = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14.0)]
         
-        attributedString.addAttributes(boldFontAttribute, range: NSMakeRange(0, username.characters.count + 2))
+        let boldFontAttribute = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14.0)]
+        let whiteAttribute = [NSForegroundColorAttributeName: UIColor.white]
+        attributedString.addAttributes(boldFontAttribute, range: NSMakeRange(0, username.count + 2))
+        attributedString.addAttributes(whiteAttribute, range:NSMakeRange(0, fullString.count))
         
         return attributedString
     }
     
-    
-    
-    
-
     
     
     /***********************************
@@ -360,17 +357,13 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
      *
      ***********************************/
     
-    
-    
     func textViewDidBeginEditing(_ textView: UITextView){
-        
         
         if(textView.text == self.placeholderText){
             textView.text = ""
             textView.textColor = UIColor.black
         }
     }
-    
     
     
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -387,7 +380,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     }
     
 
-    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
         if(text == "\n")
@@ -396,7 +388,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             self.addCommentTextView.endEditing(true)
             return false
         }
-        
         return true
     }
     

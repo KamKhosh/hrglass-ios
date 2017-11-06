@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E0C43F21FACF18F007B15FE /* SimpleLoadingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0C43F11FACF18E007B15FE /* SimpleLoadingAnimation.swift */; };
 		5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */; };
-		5E0D9FD11F894CD2006AFB18 /* CustomSpinningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FD01F894CD2006AFB18 /* CustomSpinningView.swift */; };
-		5E0D9FD71F89588D006AFB18 /* CustomRefreshControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E0D9FD61F89588D006AFB18 /* CustomRefreshControl.xib */; };
-		5E0D9FD91F8958B6006AFB18 /* CustomRefreshControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FD81F8958B6006AFB18 /* CustomRefreshControlView.swift */; };
 		5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */; };
 		5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */; };
 		5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403661F3101370024EBFF /* RequestTableViewCell.swift */; };
@@ -77,10 +75,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5E0C43F11FACF18E007B15FE /* SimpleLoadingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleLoadingAnimation.swift; sourceTree = "<group>"; };
 		5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
-		5E0D9FD01F894CD2006AFB18 /* CustomSpinningView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomSpinningView.swift; sourceTree = "<group>"; };
-		5E0D9FD61F89588D006AFB18 /* CustomRefreshControl.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomRefreshControl.xib; sourceTree = "<group>"; };
-		5E0D9FD81F8958B6006AFB18 /* CustomRefreshControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomRefreshControlView.swift; sourceTree = "<group>"; };
 		5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		5E1403661F3101370024EBFF /* RequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTableViewCell.swift; sourceTree = "<group>"; };
@@ -191,9 +187,7 @@
 		5E0D9FCF1F894CAE006AFB18 /* LoadingAnimationViews */ = {
 			isa = PBXGroup;
 			children = (
-				5E0D9FD01F894CD2006AFB18 /* CustomSpinningView.swift */,
-				5E0D9FD61F89588D006AFB18 /* CustomRefreshControl.xib */,
-				5E0D9FD81F8958B6006AFB18 /* CustomRefreshControlView.swift */,
+				5E0C43F11FACF18E007B15FE /* SimpleLoadingAnimation.swift */,
 			);
 			name = LoadingAnimationViews;
 			sourceTree = "<group>";
@@ -492,7 +486,6 @@
 				5E174AAB1FA91ED90034B33E /* Images.xcassets in Resources */,
 				5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */,
 				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
-				5E0D9FD71F89588D006AFB18 /* CustomRefreshControl.xib in Resources */,
 				5E24BD831EB275800047ED50 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -561,16 +554,15 @@
 				5E24BDAA1EB27CBA0047ED50 /* FeedViewController.swift in Sources */,
 				5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */,
 				5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */,
-				5E0D9FD91F8958B6006AFB18 /* CustomRefreshControlView.swift in Sources */,
 				5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */,
 				5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */,
 				5E254C551ECB775800CFBFCE /* ProfileTableViewCell.swift in Sources */,
 				5E24BDB01EB280C90047ED50 /* PostData.swift in Sources */,
 				5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */,
 				5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */,
-				5E0D9FD11F894CD2006AFB18 /* CustomSpinningView.swift in Sources */,
 				5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */,
 				5EF85DF91F9278B5008887F9 /* SettingsTableViewCell.swift in Sources */,
+				5E0C43F21FACF18F007B15FE /* SimpleLoadingAnimation.swift in Sources */,
 				5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */,
 				5E32A8561ED4703300AEF9DA /* AllPostsViewController.swift in Sources */,
 				5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */,
