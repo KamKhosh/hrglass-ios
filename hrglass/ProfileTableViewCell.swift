@@ -318,6 +318,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         self.likedBackBtn.isHidden = false
         self.likedNextBtn.isHidden = false
         self.likeViewAllBtn.isHidden = false
+        self.postsUserLikedLbl.isHidden = false
         
     }
     
@@ -326,7 +327,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         self.likedBackBtn.isHidden = true
         self.likedNextBtn.isHidden = true
         self.likeViewAllBtn.isHidden = true
-        
+        self.postsUserLikedLbl.isHidden = true
     }
 
     

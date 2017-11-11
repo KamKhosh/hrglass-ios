@@ -306,7 +306,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
-    
     /***************************************************************************************
      
      Function - refresh:
@@ -685,7 +684,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         
-        return 300.0
+        return 175.0
     }
 
     

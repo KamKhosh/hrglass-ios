@@ -61,11 +61,19 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         self.noReqLbl.isHidden = true
         self.view.addSubview(self.noReqLbl)
         
+            }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+        
         self.getUsers()
         self.getRequestData()
         
+
+        
     }
-    
     
 
     override func didReceiveMemoryWarning() {
@@ -399,7 +407,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             profileVC.parentView = "discover"
             
             profileVC.currentlyViewingUID = self.selectedUser.userID
-            profileVC.follwBtnIsUnfollow = true
+            profileVC.follwBtnIsUnfollow = false
         }
     }
 

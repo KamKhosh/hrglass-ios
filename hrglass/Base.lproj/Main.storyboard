@@ -421,7 +421,6 @@
                                                 <constraint firstItem="eOT-vo-pfp" firstAttribute="top" secondItem="VTW-Ug-UAs" secondAttribute="bottom" constant="5" id="Gor-kM-KZA"/>
                                                 <constraint firstItem="pdS-gR-mrl" firstAttribute="width" secondItem="GIV-l7-hC9" secondAttribute="width" multiplier="0.7" id="HDi-P7-wT9"/>
                                                 <constraint firstItem="FUr-O0-XUU" firstAttribute="trailing" secondItem="2Is-13-lU6" secondAttribute="leading" constant="-20" id="Mcc-0d-zmp"/>
-                                                <constraint firstItem="eOT-vo-pfp" firstAttribute="trailing" secondItem="VTW-Ug-UAs" secondAttribute="leading" id="OGx-Kg-OMT"/>
                                                 <constraint firstItem="eOT-vo-pfp" firstAttribute="leading" secondItem="11E-yz-NEW" secondAttribute="leading" id="OJu-6r-Md2"/>
                                                 <constraint firstItem="cHq-Lk-fxB" firstAttribute="top" secondItem="cUM-iV-Ss5" secondAttribute="bottom" id="OSq-YH-pYQ"/>
                                                 <constraint firstItem="cHq-Lk-fxB" firstAttribute="centerX" secondItem="cUM-iV-Ss5" secondAttribute="centerX" id="Opl-Ay-rLB"/>
@@ -442,6 +441,7 @@
                                                 <constraint firstItem="Vbh-60-vsS" firstAttribute="centerX" secondItem="FUr-O0-XUU" secondAttribute="centerX" id="thz-Bx-Lqk"/>
                                                 <constraint firstItem="cEI-Xz-VK4" firstAttribute="centerY" secondItem="2Is-13-lU6" secondAttribute="centerY" id="vzo-sQ-mDS"/>
                                                 <constraint firstItem="Vbh-60-vsS" firstAttribute="top" secondItem="FUr-O0-XUU" secondAttribute="bottom" id="wS8-DW-XkA"/>
+                                                <constraint firstAttribute="trailing" secondItem="eOT-vo-pfp" secondAttribute="trailing" constant="95" id="xDC-UP-gt9"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -2555,16 +2555,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="150" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="E7y-mS-Wxb">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="175" sectionHeaderHeight="28" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="E7y-mS-Wxb">
                                 <rect key="frame" x="0.0" y="100" width="375" height="567"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="scrollIndicatorInsets" minX="0.0" minY="10" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedCell" rowHeight="150" id="8Sf-UA-GJC" customClass="FeedTableViewCell" customModule="hrglass" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="150"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedCell" rowHeight="175" id="8Sf-UA-GJC" customClass="FeedTableViewCell" customModule="hrglass" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="175"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8Sf-UA-GJC" id="pMS-bU-cPH">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="150"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="175"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g3s-bM-5sS">
@@ -2715,9 +2714,9 @@
                                                         <constraint firstItem="2Aw-UK-r3i" firstAttribute="centerY" secondItem="Y4I-q9-uDY" secondAttribute="centerY" id="ujo-DV-fK9"/>
                                                     </constraints>
                                                 </view>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LZe-5p-Kt8">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LZe-5p-Kt8">
                                                     <rect key="frame" x="292.5" y="37" width="62.5" height="62.5"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="50"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>

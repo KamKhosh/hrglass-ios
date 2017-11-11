@@ -161,29 +161,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 
                 
                 createAccountBtn.backgroundColor = UIColor.lightGray
-                
-                //if the typed username has already been taken, usernameflag will be true and this will return
-                if self.usernameFlag {
-                    self.dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
-                        if(exists){
-                            self.chooseDifferentUsernameAlert()
-                        }else{
-                            //set username for user
-                            let usernameRef = self.ref.child("Users").child((Auth.auth().currentUser!.uid)).child("username")
-                            usernameRef.setValue(self.usernameField.text!)
-                            
-                            //set username in username list
-                            let usernames = self.ref.child("Usernames").child(Auth.auth().currentUser!.uid)
-                            usernames.setValue(self.usernameField.text!)
-                            
-                            
-                            self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
-                        }
-                    })
-                    return
-                }
-                
-                
+                self.startLoginIndicator()
                 
                 //CREATE USER AND LOGIN
                 Auth.auth().createUser(withEmail: email , password: password) { (user, error) in
@@ -202,22 +180,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             if(error == nil){
                                 //on login success, check if username is taken
                                 
-                                self.dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
-                                    
-                                    if exists{
-                                        self.usernameFlag = true
-                                        userData.setValue("", forKey: "username")
-                                        //show invalid username alert
                                         userRef.setValue(userData, withCompletionBlock: { (error, ref) in
-                                            self.chooseDifferentUsernameAlert()
-                                        })
-                                    }else{
-                                        
-                                        userRef.setValue(userData, withCompletionBlock: { (error, ref) in
-                                            
-                                            let usernames = self.ref.child("Usernames")
-                                            usernames.setValue("0", forKey: self.usernameField.text!)
-                                            
                                             
                                             //setup initial following -- auto follow hr.glass
                                             let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
@@ -232,8 +195,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                                             }
                                         })
-                                    }
-                                })
+//                                    }
+//                                })
                             }
                         }
                     }
@@ -327,10 +290,11 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         //login to firebase
         let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
         
+        //use facebook credential to login to firebase
         Auth.auth().signIn(with: credential) { (user, error) in
             // ...
             if let error = error {
-                
+                //Firebase with facebook Login Successful
                 print(error.localizedDescription)
                 let alert = UIAlertController(title: "Alert", message: "Facebook login failed", preferredStyle: .alert)
                 
@@ -344,16 +308,19 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 
             }else if error == nil {
  
+                //firebase with facebook login successfull
                 let ref = Database.database().reference().child("Users").child((user?.uid)!)
                 
+                //get user data
                 ref.observeSingleEvent(of: .value, with: { snapshot in
                     
                     if let _ = snapshot.value as? NSDictionary{
-                        
+                        //if the user already exists in firebase
                         self.stopLoginIndicator(success: true)
                         self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                         
                     }else{
+                        //if the user doesn't already exist in firebase. Get FB data and write to database
                         
                         self.getFBData(uid: (user?.uid)!, completion: { data in
                             
@@ -364,8 +331,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             followingList.setValue(newFollowing)
                             let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
                             followingCount.setValue(1)
-                            
-                            
                             
                             
                             self.stopLoginIndicator(success: true)
@@ -380,7 +345,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     }
     
     
-    //GET FB USER DATA -- WRITE TO FIREBASE
+    //GET FB USER DATA -- WRITE TO FIREBASE -- RETURN userdata dictionary
     func getFBData(uid: String, completion:@escaping (NSDictionary) -> ()){
         
         let connection = GraphRequestConnection()
@@ -464,7 +429,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         else if(confirmPasswordField.isFirstResponder){
             
             self.scrollView.scrollRectToVisible(confirmPasswordField.frame, animated: true)
-            
         }
     }
     

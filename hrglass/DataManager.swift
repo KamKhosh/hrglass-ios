@@ -414,7 +414,7 @@ class DataManager {
      
      Returns: NA
      
-     Gets the current users following list and returns posts from those users that
+     Gets the current users following list and returns posts (removing blocked users) from those users that
      that are active
      
      ***************************************************************************************/
@@ -426,13 +426,16 @@ class DataManager {
         
         self.getFollowingList(userId: currentUserId, completion: { followingDictionary in
             
+            //add the current user to the dictionay so we can also get our most recent post to show in the feed
+            followingDictionary.setValue(0, forKey: currentUserId)
+            
             //returns dictionary with uids as keys
             self.getBlockedUsers(completion: { (blockedUsers) in
                 
                 let count = followingDictionary.count
                 
                 var i = 0
-                let dataArray: NSMutableArray = NSMutableArray()
+                var dataArray:[PostData] = [PostData]()
                 
                 for (key, _) in followingDictionary{
                     
@@ -444,13 +447,13 @@ class DataManager {
                         
                         postRef.observeSingleEvent(of: .value, with: { snapshot in
                             
-                            
+                            //snapshot should be the post data dictionary, check for nil just in case
                             if let postDict = snapshot.value as? NSDictionary{
                                 
                                 let postData: PostData = self.getPostDataFromDictionary(postDict: postDict, uid: key as! String)
                                 if (Double(postData.expireTime)! > Date().millisecondsSince1970) {
                                     
-                                    dataArray.add(postData)
+                                    dataArray.append(postData)
                                 }
                             }
                             
@@ -458,7 +461,7 @@ class DataManager {
                             //Once we've run through all posts
                             if i == count{
                                 
-                                completion(dataArray)
+                                completion(self.sortFeedByExpireTime(dataArray: dataArray))
                             }
                         })
                     }else{
@@ -466,15 +469,23 @@ class DataManager {
                         //Once we've run through all posts
                         if i == count{
                             
-                            completion(dataArray)
+                            completion(self.sortFeedByExpireTime(dataArray: dataArray))
                         }
                     }
-                    
                 }
-                
             })
-            
         })
+    }
+    
+    
+    
+    //sorts Feed Data Array, most recent posts at bottom
+    
+    // Parameter, NSMutableArray of feed data
+    //Returns sorted NSArray
+    func sortFeedByExpireTime(dataArray: [PostData]) -> NSArray{
+        
+        return dataArray.sorted(by:{ $0.expireTime < $1.expireTime }) as NSArray
     }
     
     
@@ -560,13 +571,13 @@ class DataManager {
      
      Parameters - String: uid
      
-     Returns(completion): NSDictionary
+     Returns(completion): NSMutableDictionary
      
      completion yields a Dictionary of dictionary's containing comment data from firebase
      
      ***************************************************************************************/
     
-    func getCommentDataFromFirebase(uid: String, completion:@escaping (NSDictionary) -> ()){
+    func getCommentDataFromFirebase(uid: String, completion:@escaping (NSMutableDictionary) -> ()){
         
         let commentsRef: DatabaseReference = Database.database().reference().child("Comments").child(uid)
         
@@ -574,7 +585,7 @@ class DataManager {
             
             if let commentDict = snapshot.value as? NSDictionary{
                 
-                completion(commentDict)
+                completion(commentDict.mutableCopy() as! NSMutableDictionary)
             }else{
                 completion([:])
             }

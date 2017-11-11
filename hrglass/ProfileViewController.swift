@@ -607,7 +607,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }else{
                 
                 cell.bioTextView.isUserInteractionEnabled = false
-                if (follwBtnIsUnfollow){
+                
+                //we want the follow button to say unfollow if it comes from the feed or if we are already following them
+                if (follwBtnIsUnfollow ){
                     
                     cell.followBtn.setTitle("Unfollow", for: .normal)
                     cell.followBtn.setTitleColor(colors.getMenuColor(), for: .normal)
@@ -886,13 +888,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                     let postUserId = key as! String
                     
+                    
                     postRef.child(postUserId).observeSingleEvent(of: .value, with: { postSnapshot in
                         
                         if let post: NSDictionary = postSnapshot.value as? NSDictionary{
                             
                             
                             let postData: PostData = self.dataManager.getPostDataFromDictionary(postDict: post, uid: key as! String)
-                            
                             
                             
                             

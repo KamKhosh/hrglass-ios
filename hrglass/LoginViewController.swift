@@ -155,7 +155,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
             
             
-        
             self.startLoginIndicator()
         
             Auth.auth().signIn(with: credential) { (user, error) in

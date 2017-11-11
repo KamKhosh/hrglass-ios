@@ -89,13 +89,13 @@ class MenuView: UIView{
     //configures button views passed from parent, they all start with the same center
     func setupViews(){
         
-        var center: CGPoint = self.startCenter
+//        var center: CGPoint = self.startCenter
         
-        if offset{
-            
-            center = CGPoint(x: self.startCenter.x + self.buttonSize.width, y: self.startCenter.y)
-            
-        }
+//        if offset{
+//
+//            center = CGPoint(x: self.startCenter.x + self.buttonSize.width, y: self.startCenter.y)
+//
+//        }
         
         for button in buttonList{
 
