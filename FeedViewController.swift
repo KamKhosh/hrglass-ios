@@ -188,9 +188,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-    
-
-    
 
 //    func loadCustomRefreshContents() {
 //        let refreshContents = Bundle.main.loadNibNamed("CustomRefreshControl", owner: self, options: nil)
@@ -200,6 +197,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
 //        customRefreshView.spinView.startAnimating()
 //        refreshControl.addSubview(customRefreshView)
 //    }
+    
     
     /*********************************
      *
@@ -389,7 +387,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.messagesBtn.center = center
         self.messagesBtn.addTarget(self, action: #selector(self.messagesButtonAction), for: .touchUpInside)
         
-        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.profileBtn], feedViewController: self, offset: true, direction: .Up)
+        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.profileBtn], feedViewController: self, offset: true, direction: .Right)
         
         self.view.addSubview(self.navigationMenu)
 
@@ -511,12 +509,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //setting cell content layout/appearance
         cell.contentImageBtn.layer.cornerRadius = cell.contentImageBtn.frame.height/2
         cell.previewContentView.layer.cornerRadius = cell.previewContentView.frame.height/2
-        cell.previewContentView.layer.borderWidth = 5.0
+        cell.previewContentView.layer.borderWidth = 2.0
         cell.contentImageBtn.clipsToBounds = true
         cell.previewContentView.backgroundColor = UIColor.white
         cell.likeCountLbl.text = String(feedData[indexPath.row].likes)
         cell.viewCountLbl.text = String(feedData[indexPath.row].views)
-        cell.categoryLbl.text = feedData[indexPath.row].category.rawValue
+        //cell.categoryLbl.text = feedData[indexPath.row].category.rawValue
         cell.linkLbl.isHidden = true
         cell.postId = feedData[indexPath.row].postId as String
         cell.profileImageBtn.setImage(self.dataManager.clearImage, for: .normal)

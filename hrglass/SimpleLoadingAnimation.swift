@@ -13,8 +13,6 @@ import UIKit
 
 class SimpleLoadingAnimation: UIView {
     
-    
-    
     var hidesWhenStopped = true
     var showsWhenStarted = true
     var gameTimer: Timer!
@@ -30,15 +28,14 @@ class SimpleLoadingAnimation: UIView {
     //start at
     var translatePeriod: Int = 4
 
-    
     //init with custom frame and images
     init(frame: CGRect, outsideImage: UIImage, insideImage: UIImage){
         super.init(frame: frame)
         
         //configure subviews
         self.setupImageViews(outsideImage: outsideImage, insideImage: insideImage)
-        
     }
+    
     
     //init without setting frame
     init(outsideImage: UIImage, insideImage: UIImage){
@@ -61,6 +58,7 @@ class SimpleLoadingAnimation: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     
     
     //configures and adds imageviews based on the frame given
