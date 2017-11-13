@@ -22,8 +22,6 @@ class User
     var profilePhoto: String!
     var coverPhoto: String!
 
-
-    
     init(withUserID:String, username: String, bio:String, profilePhoto:String, coverPhoto:String, name: String, isPrivate: Bool){
         
         self.userID = withUserID
@@ -40,9 +38,5 @@ class User
     convenience init(){
         
         self.init(withUserID: "", username: "", bio: "", profilePhoto: "", coverPhoto: "", name: "", isPrivate: false)
-        
     }
-    
-    
-    
 }

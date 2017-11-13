@@ -287,13 +287,16 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         dataManager.getFeedPosts(userId: (Auth.auth().currentUser?.uid)!, completion: { data in
             
+            //data is array of PostData Objects
             self.feedData = data as! [PostData]
             self.tableView.reloadData()
             
+            //if there is no feed data
             if (self.feedData.count == 0){
                 self.noPostsLbl.isHidden = false
             }
             
+            //stop loading animations
             if self.refreshControl.isRefreshing{
                self.refreshControl.endRefreshing()
             }
