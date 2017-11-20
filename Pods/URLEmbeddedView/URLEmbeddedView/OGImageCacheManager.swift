@@ -49,7 +49,7 @@ class OGImageCacheManager: NSObject {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
     }
     
-    dynamic func didReceiveMemoryWarning(_ notification: Notification) {
+    @objc dynamic func didReceiveMemoryWarning(_ notification: Notification) {
         clearMemoryCache()
     }
 

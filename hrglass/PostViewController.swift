@@ -37,7 +37,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     //Audio/Video Players
     var avPlayerViewController: AVPlayerViewController!
-    var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer()
+    var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer
     var avMusicPlayer: AVAudioPlayer!
     
     //Storyboard Outlets
@@ -476,7 +476,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     //song timer selector -- updates the songLegthSlider every 1 second
-    func updatePlaybackViews(){
+    @objc func updatePlaybackViews(){
         if self.applicationMusicPlayer.playbackState == .playing{
             
             let millis = TimeInterval(self.applicationMusicPlayer.currentPlaybackTime * 1000)
@@ -508,7 +508,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //sets and plays the parameter array with the application music player
     func appleMusicPlayTrackId(ids:[String]) {
         
-        applicationMusicPlayer.setQueueWithStoreIDs(ids)
+        applicationMusicPlayer.setQueue(with: ids)
         self.playPauseSongAction(self)
         
     }
@@ -564,7 +564,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     //moves the music view moving to the center-ish
-    func maximizeMusicView(){
+    @objc func maximizeMusicView(){
         
         self.blurredMusicImageView.alpha = 0.0
         let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.minimizeBtn.frame.maxY + 20 + self.songView.frame.height/2)
@@ -995,7 +995,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     //PAN GESTURE
-    func handlePanGesture(panGesture: UIPanGestureRecognizer){
+    @objc func handlePanGesture(panGesture: UIPanGestureRecognizer){
         
         // get translation
         let translation = panGesture.translation(in: self.view)
@@ -1149,7 +1149,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
     //NOTIFICATIONS OF COMPELETION
-    func playerDidFinishPlayingPrimary(note: NSNotification) {
+    @objc func playerDidFinishPlayingPrimary(note: NSNotification) {
         
 //        self.avPlayerViewController.dismiss(animated: false, completion: nil)
         
@@ -1159,7 +1159,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         print("Video Finished")
     }
     
-    func playerDidFinishPlayingSeconadary(note: NSNotification) {
+    @objc func playerDidFinishPlayingSeconadary(note: NSNotification) {
         
 //        self.avPlayerViewController.dismiss(animated: false, completion: nil)
         self.secondaryPostPlayBtn.isHidden = false

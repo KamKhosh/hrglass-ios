@@ -11,6 +11,7 @@ import Firebase
 import URLEmbeddedView
 import AVKit
 import AVFoundation
+import MediaPlayer
 
 
 class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate{
@@ -18,6 +19,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     //class objects
     var navigationMenu: MenuView!
+    var addPostMenu: MenuView!
     var dataManager = DataManager()
     var awsManager: AWSManager! = nil
     
@@ -30,7 +32,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //post data of selected tableview cell
     var selectedPostData: PostData!
     var selectedUserUID: String = ""
-
+    var selectedPostTypeId: Int = 0
+    
      // More Menu data
     var moreMenuPostData: PostData!
     
@@ -40,7 +43,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //Current User
     var loggedInUser: User!
         
-    
+    //savedPost
+    var savedPost: NSDictionary!
     
     /**************************
      * Navigation Menu Buttons
@@ -51,6 +55,16 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var messagesBtn: UIButton!
 
     
+    /**************************
+     * Add Post Menu Buttons
+     *************************/
+    var photoBtn: UIButton!
+    var videoBtn: UIButton!
+    var recordBtn: UIButton!
+    var textBtn: UIButton!
+    var musicBtn: UIButton!
+    var linkBtn: UIButton!
+    var cameraBtn: UIButton!
 
     /**************************
      * -- TABLE DATA SOURCE --
@@ -73,7 +87,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var initialLoadIndicator: UIActivityIndicatorView!
     @IBOutlet weak var addPostButton: UIButton!
-    
+    @IBOutlet weak var logoImageView: UIImageView!
     
     /*********************************
      *
@@ -113,7 +127,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //set button colors
         self.settingsButton.setImage(UIImage(named:"settings")?.transform(withNewColor: UIColor.white), for: .normal)
         self.menuButton.setImage(UIImage(named:"menu")?.transform(withNewColor: UIColor.white), for: .normal)
-        self.addPostButton.setImage(UIImage(named:"plus_circle")?.transform(withNewColor: UIColor.white), for: .normal)
+//        self.addPostButton.setImage(UIImage(named:"addpostbutton")?.transform(withNewColor: UIColor.white), for: .normal)
         
         //delete the videos cache
         DispatchQueue.global().async() {
@@ -121,7 +135,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.dataManager.deleteLocalVideosCache()
         }
 
-        
+        //update the current local user with firebase user data
         ref.child("Users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
             
             // Get user value
@@ -158,6 +172,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //If navigation menu is nil, set it up
             if (self.navigationMenu == nil){
                 self.setupMenuView(profileURLString: "")
+            }
+            
+            if(self.addPostMenu == nil){
+                self.setupAddPostMenu()
             }
             
             //set menu photo
@@ -210,48 +228,82 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             if (navigationMenu.open){
                 navigationMenu.close()
+                
+                //move hrglass icon back to center
+                self.moveIconCenter()
+                
             }else{
                 navigationMenu.show()
-                self.view.bringSubview(toFront: navigationMenu)
+                
+                //move hrglass icon right
+                self.moveIconRight()
             }
         }
     }
     
+    func moveIconRight(){
+        UIView.animate(withDuration: 0.3, animations: {
+            self.logoImageView.center = CGPoint(x: self.settingsButton.frame.minX - self.logoImageView.frame.width / 2, y:self.logoImageView.center.y)
+        })
+    }
+    func moveIconCenter(){
+        UIView.animate(withDuration: 0.3, animations: {
+            self.logoImageView.center = CGPoint(x: self.view.frame.midX,y:self.logoImageView.center.y)
+        })
+    }
+    
     
     @IBAction func settingsAction(_ sender: Any) {
+        self.navigationMenu.close()
+        self.moveIconCenter()
         self.performSegue(withIdentifier: "toSettingsSegue", sender: nil)
     }
     
-    func profileButtonAction (){
+    @objc func profileButtonAction (){
         
         self.navigationMenu.close()
+        self.moveIconCenter()
         self.performSegue(withIdentifier: "toMyProfileSegue", sender: nil)
         
     }
     
     func homeButtonAction(){
         self.navigationMenu.close()
+        self.moveIconCenter()
+        self.addPostMenu.close()
     }
     
-    func discoverButtonAction (){
+    @objc func discoverButtonAction (){
         self.navigationMenu.close()
+        self.addPostMenu.close()
+        self.moveIconCenter()
         performSegue(withIdentifier: "toDiscoverSegue", sender: nil)
     }
     
     
-    func messagesButtonAction (){
+    @objc func messagesButtonAction (){
         
         self.navigationMenu.close()
+        self.addPostMenu.close()
+        self.moveIconCenter()
         performSegue(withIdentifier: "toInboxSegue", sender: nil)
     }
     
     
-    func uploadButtonAction (){
-        
-        self.navigationMenu.close()
-        performSegue(withIdentifier: "toUploadProfile", sender: self)
+    
+    @IBAction func addPostBtnAction(_ sender: Any) {
+        if (addPostMenu != nil){
+            
+            if (self.addPostMenu.open){
+                self.addPostMenu.close()
+            }else{
+                self.addPostMenu.show()
+                self.view.bringSubview(toFront: self.addPostMenu)
+            }
+        }
     }
     
+
     
     func blockUserAction(){
         
@@ -264,6 +316,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func sendMessageAction(){
         
+        self.navigationMenu.close()
+        self.moveIconCenter()
         self.performSegue(withIdentifier: "toMessagesView", sender: self)
     }
     
@@ -321,7 +375,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      
      ***************************************************************************************/
     
-    func refresh(){
+    @objc func refresh(){
         
         ref.child("Following").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (snapshot) in
             
@@ -348,7 +402,75 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         })
     }
     
+    /***************************************************************************************
+     
+     Function - setupAddPostMenu:
+     
+     Parameters - NA
+     
+     Returns: NA
+     
+     confures the Create Post Menu with the menu buttons to be shown/hidden with createPostBtn
+     
+     ***************************************************************************************/
     
+    func setupAddPostMenu(){
+        
+        let center = self.addPostButton.center
+        
+        self.photoBtn = UIButton(frame: CGRect.zero)
+        self.photoBtn.tag = 0
+        self.photoBtn.setImage(UIImage(named:"gallery")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.photoBtn.center = center
+        self.photoBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+        
+        self.videoBtn = UIButton(frame: CGRect.zero)
+        self.videoBtn.setImage(UIImage(named:"videocall")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.videoBtn.center = center
+        self.videoBtn.tag = 1
+        self.videoBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+        
+        self.textBtn = UIButton(frame: CGRect.zero)
+        self.textBtn.setImage(UIImage(named:"pencil")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.textBtn.center = center
+        self.textBtn.tag = 2
+        self.textBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+        
+        self.cameraBtn = UIButton(frame: CGRect.zero)
+        self.cameraBtn.setImage(UIImage(named:"camera")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.cameraBtn.center = center
+        self.cameraBtn.tag = 6
+        self.cameraBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+        
+        self.recordBtn = UIButton(frame: CGRect.zero)
+        self.recordBtn.setImage(UIImage(named:"microphone")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.recordBtn.center = center
+        self.recordBtn.tag = 3
+        self.recordBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+        
+        self.musicBtn = UIButton(frame: CGRect.zero)
+        self.musicBtn.setImage(UIImage(named:"music")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.musicBtn.center = center
+        self.musicBtn.tag = 4
+        self.musicBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+        
+        self.linkBtn = UIButton(frame: CGRect.zero)
+        self.linkBtn.setImage(UIImage(named:"news")?.transform(withNewColor: UIColor.white), for: .normal)
+        self.linkBtn.center = center
+        self.linkBtn.tag = 5
+        self.linkBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
+
+        
+        let buttonList: [UIButton] = [self.photoBtn, self.videoBtn, self.textBtn, self.recordBtn, self.musicBtn, self.linkBtn, self.cameraBtn]
+
+        self.addPostMenu = MenuView(buttonList: buttonList, feedViewController: self, direction: .Left, startButton: self.addPostButton, spacing: -10.0, buttonScalor: 0.7)
+        
+        self.addPostMenu.buttonSpinAngle = 5 * ((CGFloat)(Float.pi) / 4)
+        self.addPostMenu.backgroundImageView.image = UIImage(named: "postGradientBar")
+        self.addPostMenu.backgroundImageView.contentMode = .scaleToFill
+        self.view.addSubview(self.addPostMenu)
+        
+    }
     
     
     /***************************************************************************************
@@ -374,7 +496,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.profileBtn.imageView?.contentMode = .scaleAspectFill
         self.profileBtn.clipsToBounds = true
         
-        self.setMenuPhoto(profPhoto:profileURLString)
+        
         
         self.profileBtn.addTarget(self, action: #selector(self.profileButtonAction), for: .touchUpInside)
         
@@ -388,9 +510,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.messagesBtn.setImage(UIImage(named:"mail")?.transform(withNewColor: UIColor.white), for: .normal)
         self.messagesBtn.center = center
         self.messagesBtn.addTarget(self, action: #selector(self.messagesButtonAction), for: .touchUpInside)
+
+        let buttonList: [UIButton] = [self.discoverBtn, self.messagesBtn, self.profileBtn]
+
+        self.navigationMenu = MenuView(buttonList: buttonList, feedViewController: self, direction: .Right, startButton: self.menuButton, spacing: -10, buttonScalor: 0.7)
+        self.navigationMenu.buttonSpinAngle = (CGFloat)(Float.pi)
         
-        self.navigationMenu = MenuView(buttonList: [self.discoverBtn, self.messagesBtn, self.profileBtn], feedViewController: self, offset: true, direction: .Right)
-        
+        self.setMenuPhoto(profPhoto:profileURLString)
         self.view.addSubview(self.navigationMenu)
 
     }
@@ -758,6 +884,27 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
+     /*****************************************
+     
+     Function - postTypeSelected:
+     
+     Parameters NA
+     
+     Returns: NA
+     
+     calls cell.likeAction for indexPath passed
+     
+     ***************************************************************************************/
+    @objc func postTypeSelected(_ sender: UIButton) {
+        
+        self.selectedPostTypeId = sender.tag
+        self.addPostMenu.close()
+        self.navigationMenu.close()
+        self.moveIconCenter()
+        self.performSegue(withIdentifier: "toCreatePostSegue", sender: self)
+        
+    }
+    
     
     
    /*****************************************
@@ -805,9 +952,64 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
     }
     
+    
+    func getMPMediaItemWith(persistentId: MPMediaEntityPersistentID) -> MPMediaItem{
+        
+        let query: MPMediaQuery  = MPMediaQuery.songs()  // general songs query
+        
+        let pred: MPMediaPropertyPredicate = MPMediaPropertyPredicate(value: persistentId, forProperty: MPMediaItemPropertyPersistentID)
+        
+        // narrow the query down to just items with that ID
+        query.addFilterPredicate(pred)
+        
+        // now get items (there should be only one):
+        let item: MPMediaItem = (query.items?.first)!
+        
+        return item
+        
+    }
+    
 
-    
-    
+    //Checks if the user has previously saved a post
+    func checkForSavedPost(){
+        
+        if let savedPost: NSDictionary = UserDefaults.standard.dictionary(forKey: "savedPost") as NSDictionary?{
+            
+            //If there is Data in
+            if (savedPost.count > 0){
+                
+                let alert: UIAlertController = UIAlertController(title: "You have a saved Post ready to submit", message: "", preferredStyle: .actionSheet)
+                
+                let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) {(_) -> Void in
+                    
+                    alert.dismiss(animated: true, completion: nil)
+                }
+                
+                let delete: UIAlertAction = UIAlertAction(title: "Delete Saved Post", style: .default) {(_) -> Void in
+                    
+                    UserDefaults.standard.set([:], forKey: "savedPost")
+                    alert.dismiss(animated: true, completion: nil)
+                }
+                
+                delete.setValue(UIColor.red, forKey: "titleTextColor")
+                
+                let view: UIAlertAction = UIAlertAction(title: "View Post", style: .default) {(_) -> Void in
+                    
+                    self.savedPost = savedPost
+                    alert.dismiss(animated: true, completion: nil)
+                    self.performSegue(withIdentifier: "useSavedPost", sender: self)
+                    
+                }
+                
+                
+                alert.addAction(view)
+                alert.addAction(delete)
+                alert.addAction(cancel)
+                
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
+    }
     
 
     
@@ -840,8 +1042,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         else if (segue.identifier == "toCreatePostSegue"){
             
             let destinationNavigationController = segue.destination as! UINavigationController
-            let createPostVC: CreateCustomPostViewController = destinationNavigationController.topViewController as! CreateCustomPostViewController
+            let createPostVC: AddPostViewController = destinationNavigationController.topViewController as! AddPostViewController
             createPostVC.loggedInUser = self.loggedInUser
+            createPostVC.tabPassedFromParent = self.selectedPostTypeId
             
             if navigationMenu != nil{
                 self.navigationMenu.close()
@@ -890,6 +1093,70 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             messageVC.selectedUserId = self.moreMenuPostData.user.value(forKey: "uid") as! String
             messageVC.nameString = (self.moreMenuPostData.user.value(forKey: "name") as! String)
             messageVC.loggedInUser = self.loggedInUser
+        }else if(segue.identifier == "useSavedPost"){
+            
+            let addPostVC:AddPostViewController =  segue.destination as! AddPostViewController
+            
+            let cat: Category = Category(rawValue: self.savedPost.value(forKey: "category") as! String)!
+            addPostVC.selectedCategory = cat
+            addPostVC.selectedMood = Mood(rawValue: self.savedPost.value(forKey: "mood") as! String)!
+            addPostVC.loggedInUser = self.loggedInUser
+            addPostVC.postWasSaved = true
+            
+            
+            //setting music objects if necessary
+            let musicId = self.savedPost.value(forKey: "songString") as! MPMediaEntityPersistentID
+            if (String(musicId) != ""){
+                
+                let musicItem: MPMediaItem = self.getMPMediaItemWith(persistentId: musicId)
+                
+                addPostVC.selectedMusicItem = musicItem
+                
+            }
+            
+            
+            //            var secondCat: Category = .None
+            //            var savedPostHasChild:Bool = false
+            //            if let child: NSDictionary  = self.savedPost.value(forKey: "secondaryPost") as? NSDictionary{
+            //                savedPostHasChild = true
+            //                addPostVC.hasSecondarySavedPost = true
+            //                secondCat = Category(rawValue: child.value(forKey: "secondaryCategory") as! String)!
+            //                addPostVC.secondarySelectedCategory = secondCat
+            //
+            //            }
+            
+            
+            
+            if  cat == .Video{
+                
+                let path = self.dataManager.documentsPathForFileName(name: "savedPostData.mp4")
+                
+                addPostVC.trimmedVideoPath = path.absoluteString
+                addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
+                addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
+            }else if (cat == .Music){
+                addPostVC.selectedObject = self.getMPMediaItemWith(persistentId: musicId)
+            }else{
+                addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
+            }
+            
+            
+            //
+            //            if savedPostHasChild{
+            //
+            //                if (secondCat == .Video){
+            //                    let path = self.dataManager.documentsPathForFileName(name: "secondarySavedPostData.mp4")
+            //
+            //                    addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
+            ////                    addPostVC.secondarySelectedObject = AVAsset(url: path)
+            //                    addPostVC.trimmedVideoPath = path.absoluteString
+            //                    addPostVC.secondarySelectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
+            //                }else{
+            //
+            //                    addPostVC.secondarySelectedObject = self.dataManager.getSavedPostData(category: secondCat, primary: false)
+            //
+            //                }
+            //            }
         }
     }
     

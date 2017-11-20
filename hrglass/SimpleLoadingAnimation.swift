@@ -89,7 +89,7 @@ class SimpleLoadingAnimation: UIView {
     }
     
     
-    func timerAnimate(){
+    @objc func timerAnimate(){
         
         //change scale so we get the full rotation effect every two times this is called
         if rotationScalor == 1.0{

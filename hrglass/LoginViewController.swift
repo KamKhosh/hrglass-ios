@@ -58,10 +58,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         usernameField.attributedPlaceholder =
-            NSAttributedString(string: "Email", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Email", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         passwordField.attributedPlaceholder =
-            NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
     
         
     }
@@ -330,7 +330,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     }
     
     
-    func keyboardWillShow(notification: NSNotification) {
+    @objc func keyboardWillShow(notification: NSNotification) {
         
         self.scrollView.isScrollEnabled = true
         
@@ -348,7 +348,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     
     
-    func keyboardWillHide(notification: NSNotification) {
+    @objc func keyboardWillHide(notification: NSNotification) {
         
         self.scrollView.scrollsToTop = true
         self.scrollView.isScrollEnabled = false

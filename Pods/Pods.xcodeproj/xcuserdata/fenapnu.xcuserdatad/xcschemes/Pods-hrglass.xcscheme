@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B13E9FA501C74228DBF6A1ADD183B89F"
+               BlueprintIdentifier = "813CCBD66953B7DA726F36FED8FD2EE6"
                BuildableName = "Pods_hrglass.framework"
                BlueprintName = "Pods-hrglass"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,6 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -36,6 +37,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -45,7 +47,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B13E9FA501C74228DBF6A1ADD183B89F"
+            BlueprintIdentifier = "813CCBD66953B7DA726F36FED8FD2EE6"
             BuildableName = "Pods_hrglass.framework"
             BlueprintName = "Pods-hrglass"
             ReferencedContainer = "container:Pods.xcodeproj">

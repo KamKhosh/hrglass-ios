@@ -54,19 +54,19 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         //set placeholder's and text color
         fullnameField.attributedPlaceholder =
-            NSAttributedString(string: "Fullname", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Fullname", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         passwordField.attributedPlaceholder =
-            NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         confirmPasswordField.attributedPlaceholder =
-            NSAttributedString(string: "Confirm Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Confirm Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         emailField.attributedPlaceholder =
-            NSAttributedString(string: "Email", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Email", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         usernameField.attributedPlaceholder =
-            NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Username", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         
     }
@@ -416,7 +416,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
      *
      **********************************/
     
-    func keyboardWillShow(notification: NSNotification) {
+    @objc func keyboardWillShow(notification: NSNotification) {
 
         
         self.scrollView.isScrollEnabled = true
@@ -432,7 +432,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         }
     }
     
-    func keyboardWillHide(notification: NSNotification) {
+    @objc func keyboardWillHide(notification: NSNotification) {
 
         self.scrollView.scrollsToTop = true
         self.scrollView.isScrollEnabled = false

@@ -282,8 +282,10 @@ class RKNotificationHub: NSObject {
         var orderOfMagnitude = CGFloat(log10(Double(count)))
         orderOfMagnitude = (orderOfMagnitude >= 2) ? orderOfMagnitude : 1
         var frame = initialFrame
+        
         frame?.size.width = initialFrame.width * (1 + kCountMagnitudeAdaptationRatio * (orderOfMagnitude - 1))
-        frame?.origin.x = initialFrame.origin.x - ((frame?.width)! - initialFrame.width) / 2
+        let frameWidth = frame?.size.width
+        frame?.origin.x = initialFrame.origin.x - ((frameWidth)! - initialFrame.width) / 2
         redCircle.frame = frame!
         initialCenter = CGPoint(x: (frame?.minX)! + (frame?.width)! / 2, y: (frame?.minY)! + (frame?.height)! / 2)
         baseFrame = frame

@@ -1893,7 +1893,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="x4z-yl-MF6" kind="relationship" relationship="rootViewController" id="CAh-BA-skf"/>
+                        <segue destination="IMl-G2-xgF" kind="relationship" relationship="rootViewController" id="jis-J7-XOe"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hSY-82-xWu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1921,9 +1921,6 @@
                                 <state key="normal" title="Create a custom post">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <segue destination="IMl-G2-xgF" kind="show" identifier="toAddPostSegue" id="zia-Af-C7U"/>
-                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What's your story for today?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zRT-eT-Dgh">
                                 <rect key="frame" x="0.0" y="220" width="375" height="21"/>
@@ -2077,13 +2074,12 @@
                         <outlet property="recordingBtn" destination="nQq-SX-4Se" id="uJp-dH-106"/>
                         <outlet property="textBtn" destination="bJa-Vp-3Gx" id="Jnp-x1-emN"/>
                         <outlet property="videoBtn" destination="rTV-nl-7wM" id="yO4-ei-wKQ"/>
-                        <segue destination="IMl-G2-xgF" kind="show" identifier="useSavedPost" id="MGe-1t-bjU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qei-XR-m9h" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="Khe-WN-glC" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2830" y="860"/>
+            <point key="canvasLocation" x="2804" y="860"/>
         </scene>
         <!--Add Post View Controller-->
         <scene sceneID="RKK-JM-BAB">
@@ -2156,7 +2152,7 @@
                                                     <color key="titleColor" red="1" green="0.37061436019999999" blue="0.2719822254" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
                                                 <connections>
-                                                    <segue destination="d6i-iv-Tmn" kind="unwind" identifier="unwindToCreateCustomPostSegue" unwindAction="unwindToCreateCustomWithUnwindSegue:" id="7Aa-Gm-gpZ"/>
+                                                    <segue destination="d6i-iv-Tmn" kind="unwind" unwindAction="unwindToFeedWithUnwindSegue:" id="d0x-qr-6LZ"/>
                                                 </connections>
                                             </button>
                                             <color key="tintColor" red="1" green="0.37848546560000002" blue="0.45896764210000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2279,6 +2275,7 @@
                             <constraint firstItem="QcJ-do-Zly" firstAttribute="top" secondItem="xrF-q7-bhF" secondAttribute="bottom" constant="16.5" id="zFL-sX-lz8"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="hiC-ZZ-kdK"/>
                     <connections>
                         <outlet property="circleImagebtn" destination="Nn7-mO-ObP" id="Z4i-Mh-dXx"/>
                         <outlet property="currentTabView" destination="RJs-06-BBc" id="Fin-xt-mTG"/>
@@ -2300,7 +2297,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TGi-kO-V0Y" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="d6i-iv-Tmn" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3776.8000000000002" y="859.52023988005999"/>
+            <point key="canvasLocation" x="3702" y="860"/>
         </scene>
         <!--Crop View Controller-->
         <scene sceneID="h4F-jx-nuX">
@@ -2643,7 +2640,7 @@
                                                         <constraint firstAttribute="height" constant="125" id="vXB-cR-2E5"/>
                                                     </constraints>
                                                 </view>
-                                                <button opaque="NO" alpha="0.45000000000000001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QgW-G2-rU1">
+                                                <button hidden="YES" opaque="NO" alpha="0.45000000000000001" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QgW-G2-rU1">
                                                     <rect key="frame" x="320" y="4.5" width="30" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="QgW-G2-rU1" secondAttribute="height" multiplier="1:1" id="tp4-pV-rVz"/>
@@ -2772,7 +2769,7 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VzA-Sg-rUC">
-                                <rect key="frame" x="16" y="606.5" width="50.5" height="50.5"/>
+                                <rect key="frame" x="16" y="30" width="50.5" height="50.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="VzA-Sg-rUC" secondAttribute="height" multiplier="1:1" id="WxL-Oz-1Zn"/>
@@ -2782,27 +2779,15 @@
                                     <action selector="menuAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="z6C-4j-ALM"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zzU-4S-8Pv">
-                                <rect key="frame" x="308.5" y="30" width="50.5" height="50.5"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="zzU-4S-8Pv" secondAttribute="height" multiplier="1:1" id="b6z-hk-Vmf"/>
-                                    <constraint firstAttribute="width" constant="50.5" id="rph-rr-JZJ"/>
-                                </constraints>
-                                <state key="normal" image="settings"/>
-                                <connections>
-                                    <action selector="settingsAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CO7-jj-7Dy"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VR0-cW-46f">
                                 <rect key="frame" x="308.5" y="606.5" width="50.5" height="50.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="VR0-cW-46f" secondAttribute="height" multiplier="1:1" id="UTG-B8-Ibx"/>
                                 </constraints>
-                                <state key="normal" image="plus_circle"/>
+                                <state key="normal" image="addpostbutton"/>
                                 <connections>
-                                    <segue destination="INN-cs-JNV" kind="presentation" identifier="toCreatePostSegue" id="UyQ-0M-4Ae"/>
+                                    <action selector="addPostBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EU7-x7-648"/>
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo gradient" translatesAutoresizingMaskIntoConstraints="NO" id="iJe-Nk-VNK">
@@ -2817,6 +2802,18 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zzU-4S-8Pv">
+                                <rect key="frame" x="308" y="30" width="50.5" height="50.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="zzU-4S-8Pv" secondAttribute="height" multiplier="1:1" id="b6z-hk-Vmf"/>
+                                    <constraint firstAttribute="width" constant="50.5" id="rph-rr-JZJ"/>
+                                </constraints>
+                                <state key="normal" image="settings"/>
+                                <connections>
+                                    <action selector="settingsAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CO7-jj-7Dy"/>
+                                </connections>
+                            </button>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7A6-gl-kQs">
                                 <rect key="frame" x="178.5" y="88.5" width="20" height="20"/>
                                 <constraints>
@@ -2829,10 +2826,10 @@
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="iJe-Nk-VNK" firstAttribute="centerY" secondItem="zzU-4S-8Pv" secondAttribute="centerY" id="2x9-Nk-AZq"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="VzA-Sg-rUC" secondAttribute="bottom" constant="10" id="9dw-W3-zS9"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="E7y-mS-Wxb" secondAttribute="bottom" id="Avj-AW-I5s"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zzU-4S-8Pv" secondAttribute="trailing" id="Myv-YT-vgx"/>
                             <constraint firstItem="E7y-mS-Wxb" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="P5b-Oi-MA9"/>
+                            <constraint firstItem="VzA-Sg-rUC" firstAttribute="centerY" secondItem="zzU-4S-8Pv" secondAttribute="centerY" id="TqH-Ng-0Rc"/>
                             <constraint firstItem="E7y-mS-Wxb" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="UjY-gI-XWk"/>
                             <constraint firstItem="E7y-mS-Wxb" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.85" id="WVq-En-6nc"/>
                             <constraint firstItem="VR0-cW-46f" firstAttribute="width" secondItem="zzU-4S-8Pv" secondAttribute="width" id="XXV-kk-ACp"/>
@@ -2843,7 +2840,6 @@
                             <constraint firstItem="VR0-cW-46f" firstAttribute="centerX" secondItem="zzU-4S-8Pv" secondAttribute="centerX" id="h5Z-hE-8DA"/>
                             <constraint firstItem="iJe-Nk-VNK" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="htV-NT-bpg"/>
                             <constraint firstItem="JB4-HB-xwS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lBg-fV-Xqb"/>
-                            <constraint firstItem="VzA-Sg-rUC" firstAttribute="centerY" secondItem="VR0-cW-46f" secondAttribute="centerY" id="lc7-99-ycO"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="VR0-cW-46f" secondAttribute="bottom" constant="10" id="mOf-9f-Fc2"/>
                             <constraint firstItem="VzA-Sg-rUC" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="ms3-zc-f87"/>
                             <constraint firstItem="iJe-Nk-VNK" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="7" id="npA-S4-EXi"/>
@@ -2854,6 +2850,7 @@
                     <connections>
                         <outlet property="addPostButton" destination="VR0-cW-46f" id="6TM-pv-Eiy"/>
                         <outlet property="initialLoadIndicator" destination="7A6-gl-kQs" id="sib-Vg-wKn"/>
+                        <outlet property="logoImageView" destination="iJe-Nk-VNK" id="Gsu-jn-lk5"/>
                         <outlet property="menuButton" destination="VzA-Sg-rUC" id="YNt-X2-f7l"/>
                         <outlet property="noPostsLbl" destination="JB4-HB-xwS" id="8GM-Ka-Fbl"/>
                         <outlet property="settingsButton" destination="zzU-4S-8Pv" id="Ufm-he-RPp"/>
@@ -2866,11 +2863,13 @@
                         <segue destination="jaA-7n-Pvl" kind="presentation" identifier="toPostView" id="Lq0-D8-jlv"/>
                         <segue destination="xfO-6J-fTv" kind="presentation" identifier="toMessagesView" id="DPy-7D-OlM"/>
                         <segue destination="YxX-R3-hm9" kind="presentation" identifier="toInboxSegue" id="3ao-0o-yWM"/>
+                        <segue destination="INN-cs-JNV" kind="presentation" identifier="toCreatePostSegue" id="6eG-x6-B2W"/>
+                        <segue destination="INN-cs-JNV" kind="presentation" identifier="useSavedPost" id="dIA-KB-ijf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1782" y="90"/>
+            <point key="canvasLocation" x="1780" y="90"/>
         </scene>
         <!--Settings-->
         <scene sceneID="0Km-Qk-Mtt">
@@ -4067,6 +4066,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="addpostbutton" width="75" height="75"/>
         <image name="camera" width="25" height="25"/>
         <image name="chevron" width="100" height="100"/>
         <image name="chevronDown" width="100" height="100"/>
@@ -4084,7 +4084,6 @@
         <image name="pencil" width="25" height="25"/>
         <image name="play" width="50" height="50"/>
         <image name="playTriagle" width="100" height="100"/>
-        <image name="plus_circle" width="100" height="100"/>
         <image name="settings" width="100" height="100"/>
         <image name="thumbs up" width="600" height="553"/>
         <image name="videocall" width="25" height="25"/>
@@ -4092,9 +4091,9 @@
     <inferredMetricsTieBreakers>
         <segue reference="Edw-b2-iiL"/>
         <segue reference="Mnx-q4-8ia"/>
-        <segue reference="0q8-Ka-CvW"/>
+        <segue reference="Xr8-Nk-0I2"/>
         <segue reference="AuW-Mh-hDh"/>
-        <segue reference="zia-Af-C7U"/>
+        <segue reference="dIA-KB-ijf"/>
         <segue reference="DPy-7D-OlM"/>
         <segue reference="JGD-Oh-55j"/>
     </inferredMetricsTieBreakers>

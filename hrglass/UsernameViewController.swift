@@ -41,7 +41,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
         
         usernameField.attributedPlaceholder =
-            NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Username", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         //swipe down gesture setup -- to dismiss keyboard
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismisskeyboard))
@@ -65,7 +65,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
      *
      ************************/
     
-    func dismisskeyboard(){
+    @objc func dismisskeyboard(){
         
         self.usernameField.resignFirstResponder()
         

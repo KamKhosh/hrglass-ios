@@ -52,7 +52,6 @@
 		5E3537FF1F204F99009D121B /* VideoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3537FE1F204F99009D121B /* VideoStore.swift */; };
 		5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35D7571EC508AF00A41633 /* ProfileViewController.swift */; };
 		5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */; };
-		5E375C0B1F4A19BB009AC14E /* CropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E375C0A1F4A19BB009AC14E /* CropViewController.swift */; };
 		5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */; };
 		5E3BAC451F00282E0007197A /* SubmitPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */; };
 		5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC471F0042420007197A /* DiscoverViewController.swift */; };
@@ -61,7 +60,6 @@
 		5E3CBC8F1F7AD6870073322B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */; };
 		5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC921F7AE91D0073322B /* RKNotificationHub.swift */; };
 		5E3CBC951F7AF3080073322B /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */; };
-		5E4190571F7EFB9300BF2955 /* CLImageEditor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E4190561F7EFB9300BF2955 /* CLImageEditor.framework */; };
 		5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E60F5371F42270900569F74 /* ColorSlider.swift */; };
 		5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */; };
 		5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7197AD1F1D502900411A08 /* AWSManager.swift */; };
@@ -125,7 +123,6 @@
 		5E3537FE1F204F99009D121B /* VideoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoStore.swift; sourceTree = "<group>"; };
 		5E35D7571EC508AF00A41633 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		5E375C0A1F4A19BB009AC14E /* CropViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CropViewController.swift; sourceTree = "<group>"; };
 		5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewCell.swift; sourceTree = "<group>"; };
 		5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitPostViewController.swift; sourceTree = "<group>"; };
 		5E3BAC471F0042420007197A /* DiscoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverViewController.swift; sourceTree = "<group>"; };
@@ -162,7 +159,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E4190571F7EFB9300BF2955 /* CLImageEditor.framework in Frameworks */,
 				5E32DCBB1F536656004E6AA1 /* AudioToolbox.framework in Frameworks */,
 				5E32DCB81F53664A004E6AA1 /* MediaPlayer.framework in Frameworks */,
 				5E32DCB91F53664A004E6AA1 /* MediaToolbox.framework in Frameworks */,
@@ -289,7 +285,6 @@
 			children = (
 				5EF85DF31F8D5C89008887F9 /* AddPostTableViewCell */,
 				5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */,
-				5E375C0A1F4A19BB009AC14E /* CropViewController.swift */,
 				5E375C091F4A11DD009AC14E /* AddPostCollectionCell */,
 				5E28BF3A1ED79219006E653B /* AddPostViewController.swift */,
 				5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */,
@@ -443,12 +438,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0910;
 				TargetAttributes = {
 					5E24BD791EB275800047ED50 = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = YKN8DC38G3;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
@@ -499,9 +494,46 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-hrglass/Pods-hrglass-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSCognito/AWSCognito.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
+				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FacebookLogin/FacebookLogin.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${PODS_ROOT}/Instabug/Instabug.framework",
+				"${PODS_ROOT}/Instabug/Instabug.framework.dSYM",
+				"${BUILT_PRODUCTS_DIR}/Kanna/Kanna.framework",
+				"${BUILT_PRODUCTS_DIR}/RKNotificationHub/RKNotificationHub.framework",
+				"${BUILT_PRODUCTS_DIR}/URLEmbeddedView/URLEmbeddedView.framework",
+				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognito.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookLogin.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Instabug.framework",
+				"${DWARF_DSYM_FOLDER_PATH}/Instabug.framework.dSYM",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kanna.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKNotificationHub.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/URLEmbeddedView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/iOSPhotoEditor.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -514,9 +546,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-hrglass/Pods-hrglass-resources.sh",
+				"${PODS_ROOT}/Instabug/Instabug.framework/Instabug.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -529,13 +564,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-hrglass-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -568,7 +606,6 @@
 				5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */,
 				5E24BD7E1EB275800047ED50 /* AppDelegate.swift in Sources */,
 				5E3CBC951F7AF3080073322B /* CommentTableViewCell.swift in Sources */,
-				5E375C0B1F4A19BB009AC14E /* CropViewController.swift in Sources */,
 				5E2DCFD81F660A6E00211001 /* MessageCollectionViewCell.swift in Sources */,
 				5E254C5C1ECCC36B00CFBFCE /* CreateAccountViewController.swift in Sources */,
 				5E24BDAC1EB27EB10047ED50 /* FeedTableViewCell.swift in Sources */,
@@ -632,7 +669,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -640,7 +679,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -685,7 +728,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -693,7 +738,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -743,7 +792,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -769,7 +819,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

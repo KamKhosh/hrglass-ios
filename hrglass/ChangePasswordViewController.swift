@@ -32,13 +32,13 @@ class ChangePasswordViewController: UIViewController {
 
         
         confirmPasswordField.attributedPlaceholder =
-            NSAttributedString(string: "Confirm Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Confirm Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         newPasswordField.attributedPlaceholder =
-            NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         oldPasswordField.attributedPlaceholder =
-            NSAttributedString(string: "Old Password", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Old Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
     }
 

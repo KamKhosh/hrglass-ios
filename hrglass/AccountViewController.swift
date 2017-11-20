@@ -169,7 +169,7 @@ class AccountViewController: UIViewController {
      *
      **********************************/
     
-    func blockedUsersAction(){
+    @objc func blockedUsersAction(){
         
         let blockedAccountsView = self.storyboard?.instantiateViewController(withIdentifier: "blockedAccountsView") as! BlockedAccountsViewController
         
@@ -179,7 +179,7 @@ class AccountViewController: UIViewController {
     
     
 
-    func changePasswordAction(){
+    @objc func changePasswordAction(){
         
         if (Auth.auth().currentUser?.providerID == "Firebase" ){
             

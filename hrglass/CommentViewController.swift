@@ -108,7 +108,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     }
     
     
-    func keyboardNotification(notification: NSNotification) {
+    @objc func keyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
             
             let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
@@ -263,7 +263,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     func findHeightForText(text: String, havingWidth widthValue: CGFloat, andFont font: UIFont) -> CGFloat {
         var size = CGSize.zero
         if text.isEmpty == false {
-            let frame = text.boundingRect(with: CGSize(width: widthValue, height:CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
+            let frame = text.boundingRect(with: CGSize(width: widthValue, height:CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
             size = CGSize(width:frame.size.width, height:ceil(frame.size.height))
         }
         return size.height
@@ -339,10 +339,10 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         
         //Use Attributed text to bold the username
-        let attributedString = NSMutableAttributedString(string: fullString, attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 14.0)])
+        let attributedString = NSMutableAttributedString(string: fullString, attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14.0)])
         
-        let boldFontAttribute = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14.0)]
-        let whiteAttribute = [NSForegroundColorAttributeName: UIColor.white]
+        let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14.0)]
+        let whiteAttribute = [NSAttributedStringKey.foregroundColor: UIColor.white]
         attributedString.addAttributes(boldFontAttribute, range: NSMakeRange(0, username.count + 2))
         attributedString.addAttributes(whiteAttribute, range:NSMakeRange(0, fullString.count))
         

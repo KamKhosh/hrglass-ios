@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '7A9C700B45284096D6F7800D168CB07B'
+               BlueprintIdentifier = '501E637F462D92A2E0434EF64F2DACAF'
                BlueprintName = 'RKNotificationHub'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'RKNotificationHub.framework'>

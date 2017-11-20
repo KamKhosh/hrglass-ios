@@ -327,7 +327,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             
             if (userdata.profilePhoto != ""){
                 
-                self.imageCache.getImage(urlString: userdata.profilePhoto as! String, completion: { image in
+                self.imageCache.getImage(urlString: userdata.profilePhoto as String, completion: { image in
                     
                     cell.profilePhotoImageView.image = image
                     cell.activityInd.stopAnimating()
@@ -350,7 +350,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                 cell.followerLbl.text = String(count)
             })
 
-            cell.nameLbl.text = userdata.name as? String
+            cell.nameLbl.text = userdata.name as String
             
             finalCell = cell
         }

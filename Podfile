@@ -16,10 +16,9 @@ target 'hrglass' do
     pod 'AWSCore'
     pod 'AWSCognito'
     pod 'AWSS3'
-    pod 'SwiftRangeSlider'
     pod 'RKNotificationHub'
-    pod 'CLImageEditor'
-    pod 'CLImageEditor/TextTool'
     pod 'Instabug'
-    
+    pod 'iOSPhotoEditor'
+
+
 end

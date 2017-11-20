@@ -155,7 +155,7 @@ private func substringWithRangeAtIndex(_ result: AKTextCheckingResult, str: Stri
         #if os(Linux)
         let range = result.range(at: at)
         #else
-        let range = result.rangeAt(at)
+            let range = result.range(at:at)
         #endif
         if range.length > 0 {
             let startIndex = str.index(str.startIndex, offsetBy: range.location)
@@ -323,7 +323,7 @@ private func getAttrNot(_ str: inout String, skip: Bool = true) -> String? {
             #if os(Linux)
             let range = sub.range(at: 1)
             #else
-            let range = sub.rangeAt(1)
+                let range = sub.range(at:1)
             #endif
             let startIndex = one.index(one.startIndex, offsetBy: range.location)
             let endIndex   = one.index(startIndex, offsetBy: range.length)

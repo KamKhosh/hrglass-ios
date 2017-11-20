@@ -84,7 +84,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     
-    func keyboardNotification(notification: NSNotification) {
+    @objc func keyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
             let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
             let duration:TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
@@ -277,7 +277,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
 
     func calculateHeight(inString:String, withWidth: CGFloat) -> CGFloat {
         let messageString = inString
-        let attributes : [String : Any] = [NSFontAttributeName : UIFont.systemFont(ofSize: 20.0)]
+        let attributes : [NSAttributedStringKey : Any] = [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20.0)]
         
         let attributedString : NSAttributedString = NSAttributedString(string: messageString, attributes: attributes)
         

@@ -11,10 +11,18 @@ import Firebase
 import URLEmbeddedView
 import AVKit
 import AVFoundation
-import CLImageEditor
+import iOSPhotoEditor
 
 
-class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CLImageEditorDelegate{
+class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CropViewControllerDelegate{
+    
+    
+    
+    
+
+    
+
+    
     
     let dataManager = DataManager()
     let colors = Colors()
@@ -45,7 +53,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //default is feed unless other wise specified in discoverVC
     var parentView: String = "feed"
-    
+    var cropNavController: UINavigationController!
     
     /*******************************
      *
@@ -188,7 +196,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             print("chose to edit profile picture")
             self.isChoosingProfile = true
-            self.imagePicker.allowsEditing = true
+            self.imagePicker.allowsEditing = false
             self.imagePicker.sourceType = .photoLibrary
             
             self.presentImagePicker()
@@ -200,7 +208,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             print("chose to edit profile picture")
             
             self.isChoosingProfile = false
-            self.imagePicker.allowsEditing = true
+            self.imagePicker.allowsEditing = false
             self.imagePicker.sourceType = .photoLibrary
             
             self.presentImagePicker()
@@ -357,86 +365,55 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
         
-        //if picture is edited use the edited version
-        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage{
-            
-            if (isChoosingProfile){
-                //setting the profile picture
-                let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-                let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-                
-                cell.profilePhoto.contentMode = .scaleAspectFill
-                
-                //get data representation and save to documents path
-                let data: Data = UIImageJPEGRepresentation(editedImage, 0.8)! as Data
-                dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
-                
-                cell.profilePictureIndicator.startAnimating()
-                
-                //upload photo
-                self.uploadProfilePhoto(completion: { (url) in
-                    print(url)
-                    
-                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
-                    self.profileTableView.reloadData()
-                    cell.profilePictureIndicator.stopAnimating()
-                })
-                
-            }else{
-                //setting the cover photo
-                coverPhoto.contentMode = .scaleAspectFill
-                coverPhoto.image = editedImage
-                
-                //upload photo
-                self.uploadCoverPhoto(completion: { (url) in
-                    print(url)
-                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
-                    
-                })
-            }
-        }
-            
-        else{
+//        //if picture is edited use the edited version
+//        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage{
+//
+//            if (isChoosingProfile){
+//                //setting the profile picture
+//                let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+//                let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+//
+//                cell.profilePhoto.contentMode = .scaleAspectFill
+//
+//                //get data representation and save to documents path
+//                let data: Data = UIImageJPEGRepresentation(editedImage, 0.8)! as Data
+//                dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
+//
+//                cell.profilePictureIndicator.startAnimating()
+//
+//                //upload photo
+//                self.uploadProfilePhoto(completion: { (url) in
+//                    print(url)
+//
+//                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
+//                    self.profileTableView.reloadData()
+//                    cell.profilePictureIndicator.stopAnimating()
+//                })
+//
+//            }else{
+//                //setting the cover photo
+//                coverPhoto.contentMode = .scaleAspectFill
+//                coverPhoto.image = editedImage
+//
+//                //upload photo
+//                self.uploadCoverPhoto(completion: { (url) in
+//                    print(url)
+//                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
+//
+//                })
+//            }
+//        }
+        
+//        else{
             //else use the original
             if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                
-                if (isChoosingProfile){
-                    //choosing profile photo
-                    
-                    let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-                    let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-                    
-                    cell.profilePhoto.contentMode = .scaleAspectFill
-                    
-                    let data: Data = UIImageJPEGRepresentation(pickedImage, 0.8)! as Data
-                    dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
-                    
-                    cell.profilePictureIndicator.startAnimating()
-                    self.profileTableView.reloadData()
-                    
-                    self.uploadProfilePhoto(completion: { (url) in
-                        print(url)
-                        
-                        self.imageCache.replacePhotoForKey(url: url, image: pickedImage)
-                        self.profileTableView.reloadData()
-                        cell.profilePictureIndicator.stopAnimating()
-                    })
-                    
-                }else{
-                    //choosing cover photo
-                    
-                    coverPhoto.contentMode = .scaleAspectFill
-                    coverPhoto.image = pickedImage
-                    self.uploadCoverPhoto(completion: { (url) in
-                        print(url)
-                        self.imageCache.replacePhotoForKey(url: url, image: pickedImage)
-                    })
-                }
+                dismiss(animated: true, completion: nil)
+                self.presentImageEditorWithImage(image: pickedImage)
             }
             
-        }
+//        }
         
-        dismiss(animated: true, completion: nil)
+        
     }
     
     
@@ -470,42 +447,92 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //        }
     //    }
     
+    
+    
     /*
-     * CLImage Editor Delegate Methods
+     * CropView Controller methods
      *
      */
     
-    //CLImageEditor Delegate Functions
     func presentImageEditorWithImage(image:UIImage){
         
-        guard let editor = CLImageEditor(image: image, delegate: self) else {
-            
-            return;
+        let controller:CropViewController = CropViewController()
+        controller.delegate = self
+        controller.image = image
+        controller.toolbarHidden = true
+        controller.keepAspectRatio = true
+        
+        if isChoosingProfile{
+            controller.cropAspectRatio = 1.0
+        }else{
+            controller.cropAspectRatio = 3.0/5.0
         }
         
-        editor.theme.backgroundColor = UIColor.white
-        editor.theme.toolbarColor = UIColor.white
-        editor.theme.toolbarTextColor = UIColor.lightGray
-        editor.theme.toolIconColor = "black"
+        cropNavController = UINavigationController(rootViewController: controller)
+        present(cropNavController, animated: true, completion: nil)
         
-        self.present(editor, animated: true, completion: {});
+    }
+    
+    
+    
+    func cropViewController(_ controller: CropViewController, didFinishCroppingImage image: UIImage, transform: CGAffineTransform, cropRect: CGRect) {
+        if (isChoosingProfile){
+            
+            let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+            let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+            
+            cell.profilePhoto.contentMode = .scaleAspectFill
+            
+            let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
+            dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
+            
+            cell.profilePictureIndicator.startAnimating()
+            self.profileTableView.reloadData()
+            
+            self.uploadProfilePhoto(completion: { (url) in
+                print(url)
+                
+                self.imageCache.replacePhotoForKey(url: url, image: image)
+                self.profileTableView.reloadData()
+                cell.profilePictureIndicator.stopAnimating()
+            })
+            
+        }else{
+            
+            coverPhoto.contentMode = .scaleAspectFill
+            coverPhoto.image = image
+            self.uploadCoverPhoto(completion: { (url) in
+                print(url)
+                self.imageCache.replacePhotoForKey(url: url, image: image)
+            })
+        }
+        
+        cropNavController.dismiss(animated: true, completion: nil)
+    }
+    
+    func cropViewControllerDidCancel(_ controller: CropViewController) {
+        print("Canceled")
+        cropNavController.dismiss(animated: true, completion: nil)
     }
     
     
     
-    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-        
-        let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-        let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-        
-        cell.profilePhoto.contentMode = .scaleAspectFill
-        cell.profilePhoto.image = image
-        self.profileTableView.reloadData()
-        
-        editor.dismiss(animated: true, completion: nil)
-        
-    }
+
     
+//
+//    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
+//
+//        let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+//        let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+//
+//        cell.profilePhoto.contentMode = .scaleAspectFill
+//        cell.profilePhoto.image = image
+//        self.profileTableView.reloadData()
+//
+//        editor.dismiss(animated: true, completion: nil)
+//
+//    }
+//
     
     
     
@@ -653,10 +680,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.noRecentPostsLbl.isHidden = true
             
             cell.latestPostBackground.layer.borderColor = self.dataManager.getUIColorForCategory(category: self.latestPostData.category).cgColor
-            
-            
-            
-            
+
             switch self.latestPostData.category {
                 
             case .Link:
@@ -1042,9 +1066,5 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         
     }
-    
-    
-    
-    
     
 }

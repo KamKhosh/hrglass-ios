@@ -1461,7 +1461,7 @@ class DataManager {
                 }
                 let exporter: AVAssetExportSession = AVAssetExportSession.init(asset:vAsset, presetName:AVAssetExportPresetHighestQuality)!;
                 exporter.outputURL = path;
-                exporter.outputFileType = AVFileTypeMPEG4;
+                exporter.outputFileType = AVFileType.mp4;
                 exporter.shouldOptimizeForNetworkUse = true;
                 
                 exporter.exportAsynchronously(completionHandler: {
@@ -1500,7 +1500,7 @@ class DataManager {
                 
                 let exporter: AVAssetExportSession = AVAssetExportSession.init(asset:vAsset, presetName:AVAssetExportPresetHighestQuality)!;
                 exporter.outputURL = path;
-                exporter.outputFileType = AVFileTypeMPEG4;
+                exporter.outputFileType = AVFileType.mp4;
                 exporter.shouldOptimizeForNetworkUse = true;
                 
                 exporter.exportAsynchronously(completionHandler: {
@@ -1833,7 +1833,7 @@ class DataManager {
         
         let exporter: AVAssetExportSession = AVAssetExportSession.init(asset:asset, presetName:AVAssetExportPresetAppleM4A)!;
         exporter.outputURL = path;
-        exporter.outputFileType = AVFileTypeAppleM4A;
+        exporter.outputFileType = AVFileType.m4a;
         exporter.shouldOptimizeForNetworkUse = true;
         
         exporter.exportAsynchronously(completionHandler: {

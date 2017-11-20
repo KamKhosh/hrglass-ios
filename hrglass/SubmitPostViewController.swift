@@ -1549,7 +1549,7 @@ class SubmitPostViewController: UIViewController {
     }
     
     
-    func videoTimer(){
+    @objc func videoTimer(){
         
         if (self.progressView.percentageComplete <= 1.0){
             
@@ -1567,7 +1567,7 @@ class SubmitPostViewController: UIViewController {
         }
     }
     
-    func photoTimer(){
+    @objc func photoTimer(){
         
         if (self.progressView.percentageComplete <= 1.0){
             
@@ -1582,7 +1582,7 @@ class SubmitPostViewController: UIViewController {
         }
     }
     
-    func audioTimer(){
+    @objc func audioTimer(){
         if (self.progressView.percentageComplete <= 1.0){
             
             self.awsManager.audioUploadProgressCheck()

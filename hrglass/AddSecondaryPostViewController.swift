@@ -245,7 +245,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
     
     
     
-    func swipeDownAction(){
+    @objc func swipeDownAction(){
         
         if self.linkTextField != nil{
             
@@ -349,7 +349,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
     
     
     
-    func changedBackgroundColor(_ slider: ColorSlider) {
+    @objc func changedBackgroundColor(_ slider: ColorSlider) {
         let color = slider.color
         self.textPostView.backgroundColor = color
         self.backgroundColorBtn.backgroundColor = color
@@ -358,7 +358,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
         
     }
     
-    func changedTextColor(_ slider: ColorSlider) {
+    @objc func changedTextColor(_ slider: ColorSlider) {
         let color = slider.color
         self.textPostView.textColor = color
         self.textColorBtn.backgroundColor = color
@@ -368,7 +368,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
     }
     
     
-    func toggleBackgroundColorSliderVisibility(){
+    @objc func toggleBackgroundColorSliderVisibility(){
         
         self.hideVideoEditingBtns()
         if self.backgroundSlider.isHidden{
@@ -380,7 +380,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
         }
     }
     
-    func toggleTextColorSliderVisibility(){
+    @objc func toggleTextColorSliderVisibility(){
         
         self.hideVideoEditingBtns()
         if self.textSlider.isHidden{
@@ -615,7 +615,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
     }
     
     //RECORD AUDIO
-    func recordTapped() {
+    @objc func recordTapped() {
         if audioRecorder == nil {
             
             self.hideVideoEditingBtns()
@@ -655,7 +655,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
      *     PLAYBACK METHODS -- AUDIO and VIDEO
      *
      *************************************************/
-    func playBtnAction() {
+    @objc func playBtnAction() {
         
         if self.selectedCategory == .Recording{
             
@@ -792,7 +792,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
     }
     
     
-    func setupMusicAccess(){
+    @objc func setupMusicAccess(){
         
         if (MPMediaLibrary.authorizationStatus() == .authorized){
             
@@ -1634,7 +1634,7 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
         
     }
     
-    func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             // we got back an error!
             let ac = UIAlertController(title: "Error saving photo", message: error.localizedDescription, preferredStyle: .alert)
@@ -1762,9 +1762,9 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
             
         }else if (segue.identifier == "toCropView"){
             
-            let cropVC: CropViewController = segue.destination as! CropViewController
-            cropVC.originalImage = self.selectedObject
-            cropVC.parentView = "secondaryPostView"
+//            let cropVC: CropViewController = segue.destination as! CropViewController
+//            cropVC.originalImage = self.selectedObject
+//            cropVC.parentView = "secondaryPostView"
             
         }else if (segue.identifier == "toThumbnailView"){
             

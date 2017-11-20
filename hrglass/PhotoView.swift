@@ -56,7 +56,7 @@ class PhotoView: UIView{
         
     }
     
-    func dismiss(){
+    @objc func dismiss(){
         
         UIView.animate(withDuration: 0.1, animations: {
             self.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)

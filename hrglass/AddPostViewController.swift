@@ -15,10 +15,10 @@ import AVFoundation
 import MediaPlayer
 import AVKit
 import AWSS3
-import CLImageEditor
+import iOSPhotoEditor
 
 
-class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, CLImageEditorDelegate, MPMediaPickerControllerDelegate{
+class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, MPMediaPickerControllerDelegate, PhotoEditorDelegate{
 
     
     //DEMO COLOR
@@ -68,7 +68,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     //music views/players
     var musicView: UIView!
-    var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer()
+    var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer
     var avMusicPlayer: AVAudioPlayer!
     
     //photo and video selected cells
@@ -115,7 +115,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var imagePicker: UIImagePickerController!
     var songPicker: MPMediaPickerController!
     var editorVC: UIVideoEditorController!
-    
+    var photoEditor: PhotoEditorViewController!
     //set to true by previous view controller if the post was retrieved from a saved stat
     var postWasSaved: Bool = false
     
@@ -335,7 +335,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //Swipe Gesture to resign first responder
-    func swipeDownAction(){
+    @objc func swipeDownAction(){
         
         if self.linkTextField.isFirstResponder{
             
@@ -442,10 +442,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         angryBtn.addTarget(self, action: #selector(self.angryAction), for: .touchUpInside)
         shockedBtn.addTarget(self, action: #selector(self.shockedAction), for: .touchUpInside)
         
-        moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, offset: false, direction: .Down)
-        
-        //tighten the buttons
-        moodMenu.spacing = -10.0
+        moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, direction: .Down, startButton: self.moodBtn, spacing: -10.0)
         
         self.view.addSubview(moodMenu)
         moodMenu.isHidden = true
@@ -471,7 +468,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //background color slider selector
-    func changedBackgroundColor(_ slider: ColorSlider) {
+    @objc func changedBackgroundColor(_ slider: ColorSlider) {
         let color = slider.color
         self.textPostView.backgroundColor = color
         self.backgroundColorBtn.backgroundColor = color
@@ -481,7 +478,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //text color slider selector
-    func changedTextColor(_ slider: ColorSlider) {
+    @objc func changedTextColor(_ slider: ColorSlider) {
         let color = slider.color
         self.textPostView.textColor = color
         self.textColorBtn.backgroundColor = color
@@ -491,7 +488,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //also toggles the resize buttons visibility as well as the background color slider
-    func toggleBackgroundColorSliderVisibility(){
+    @objc func toggleBackgroundColorSliderVisibility(){
         
         self.hideVideoEditingBtns()
         if self.backgroundSlider.isHidden{
@@ -505,7 +502,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //toggle the text color slider visibility
-    func toggleTextColorSliderVisibility(){
+    @objc func toggleTextColorSliderVisibility(){
         
         self.hideVideoEditingBtns()
         if self.textSlider.isHidden{
@@ -770,7 +767,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     //RECORD AUDIO
-    func recordTapped() {
+    @objc func recordTapped() {
         if audioRecorder == nil {
             
             self.hideVideoEditingBtns()
@@ -821,7 +818,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *     PLAYBACK METHODS -- AUDIO and VIDEO
      *
      *************************************************/
-    func playBtnAction() {
+    @objc func playBtnAction() {
         
         if self.selectedCategory == .Recording{
             //recording, use audio player to play
@@ -895,7 +892,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
         
         applicationMusicPlayer.setQueue(with: collection)
-        
     }
     
     
@@ -906,28 +902,63 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func presentImageEditorWithImage(image:UIImage){
     
         
-        guard let editor = CLImageEditor(image: image, delegate: self) else {
-    
-            return;
-        }
+        photoEditor = PhotoEditorViewController(nibName:"PhotoEditorViewController",bundle: Bundle(for: PhotoEditorViewController.self))
         
-        editor.theme.backgroundColor = UIColor.white
-        editor.theme.toolbarColor = UIColor.white
-        editor.theme.toolbarTextColor = UIColor.lightGray
-        editor.theme.toolIconColor = "black"
+        //PhotoEditorDelegate
+        photoEditor.photoEditorDelegate = self
         
-        self.present(editor, animated: true, completion: {});
+        //The image to be edited
+        photoEditor.image = image
+        
+        //Stickers that the user will choose from to add on the image
+//        photoEditor.stickers.append(UIImage(named: "sticker" )!)
+        
+        //Optional: To hide controls - array of enum control
+        photoEditor.hiddenControls = [.share]
+        
+        //Optional: Colors for drawing and Text, If not set default values will be used
+        photoEditor.colors = [.black,.purple,.red,.orange,.yellow,.green,.blue,.white]
+        
+        //Present the View Controller
+        present(photoEditor, animated: true, completion: nil)
+        
+        
+//        guard let editor = CLImageEditor(image: image, delegate: self) else {
+//
+//            return;
+//        }
+        
+//        editor.theme.backgroundColor = UIColor.white
+//        editor.theme.toolbarColor = UIColor.white
+//        editor.theme.toolbarTextColor = UIColor.lightGray
+//        editor.theme.toolIconColor = "black"
+//
+//        self.present(editor, animated: true, completion: {});
     }
 
     
     
-    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-        
+    
+    func doneEditing(image: UIImage) {
+        //edited image
         self.setPhotoView(image: image)
         self.selectedObject = image
-        editor.dismiss(animated: true, completion: nil)
-        
+        photoEditor.dismiss(animated: true, completion: nil)
     }
+    
+    func canceledEditing() {
+        photoEditor.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
+//    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
+//
+//        self.setPhotoView(image: image)
+//        self.selectedObject = image
+//        editor.dismiss(animated: true, completion: nil)
+//
+//    }
 
     
     /***************
@@ -952,7 +983,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     //set mood as afraid emoji
-    func afraidAction(){
+    @objc func afraidAction(){
         
         self.selectedMood = .Afraid
         self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
@@ -960,28 +991,28 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     //set mood as sad emoji
-    func sadAction(){
+    @objc func sadAction(){
         self.selectedMood = .Sad
         self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
         self.moodMenu.close()
     }
     
     //set mood as funny emoji
-    func funnyAction(){
+    @objc func funnyAction(){
         self.selectedMood = .Funny
         self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
         self.moodMenu.close()
     }
     
     //set mood as shocked emoji
-    func shockedAction(){
+    @objc func shockedAction(){
         self.selectedMood = .Shocked
         self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
         self.moodMenu.close()
     }
     
     //set mood as angry emoji
-    func angryAction(){
+    @objc func angryAction(){
         self.selectedMood = .Angry
         self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
         self.moodMenu.close()
@@ -1111,7 +1142,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *
      *********************************/
     
-    func setupMusicAccess(){
+    @objc func setupMusicAccess(){
         
         if (MPMediaLibrary.authorizationStatus() == .authorized){
             
@@ -1472,7 +1503,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textPostView.frame.size = self.currentTabView.frame.size
         self.textPostView.placeholder = "What's on your mind?"
         textPostView.attributedPlaceholder =
-            NSAttributedString(string: "What's on your mind?", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "What's on your mind?", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         self.textPostView.backgroundColor = UIColor.black
         self.textPostView.tintColor = UIColor.white
         self.textPostView.textColor = UIColor.white
@@ -1632,7 +1663,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.linkTextField.delegate = self
         linkTextField.attributedPlaceholder =
-            NSAttributedString(string: "Paste a link", attributes: [NSForegroundColorAttributeName : UIColor.lightGray])
+            NSAttributedString(string: "Paste a link", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         self.linkTextField.addSubview(bottomLine)
         self.linkTextField.textAlignment = .center
@@ -2334,7 +2365,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
     }
     
-    func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             // we got back an error!
             let ac = UIAlertController(title: "Error saving photo", message: error.localizedDescription, preferredStyle: .alert)
@@ -2470,12 +2501,14 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             self.tabBar(self.tabBar, didSelect: (self.tabBar.items?[0])!)
             
-        }else if (segue.identifier == "toCropView"){
-            
-            let cropVC: CropViewController = segue.destination as! CropViewController
-            cropVC.originalImage = self.selectedObject
-
-        }else if (segue.identifier == "toThumbnailView"){
+        }
+//        else if (segue.identifier == "toCropView"){
+//            
+//            let cropVC: CropViewController = segue.destination as! CropViewController
+//            cropVC.originalImage = self.selectedObject
+//
+//        }
+        else if (segue.identifier == "toThumbnailView"){
             
             let thumbVC: SelectThumbnailViewController = segue.destination as! SelectThumbnailViewController
             
