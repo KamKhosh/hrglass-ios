@@ -22,7 +22,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var addPostMenu: MenuView!
     var dataManager = DataManager()
     var awsManager: AWSManager! = nil
-    
+    var colors: Colors = Colors()
     
     //Caches init
     var imageCache: ImageCache = ImageCache()
@@ -111,7 +111,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         self.refreshControl = UIRefreshControl()
         
-        refreshControl.backgroundColor = UIColor.black
+        refreshControl.backgroundColor = colors.getBlackishColor()
         refreshControl.tintColor = UIColor.white
         self.refreshControl.addTarget(self, action: #selector (refresh), for: .valueChanged)
         self.tableView.addSubview(self.refreshControl)

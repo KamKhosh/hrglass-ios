@@ -38,7 +38,7 @@ class BlockedAccountsViewController: UIViewController, UITableViewDelegate, UITa
         
         //nav bar setup
         self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
-        self.navigationBar.backgroundColor = UIColor.black
+//        self.navigationBar.backgroundColor = UIColor.black
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationBar.shadowImage = UIImage()
         

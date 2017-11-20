@@ -58,7 +58,7 @@ class AccountViewController: UIViewController {
         currentUserRef = ref.child("Users").child((self.user?.uid)!)
         
         self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
-        self.navigationBar.backgroundColor = UIColor.black
+//        self.navigationBar.backgroundColor = UIColor.black
         
         self.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationBar.shadowImage = UIImage()
