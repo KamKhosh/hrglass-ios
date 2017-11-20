@@ -17,13 +17,7 @@ import iOSPhotoEditor
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CropViewControllerDelegate{
     
     
-    
-    
 
-    
-
-    
-    
     let dataManager = DataManager()
     let colors = Colors()
     var progressView: ProgressView!
@@ -846,7 +840,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.addChildViewController(postVC)
             
             postVC.view.frame = self.view.bounds
-            postVC.alphaView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+            postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
             
             self.view.addSubview(postVC.view)
             postVC.didMove(toParentViewController: self)
@@ -989,7 +983,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         //change background and text
         textView.backgroundColor = UIColor.white
         textView.textColor = UIColor.black
-        
     }
     
     

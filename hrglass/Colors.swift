@@ -26,6 +26,7 @@ class Colors {
     let musicPostColor: String = "#81BEF7"
     let mainBlueColor: String = "#2295C6"
     let photoPostColor: String = ""
+    let blackish: String = "#1C1C1C"
     
     func getGradientLayer() -> CAGradientLayer{
         
@@ -67,7 +68,6 @@ class Colors {
     func getSearchBarColor () -> UIColor{
     //search bar textfield background color
         return hexStringToUIColor(hex: self.searchBarColor)
-    
     }
     
     func getSeenPostColor () -> UIColor{
@@ -95,6 +95,11 @@ class Colors {
     func getMusicColor () -> UIColor{
         
         return hexStringToUIColor(hex: self.musicPostColor)
+    }
+    
+    func getBlackishColor () -> UIColor{
+        
+        return hexStringToUIColor(hex: self.blackish)
     }
     
     
