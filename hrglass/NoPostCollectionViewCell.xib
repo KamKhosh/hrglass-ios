@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="noPostsCell" id="kjP-kG-fp4" customClass="NoPostsCollectionViewCell" customModule="hrglass" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="90" height="130"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                <rect key="frame" x="0.0" y="0.0" width="90" height="130"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LGB-b4-H9e">
+                        <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
+                        <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="LGB-b4-H9e" secondAttribute="height" multiplier="1:1" id="MRE-Wf-WIr"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ece-X6-mbj">
+                        <rect key="frame" x="0.0" y="92" width="90" height="14.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uxR-iN-F7Y">
+                        <rect key="frame" x="0.0" y="108" width="90" height="30"/>
+                        <state key="normal" title="Follow"/>
+                    </button>
+                </subviews>
+            </view>
+            <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="ece-X6-mbj" firstAttribute="top" secondItem="LGB-b4-H9e" secondAttribute="bottom" constant="2" id="1Yq-zy-BJd"/>
+                <constraint firstItem="uxR-iN-F7Y" firstAttribute="centerX" secondItem="tKa-kb-pBS" secondAttribute="centerX" id="1pG-32-WSr"/>
+                <constraint firstItem="uxR-iN-F7Y" firstAttribute="width" secondItem="kjP-kG-fp4" secondAttribute="width" id="3z0-9r-l8S"/>
+                <constraint firstItem="LGB-b4-H9e" firstAttribute="top" secondItem="tKa-kb-pBS" secondAttribute="top" id="d8i-NY-Zwv"/>
+                <constraint firstItem="LGB-b4-H9e" firstAttribute="centerX" secondItem="tKa-kb-pBS" secondAttribute="centerX" id="hsf-H9-68q"/>
+                <constraint firstItem="uxR-iN-F7Y" firstAttribute="top" secondItem="ece-X6-mbj" secondAttribute="bottom" constant="1" id="kd1-Oz-Jv1"/>
+                <constraint firstItem="ece-X6-mbj" firstAttribute="centerX" secondItem="tKa-kb-pBS" secondAttribute="centerX" id="rBI-8d-qRp"/>
+                <constraint firstItem="LGB-b4-H9e" firstAttribute="width" secondItem="kjP-kG-fp4" secondAttribute="width" id="wPv-Ko-a1j"/>
+                <constraint firstItem="ece-X6-mbj" firstAttribute="width" secondItem="kjP-kG-fp4" secondAttribute="width" id="yDu-xZ-X7D"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="tKa-kb-pBS"/>
+            <size key="customSize" width="97" height="136"/>
+            <connections>
+                <outlet property="followBtn" destination="uxR-iN-F7Y" id="0lR-q6-A8P"/>
+                <outlet property="imageView" destination="LGB-b4-H9e" id="Te6-kn-v1f"/>
+                <outlet property="nameLbl" destination="ece-X6-mbj" id="eLZ-dl-cfR"/>
+            </connections>
+            <point key="canvasLocation" x="12" y="25"/>
+        </collectionViewCell>
+    </objects>
+</document>

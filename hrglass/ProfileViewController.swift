@@ -793,6 +793,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }else{
                 
                 cell.profilePhoto.image = dataManager.defaultsUserPhoto
+                cell.profilePictureIndicator.stopAnimating()
             }
             
             cell.profilePhoto.layer.cornerRadius = cell.profilePhoto.frame.width / 2

@@ -14,7 +14,9 @@ import AVFoundation
 import MediaPlayer
 
 
-class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate{
+class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
+    
+    
 
     
     //class objects
@@ -28,6 +30,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var imageCache: ImageCache = ImageCache()
     var videoStore: VideoStore = VideoStore()
     
+    //discover users // no posts view
+    var noPostCollectionView: UICollectionView!
+    var discoverUserData: NSMutableArray = NSMutableArray()
+    var assetThumbnailSize: CGSize = CGSize.zero
     
     //post data of selected tableview cell
     var selectedPostData: PostData!
@@ -120,9 +126,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.view.addSubview(self.initialLoadIndicator)
         self.initialLoadIndicator.startAnimating()
         
-        
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
-        
         
         //set button colors
         self.settingsButton.setImage(UIImage(named:"settings")?.transform(withNewColor: UIColor.white), for: .normal)
@@ -157,6 +161,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     self.loggedInUser.username = username
                 }
             }
+            
             
             
             if (self.loggedInUser != nil){
@@ -303,8 +308,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
-
-    
     func blockUserAction(){
         
         self.feedData.remove(at: self.blockUserRow)
@@ -348,6 +351,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //if there is no feed data
             if (self.feedData.count == 0){
                 self.noPostsLbl.isHidden = false
+                self.setupNoPostsCollection()
+                self.getPublicUsers()
+                
+                self.noPostCollectionView.isHidden = false
+            }else{
+                self.noPostCollectionView.isHidden = true
             }
             
             //stop loading animations
@@ -401,6 +410,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
         })
     }
+    
     
     /***************************************************************************************
      
@@ -472,6 +482,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
     }
     
+
+    
     
     /***************************************************************************************
      
@@ -495,7 +507,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.profileBtn.layer.cornerRadius = buttonFrame.size.width * 0.35
         self.profileBtn.imageView?.contentMode = .scaleAspectFill
         self.profileBtn.clipsToBounds = true
-        
         
         
         self.profileBtn.addTarget(self, action: #selector(self.profileButtonAction), for: .touchUpInside)
@@ -554,6 +565,171 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
+    
+    /***************************************************************************************************
+     
+     Function - setupNoPostsCollection:
+     
+     Parameters - NA
+     
+     Returns: NA
+     
+     confures the collection view for when there are no active posts, sets noPostsCollectionView hidden
+     
+     ***************************************************************************************************/
+    
+    func setupNoPostsCollection(){
+        
+        //collectionview layout
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 5, left: 3, bottom: 0, right: 3)
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
+        layout.scrollDirection = .horizontal
+        
+        //set thumbnail sizes (applicible to both photos and videos collection views)
+        assetThumbnailSize = CGSize(width:90, height:110)
+        layout.itemSize = assetThumbnailSize
+        
+        let noPostsFrame: CGRect = CGRect(x: 0, y: self.noPostsLbl.frame.maxY + 20, width: self.view.frame.width, height: 130)
+        //set photos collection attributes
+        self.noPostCollectionView = UICollectionView(frame: noPostsFrame, collectionViewLayout: layout)
+        
+        let cellNib = UINib(nibName: "NoPostCollectionViewCell", bundle:nil)
+        self.noPostCollectionView.register(cellNib, forCellWithReuseIdentifier: "noPostsCell")
+        self.noPostCollectionView.allowsSelection = true
+        self.noPostCollectionView.allowsMultipleSelection = false
+        //        self.noPostCollectionView.center = self.currentTabView.center
+        self.noPostCollectionView.backgroundColor = colors.getBlackishColor()
+        self.noPostCollectionView.delegate = self
+        self.noPostCollectionView.dataSource = self
+        
+        self.view.addSubview(noPostCollectionView)
+        self.noPostCollectionView.isHidden = true
+    }
+    
+
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - getPublicUsers:
+     
+     Parameters - String: profileURLString
+     
+     Returns: NA
+     
+     confures the menuView with the menu buttons to be shown/hidden with menuButton
+     
+     ***************************************************************************************/
+    
+    func getPublicUsers(){
+        
+        //For now just grab all users -- TODO: Develop Algorithm for pulling in more relevant users to this array
+        let usersRef: DatabaseReference = ref.child("Users")
+        
+        usersRef.observeSingleEvent(of: .value, with: { snapshot in
+            
+            let data: NSDictionary = snapshot.value as! NSDictionary
+            print(data)
+            let followingRef: DatabaseReference = self.ref.child("Following")
+            
+            followingRef.child((Auth.auth().currentUser?.uid)!).child("following_list").observeSingleEvent(of: .value, with: { snapshot in
+                
+                if let followingDict: NSDictionary = snapshot.value as? NSDictionary {
+                    
+                    for key in data.allKeys{
+                        
+                        let keyString = key as! String
+                        
+                        //if the user is not current user or already followed add them to datasourse
+                        if (keyString != Auth.auth().currentUser?.uid && followingDict.value(forKey: keyString) == nil){
+                            
+                            self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+                            
+                        }
+                    }
+                    self.noPostCollectionView.isHidden = false
+                    self.noPostCollectionView.reloadData()
+                    
+                }else{
+                    
+                    for key in data.allKeys{
+                        
+                        let keyString = key as! String
+                        
+                        //TODO: Removed the logged in User
+                        if (keyString != Auth.auth().currentUser?.uid){
+                            
+                            self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+                            //                            self.userIdArray.add(keyString)
+                            
+                        }
+                    }
+                    self.noPostCollectionView.isHidden = false
+                    self.noPostCollectionView.reloadData()
+                }
+                
+            })
+            
+        })
+    }
+    
+    
+    /*****************************************************
+     *
+     * NO POSTS COLLECTION VIEW DELEGATE METHODS
+     *
+     ******************************************************/
+    
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.discoverUserData.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell: NoPostsCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "noPostsCell", for: indexPath) as! NoPostsCollectionViewCell
+        let user: User = self.discoverUserData[indexPath.row] as! User
+        
+        let loadingInd: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        loadingInd.hidesWhenStopped = true
+        loadingInd.center = cell.imageView.center
+        loadingInd.startAnimating()
+        
+        cell.imageView.layer.cornerRadius = cell.frame.width/2
+        cell.imageView.backgroundColor = colors.getBlackishColor()
+        
+        if user.profilePhoto != ""{
+            self.imageCache.getImage(urlString: user.profilePhoto, completion: { (image) in
+                
+                cell.imageView.image = image
+                loadingInd.stopAnimating()
+            })
+        }else{
+            cell.imageView.image = dataManager.defaultsUserPhoto
+        }
+        
+        cell.nameLbl.text = user.name
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let user: User = self.discoverUserData[indexPath.row] as! User
+        self.selectedUserUID = user.userID
+        self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
+        
+    }
+    
+    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout,sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    {
+        return self.assetThumbnailSize
+        
+    }
     
      
     /*****************************
@@ -1058,7 +1234,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.imageCache = ImageCache()
             
             profileVC.currentlyViewingUID = self.selectedUserUID
-            profileVC.follwBtnIsUnfollow = true
+            
+            //if the user is selecting from the noPostsCollectionView, noPostsLbl will not be hidden and we want the follow button to say follow
+            if self.noPostsLbl.isHidden{
+                profileVC.follwBtnIsUnfollow = true
+            }else{
+                profileVC.follwBtnIsUnfollow = false
+            }
+            
             
             if navigationMenu != nil{
                 self.navigationMenu.close()

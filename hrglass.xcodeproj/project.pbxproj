@@ -52,6 +52,8 @@
 		5E3537FF1F204F99009D121B /* VideoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3537FE1F204F99009D121B /* VideoStore.swift */; };
 		5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35D7571EC508AF00A41633 /* ProfileViewController.swift */; };
 		5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */; };
+		5E3721651FC4DC620032F67B /* NoPostCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E3721641FC4DC620032F67B /* NoPostCollectionViewCell.xib */; };
+		5E3721671FC4E2690032F67B /* NoPostsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3721661FC4E2690032F67B /* NoPostsCollectionViewCell.swift */; };
 		5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */; };
 		5E3BAC451F00282E0007197A /* SubmitPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */; };
 		5E3BAC481F0042420007197A /* DiscoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3BAC471F0042420007197A /* DiscoverViewController.swift */; };
@@ -123,6 +125,8 @@
 		5E3537FE1F204F99009D121B /* VideoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoStore.swift; sourceTree = "<group>"; };
 		5E35D7571EC508AF00A41633 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5E3721641FC4DC620032F67B /* NoPostCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoPostCollectionViewCell.xib; sourceTree = "<group>"; };
+		5E3721661FC4E2690032F67B /* NoPostsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPostsCollectionViewCell.swift; sourceTree = "<group>"; };
 		5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewCell.swift; sourceTree = "<group>"; };
 		5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitPostViewController.swift; sourceTree = "<group>"; };
 		5E3BAC471F0042420007197A /* DiscoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverViewController.swift; sourceTree = "<group>"; };
@@ -249,6 +253,8 @@
 				5E24BDA91EB27CBA0047ED50 /* FeedViewController.swift */,
 				5E24BDAB1EB27EB10047ED50 /* FeedTableViewCell.swift */,
 				5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */,
+				5E3721641FC4DC620032F67B /* NoPostCollectionViewCell.xib */,
+				5E3721661FC4E2690032F67B /* NoPostsCollectionViewCell.swift */,
 			);
 			name = FeedViewController;
 			sourceTree = "<group>";
@@ -478,6 +484,7 @@
 			files = (
 				5E24BD881EB275800047ED50 /* LaunchScreen.storyboard in Resources */,
 				5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */,
+				5E3721651FC4DC620032F67B /* NoPostCollectionViewCell.xib in Resources */,
 				5E174AAB1FA91ED90034B33E /* Images.xcassets in Resources */,
 				5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */,
 				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
@@ -614,6 +621,7 @@
 				5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */,
 				5E3098151EBC3457001AC1A6 /* SettingsViewController.swift in Sources */,
 				5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */,
+				5E3721671FC4E2690032F67B /* NoPostsCollectionViewCell.swift in Sources */,
 				5E3CBC791F76D6450073322B /* AddSecondaryPostViewController.swift in Sources */,
 				5E2A89671F44FCF6002AD645 /* PostViewController.swift in Sources */,
 				5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */,
