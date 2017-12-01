@@ -667,7 +667,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 16000,
             AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            AVEncoderAudioQualityKey: AVAudioQuality.max.rawValue
         ]
         
         do {
@@ -766,7 +766,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     //RECORD AUDIO
     @objc func recordTapped() {
-        if audioRecorder == nil {
+        if audioRecorder == nil || recordButton.title(for: .normal) == "Tap to Re-record" {
             
             self.hideVideoEditingBtns()
             startRecording()

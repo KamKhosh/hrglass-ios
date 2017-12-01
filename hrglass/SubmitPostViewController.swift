@@ -951,35 +951,42 @@ class SubmitPostViewController: UIViewController {
         }
         
         songString = String(format: "%@:%@:%@", title, artist, album)
-        let toExport: URL = item.assetURL!
         
-        self.dataManager.export(toExport, completionHandler: { (url, error) in
+        if let toExport: URL = item.assetURL {
             
-            if error == nil{
+            self.dataManager.export(toExport, completionHandler: { (url, error) in
                 
-                if url != nil{
-                    songString = songString + ":local"
+                if error == nil{
                     
-                    self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
-                        if success{
-                            print("song uploaded")
-                            
-                            completion(songString)
-                            
-                            
-                        }else{
-                            
-                            print("Failure, try again?")
-                            self.postFailedAlert(title: "Post Save Failed", message: "try again")
-                        }
-                    })
-                }else{
-                    
-                    songString = songString + ":apple"
-                    completion(songString)
+                    if url != nil{
+                        songString = songString + ":local"
+                        
+                        self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
+                            if success{
+                                print("song uploaded")
+                                
+                                completion(songString)
+                                
+                                
+                            }else{
+                                
+                                print("Failure, try again?")
+                                self.postFailedAlert(title: "Post Save Failed", message: "try again")
+                            }
+                        })
+                    }else{
+                        
+                        songString = songString + ":apple"
+                        completion(songString)
+                    }
                 }
-            }
-        })
+            })
+            
+        }else{
+            songString = songString + ":apple"
+            completion(songString)
+        }
+
     }
     
     

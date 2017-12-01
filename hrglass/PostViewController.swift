@@ -136,6 +136,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         //setup data for post category
         self.dataSetup()
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
+        tap.numberOfTapsRequired = 2
+        tap.delegate = self
+        self.view.addGestureRecognizer(tap)
+        
         do {
             try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
         } catch _ {
@@ -576,7 +581,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @objc func maximizeMusicView(){
         
         self.blurredMusicImageView.alpha = 0.0
-        let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.minimizeBtn.frame.maxY + 20 + self.songView.frame.height/2)
+//        let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.minimizeBtn.frame.maxY + 20 + self.songView.frame.height/2)
+         let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.postContainerPlaceholder.frame.midY + 20)
         
         self.musicViewMinimized = false
         self.blurredMusicImageView.isHidden = false
@@ -606,7 +612,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     func minimizeMusicView() {
         
         self.songTapGesture.isEnabled = true
-        
+        self.musicViewMinimized = true
         self.moveBtnsUp()
         UIView.animate(withDuration: 0.5, animations: {
             
@@ -633,6 +639,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     func moveBtnsDown(){
         
         UIView.animate(withDuration: 0.5){
+            
+            //calculate distance between bottom of song view and bottom of view
             
             self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.likeBtn.center.y + 50)
             self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.commentBtn.center.y + 50)
@@ -742,7 +750,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     
 
-    
+    @objc func doubleTapped(){
+        
+        self.likeAction(self)
+        
+    }
     
     
     /***********************
@@ -819,12 +831,13 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             if (postId != ""){
                 
-                self.likedByUser = false
                 
+                
+                self.likedByUser = false
+                self.flashThumb(liked: likedByUser)
                 //set image to normal color
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
-                self.likeBtn.setImage(newImage, for: .normal)
                 
                 self.likedButtonPressed(liked: false, indexPath: self.selectedIndexPath)
             }
@@ -835,6 +848,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             if (postId != ""){
                 
                 self.likedByUser = true
+                self.flashThumb(liked: likedByUser)
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
                 
@@ -844,13 +858,53 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         }
     }
     
+    //will add a thumb and fade out based on whether the user has liked the post or unliked it
+    func flashThumb(liked: Bool){
+        
+        let frame: CGRect = CGRect(x: self.postContainerPlaceholder.frame.origin.x, y: self.postContainerPlaceholder.frame.origin.y, width: self.postContainerPlaceholder.frame.width/2, height: self.postContainerPlaceholder.frame.height/2)
+        
+        let thumb: UIImageView = UIImageView(frame: frame)
+        thumb.center = self.postContainerPlaceholder.center
+        
+        let image: UIImage = UIImage.init(named: "thumbs up")!
+        thumb.image = image
+        
+        if liked{
+            
+            thumb.image = image.transform(withNewColor: UIColor.red)
+            self.contentView.addSubview(thumb)
+            
+            UIView.animate(withDuration: 0.5, animations: {
+                thumb.alpha = 0.0
+            }, completion: { (success) in
+                if success{
+                    thumb.removeFromSuperview()
+                }
+            })
+            
+        }else{
+            
+            thumb.image = image.transform(withNewColor: UIColor.white)
+            self.contentView.addSubview(thumb)
+            
+            UIView.animate(withDuration: 0.5, animations: {
+                thumb.alpha = 0.0
+            }, completion: { (success) in
+                if success{
+                    thumb.removeFromSuperview()
+                }
+            })
+        }
+    }
+    
+    
+    
     
     
     //shows the comments view
     @IBAction func commentsAction(_ sender: Any) {
         
         let commentsVC: CommentViewController = storyboard!.instantiateViewController(withIdentifier: "commentViewController") as! CommentViewController
-        
         commentsVC.viewingUserId = self.postData.user.value(forKey: "uid") as! String
         
         if self.commentData != nil{
@@ -871,7 +925,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             commentsVC.didMove(toParentViewController: self)
         }
     }
-    
     
     
     //displays the more menu
@@ -1051,7 +1104,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 UIView.animate(withDuration: 0.1, animations: {
                     
                     self.view.center = (self.parent!.view.center)
-                    
                 })
             }
         }
@@ -1151,9 +1203,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             self.delegate.moreButtonPressed(data: data, indexPath: indexPath)
         }
     }
-    
-    
-    
     
     
     
