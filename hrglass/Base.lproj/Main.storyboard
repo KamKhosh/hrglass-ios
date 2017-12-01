@@ -2719,13 +2719,6 @@
                                     <action selector="settingsAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CO7-jj-7Dy"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7A6-gl-kQs">
-                                <rect key="frame" x="178.5" y="88.5" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="Cij-6i-Jv0"/>
-                                    <constraint firstAttribute="height" constant="20" id="W5A-f6-uiD"/>
-                                </constraints>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -2739,8 +2732,6 @@
                             <constraint firstItem="E7y-mS-Wxb" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.85" id="WVq-En-6nc"/>
                             <constraint firstItem="VR0-cW-46f" firstAttribute="width" secondItem="zzU-4S-8Pv" secondAttribute="width" id="XXV-kk-ACp"/>
                             <constraint firstItem="zzU-4S-8Pv" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="ffP-a8-FPB"/>
-                            <constraint firstItem="7A6-gl-kQs" firstAttribute="top" secondItem="iJe-Nk-VNK" secondAttribute="bottom" constant="5" id="gSM-RE-Z1i"/>
-                            <constraint firstItem="7A6-gl-kQs" firstAttribute="centerX" secondItem="iJe-Nk-VNK" secondAttribute="centerX" id="gse-FL-JQR"/>
                             <constraint firstItem="VR0-cW-46f" firstAttribute="centerX" secondItem="zzU-4S-8Pv" secondAttribute="centerX" id="h5Z-hE-8DA"/>
                             <constraint firstItem="iJe-Nk-VNK" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="htV-NT-bpg"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="VR0-cW-46f" secondAttribute="bottom" constant="10" id="mOf-9f-Fc2"/>
@@ -2752,7 +2743,6 @@
                     <navigationItem key="navigationItem" id="e5m-qO-DVx"/>
                     <connections>
                         <outlet property="addPostButton" destination="VR0-cW-46f" id="6TM-pv-Eiy"/>
-                        <outlet property="initialLoadIndicator" destination="7A6-gl-kQs" id="sib-Vg-wKn"/>
                         <outlet property="logoImageView" destination="iJe-Nk-VNK" id="Gsu-jn-lk5"/>
                         <outlet property="menuButton" destination="VzA-Sg-rUC" id="YNt-X2-f7l"/>
                         <outlet property="noPostsLbl" destination="JB4-HB-xwS" id="8GM-Ka-Fbl"/>

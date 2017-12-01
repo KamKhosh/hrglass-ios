@@ -97,7 +97,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var menuButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var settingsButton: UIButton!
-    @IBOutlet weak var initialLoadIndicator: UIActivityIndicatorView!
+    var initialLoadIndicator: BreathingAnimation!
     @IBOutlet weak var addPostButton: UIButton!
     @IBOutlet weak var logoImageView: UIImageView!
     
@@ -132,8 +132,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         self.setupRefreshControl()
         
-        
-        self.initialLoadIndicator.hidesWhenStopped = true
+        initialLoadIndicator = BreathingAnimation(frame: CGRect(x: self.logoImageView.frame.midX - 20, y: self.logoImageView.frame.maxY + 60, width: 40, height: 40), image: UIImage(named: "logoGlassOnlyVertical")!)
         self.view.addSubview(self.initialLoadIndicator)
         self.initialLoadIndicator.startAnimating()
         
@@ -1406,8 +1405,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         // Setup the color view, which will display the rainbowed background
         self.refreshColorView = UIView(frame: self.refreshControl!.bounds)
-        self.refreshColorView.backgroundColor = UIColor.clear
-        self.refreshColorView.alpha = 0.30
+        self.refreshColorView.backgroundColor = colors.getMusicColor()
+        self.refreshColorView.alpha = 0.0
         
         // Create the graphic image views
 //        self.compass_background = UIImageView(image: UIImage(named: "logoOutsideRing"))
@@ -1497,23 +1496,20 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         // Calculate the pull ratio, between 0.0-1.0
         let pullRatio = min( max(pullDistance, 0.0), 100.0) / 100.0;
-        
+        self.refreshColorView.alpha = pullRatio / 2.0
         
         // Set the Y coord of the graphics, based on pull distance
         let spinnerY = pullDistance / 2.0 - spinnerHeightHalf;
         
         // Calculate the X coord of the graphics, adjust based on pull ratio
-
         var spinnerX = midX - spinnerWidthHalf
-        
-        
         
         // If the graphics have overlapped or we are refreshing, keep them together
         if (self.refreshControl!.isRefreshing) {
             spinnerX = midX - spinnerWidthHalf;
         }
         
-        
+        //
         var spinnerFrame = self.compass_spinner.frame;
         spinnerFrame.origin.x = spinnerX;
         spinnerFrame.origin.y = spinnerY;
@@ -1524,6 +1520,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         self.refreshColorView.frame = refreshBounds;
         self.refreshLoadingView.frame = refreshBounds;
+        
 
         // If we're refreshing and the animation is not playing, then play the animation
         if (self.refreshControl!.isRefreshing && !self.isRefreshAnimating) {
@@ -1538,7 +1535,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         print()
         
         // Background color to loop through for our color view
-        var colorArray = [colors.getSeenPostColor(), colors.getMusicColor(), colors.getMenuColor(), colors.getPurpleColor()]
+//        var colorArray = [colors.getSeenPostColor(), colors.getMusicColor(), colors.getMenuColor(), colors.getPurpleColor()]
         
         // In Swift, static variables must be members of a struct or class
         struct ColorIndex {
@@ -1558,23 +1555,23 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         if (self.rotatePeriod == 1){
                             self.rotatePeriod = 2
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi / 2))
+                            self.refreshColorView!.alpha = 0.5
                         }else if (self.rotatePeriod == 2){
                             self.rotatePeriod = 3
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi))
+                            self.refreshColorView!.alpha = 0.4
                         }else if (self.rotatePeriod == 3){
                             self.rotatePeriod = 4
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi) * 3/2)
+                            self.refreshColorView!.alpha = 0.3
                         }else if (self.rotatePeriod == 4){
                             self.rotatePeriod = 1
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: 0)
+                            self.refreshColorView!.alpha = 0.1
                         }
                         
-                       
-                        //                self.compass_spinner.transform = CGAffineTransformRotate(self.compass_spinner.transform, CGFloat(Float.pi / 2))
                         
-                        // Change the background color
-                        self.refreshColorView!.backgroundColor = colorArray[ColorIndex.colorIndex]
-                        ColorIndex.colorIndex = (ColorIndex.colorIndex + 1) % colorArray.count
+                        
         },
                        completion: { finished in
                         // If still refreshing, keep spinning, else reset
@@ -1593,8 +1590,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         // Reset our flags and }background color
         self.isRefreshAnimating = false;
-        self.refreshColorView.backgroundColor = UIColor.clear
-
+        self.refreshColorView.alpha = 0.0
         
     }
     

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5E0C43F21FACF18F007B15FE /* SimpleLoadingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0C43F11FACF18E007B15FE /* SimpleLoadingAnimation.swift */; };
 		5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */; };
 		5E14035E1F2FCDF00024EBFF /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */; };
 		5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */; };
@@ -66,6 +65,7 @@
 		5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */; };
 		5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7197AD1F1D502900411A08 /* AWSManager.swift */; };
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
+		5EB1A7701FD1C4CD008F625E /* BreathingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */; };
 		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
 		5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */; };
 		5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */; };
@@ -75,7 +75,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5E0C43F11FACF18E007B15FE /* SimpleLoadingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleLoadingAnimation.swift; sourceTree = "<group>"; };
 		5E0D9FA71F841D9E006AFB18 /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
 		5E14035D1F2FCDF00024EBFF /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		5E14035F1F2FCE730024EBFF /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
@@ -148,6 +147,7 @@
 		5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedUserCell.swift; sourceTree = "<group>"; };
 		5E7197AD1F1D502900411A08 /* AWSManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
+		5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreathingAnimation.swift; sourceTree = "<group>"; };
 		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostTableViewCell.swift; sourceTree = "<group>"; };
 		5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddPostTableViewCell.xib; sourceTree = "<group>"; };
@@ -187,7 +187,7 @@
 		5E0D9FCF1F894CAE006AFB18 /* LoadingAnimationViews */ = {
 			isa = PBXGroup;
 			children = (
-				5E0C43F11FACF18E007B15FE /* SimpleLoadingAnimation.swift */,
+				5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */,
 			);
 			name = LoadingAnimationViews;
 			sourceTree = "<group>";
@@ -594,6 +594,7 @@
 				5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */,
 				5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */,
 				5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */,
+				5EB1A7701FD1C4CD008F625E /* BreathingAnimation.swift in Sources */,
 				5E3CBC8F1F7AD6870073322B /* CommentViewController.swift in Sources */,
 				5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */,
 				5E24BDAA1EB27CBA0047ED50 /* FeedViewController.swift in Sources */,
@@ -607,7 +608,6 @@
 				5E254C581ECCC30900CFBFCE /* LoginViewController.swift in Sources */,
 				5E60F5381F42270900569F74 /* ColorSlider.swift in Sources */,
 				5EF85DF91F9278B5008887F9 /* SettingsTableViewCell.swift in Sources */,
-				5E0C43F21FACF18F007B15FE /* SimpleLoadingAnimation.swift in Sources */,
 				5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */,
 				5E32A8561ED4703300AEF9DA /* AllPostsViewController.swift in Sources */,
 				5E3405401F5F32B900BAA06F /* ProgressView.swift in Sources */,

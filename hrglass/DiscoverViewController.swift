@@ -18,7 +18,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     var discoverUserData: NSMutableArray = NSMutableArray()
     var userIdArray: NSMutableArray = NSMutableArray()
     
-    var loadingAnimation: SimpleLoadingAnimation!
+    var loadingAnimation: BreathingAnimation!
     let ref = Database.database().reference()
     
     let currentUserId = Auth.auth().currentUser?.uid
@@ -62,7 +62,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         self.noReqLbl.isHidden = true
         
         let loadingFrame: CGRect = CGRect(x: 0, y: 0, width: 75, height: 75)
-        self.loadingAnimation = SimpleLoadingAnimation(frame: loadingFrame, outsideImage: UIImage(named: "logoOutsideRing")!, insideImage: UIImage(named: "logoGlassOnly")!)
+        self.loadingAnimation = BreathingAnimation(frame: loadingFrame, image: UIImage(named: "logoGlassOnlyVertical")!)
         self.loadingAnimation.center = CGPoint(x: self.tableView.center.x,y: 50 )
         self.tableView.addSubview(self.loadingAnimation)
         
