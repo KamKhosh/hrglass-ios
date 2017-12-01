@@ -18,6 +18,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     var discoverUserData: NSMutableArray = NSMutableArray()
     var userIdArray: NSMutableArray = NSMutableArray()
     
+    var loadingAnimation: SimpleLoadingAnimation!
     let ref = Database.database().reference()
     
     let currentUserId = Auth.auth().currentUser?.uid
@@ -59,19 +60,24 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         self.noReqLbl.textAlignment = .center
         self.noReqLbl.textColor = UIColor.lightGray
         self.noReqLbl.isHidden = true
+        
+        let loadingFrame: CGRect = CGRect(x: 0, y: 0, width: 75, height: 75)
+        self.loadingAnimation = SimpleLoadingAnimation(frame: loadingFrame, outsideImage: UIImage(named: "logoOutsideRing")!, insideImage: UIImage(named: "logoGlassOnly")!)
+        self.loadingAnimation.center = CGPoint(x: self.tableView.center.x,y: 50 )
+        self.tableView.addSubview(self.loadingAnimation)
+        
         self.view.addSubview(self.noReqLbl)
         
-            }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
+        discoverUserData = NSMutableArray()
+        userIdArray = NSMutableArray()
         
         self.getUsers()
         self.getRequestData()
-        
-
         
     }
     
@@ -80,8 +86,6 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    
     
     
     
@@ -98,6 +102,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             self.tableView.reloadData()
         }
     }
+    
     
     
     
@@ -125,6 +130,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     
+    
     func getUserData(userArray: NSArray){
         
         for uid in userArray{
@@ -147,6 +153,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     
     func getUsers(){
         
+        self.loadingAnimation.startAnimating()
         //For now just grab all users -- TODO: Develop Algorithm for pulling in more relevant users to your discover list
         let usersRef: DatabaseReference = ref.child("Users")
 
@@ -171,11 +178,10 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                             
                             
                             self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
-//                            self.userIdArray.add(keyString)
-                            
                         }
                     }
                     
+                    self.loadingAnimation.stopAnimating()
                     self.tableView.reloadData()
                     
                 }else{
@@ -193,6 +199,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                         }
                     }
                     
+                    self.loadingAnimation.stopAnimating()
                     self.tableView.reloadData()
                 }
                 

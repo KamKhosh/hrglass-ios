@@ -21,6 +21,7 @@ class User
     var username: String!
     var profilePhoto: String!
     var coverPhoto: String!
+    
 
     init(withUserID:String, username: String, bio:String, profilePhoto:String, coverPhoto:String, name: String, isPrivate: Bool){
         
@@ -31,6 +32,7 @@ class User
         self.name = name
         self.isPrivate = isPrivate
         self.username = username
+        
     }
     
     

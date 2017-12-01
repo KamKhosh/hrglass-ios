@@ -262,7 +262,6 @@
 		5E24BDAE1EB280A30047ED50 /* DataManagers */ = {
 			isa = PBXGroup;
 			children = (
-				5E24BDAF1EB280C90047ED50 /* PostData.swift */,
 				5E3214BC1EC3AB24004ACBB1 /* Colors.swift */,
 				5ECF6B911EC5F99D00D2A00B /* User.swift */,
 				5E29FD841EDFA0D100555CCB /* ImageCache.swift */,
@@ -271,6 +270,7 @@
 				5E3537FE1F204F99009D121B /* VideoStore.swift */,
 				5E32DCB41F5365F4004E6AA1 /* SongQuery.swift */,
 				5EF85DFA1F953AE6008887F9 /* AppleMusicManager.swift */,
+				5E24BDAF1EB280C90047ED50 /* PostData.swift */,
 			);
 			name = DataManagers;
 			sourceTree = "<group>";

@@ -124,6 +124,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.contentView.backgroundColor = UIColor.clear
         self.contentView.clipsToBounds = false
         
+        //set speaker to the large speaker
+        
+        
         //current user data
         self.currentUserId = Auth.auth().currentUser!.uid
         
@@ -132,6 +135,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         //setup data for post category
         self.dataSetup()
+        
+        do {
+            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
+        } catch _ {
+        }
+        
     }
     
     
@@ -1089,6 +1098,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 self.avPlayerViewController.player = player
                 self.avPlayerViewController.view.frame = self.contentImageView.bounds
                 self.avPlayerViewController.delegate = self
+                player.volume = 2
                 
                 if primary{
                     self.contentImageView.addSubview(self.avPlayerViewController.view)

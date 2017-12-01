@@ -14,10 +14,8 @@ import AVFoundation
 import MediaPlayer
 
 
-class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
+class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate{
     
-    
-
     
     //class objects
     var navigationMenu: MenuView!
@@ -43,14 +41,23 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      // More Menu data
     var moreMenuPostData: PostData!
     
-    //refresh control
+    
+    //custom refresh control 
     var refreshControl: UIRefreshControl!
+    var refreshLoadingView : UIView!
+    var refreshColorView : UIView!
+    var compass_spinner : UIImageView!
+    var isRefreshAnimating = false
+    var rotatePeriod = 1
+    
     
     //Current User
     var loggedInUser: User!
-        
+    
+    
     //savedPost
     var savedPost: NSDictionary!
+    
     
     /**************************
      * Navigation Menu Buttons
@@ -59,7 +66,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var homeBtn: UIButton!
     var discoverBtn: UIButton!
     var messagesBtn: UIButton!
-
     
     /**************************
      * Add Post Menu Buttons
@@ -115,12 +121,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let uid = Auth.auth().currentUser?.uid
         awsManager = AWSManager(uid: uid!)
         
-        self.refreshControl = UIRefreshControl()
+//        self.refreshControl = UIRefreshControl()
         
-        refreshControl.backgroundColor = colors.getBlackishColor()
-        refreshControl.tintColor = UIColor.white
-        self.refreshControl.addTarget(self, action: #selector (refresh), for: .valueChanged)
-        self.tableView.addSubview(self.refreshControl)
+//        refreshControl.backgroundColor = colors.getBlackishColor()
+//        refreshControl.tintColor = UIColor.clear
+//        refreshControl.alpha = 0.2
+//        self.refreshControl.addTarget(self, action: #selector (refresh), for: .valueChanged)
+//        self.tableView.addSubview(self.refreshControl)
+        
+        
+        self.setupRefreshControl()
+        
         
         self.initialLoadIndicator.hidesWhenStopped = true
         self.view.addSubview(self.initialLoadIndicator)
@@ -162,7 +173,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }
             }
             
-            
+            self.setupNoPostsCollection()
             
             if (self.loggedInUser != nil){
                 
@@ -351,12 +362,16 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //if there is no feed data
             if (self.feedData.count == 0){
                 self.noPostsLbl.isHidden = false
-                self.setupNoPostsCollection()
+                self.noPostCollectionView.isHidden = false
                 self.getPublicUsers()
                 
                 self.noPostCollectionView.isHidden = false
             }else{
-                self.noPostCollectionView.isHidden = true
+                if (self.noPostCollectionView != nil){
+                    self.noPostsLbl.isHidden = true
+                    self.noPostCollectionView.isHidden = true
+                }
+                
             }
             
             //stop loading animations
@@ -372,44 +387,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     
-    /***************************************************************************************
-     
-     Function - refresh:
-     
-     Parameters - NA
-     
-     Returns: NA
-     
-     refreshes the current users following/followedby dictionaries, then calls getFeedData
-     
-     ***************************************************************************************/
     
-    @objc func refresh(){
-        
-        ref.child("Following").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            //GET FOLLOWING LIST CONSTANT
-            var followingList: NSDictionary!
-            if let temp: NSDictionary = snapshot.value as? NSDictionary{
-                followingList = temp.value(forKey: "following_list") as! NSDictionary
-            }else{
-                followingList = [:]
-            }
-            
-            
-            // For now we get nil because we're not saving lists, so pass something else
-            if (followingList.count != 0){
-                
-                self.noPostsLbl.isHidden = true
-                self.getFeedData()
-                
-            }else{
-                
-                self.noPostsLbl.isHidden = false
-                self.getFeedData()
-            }
-        })
-    }
     
     
     /***************************************************************************************
@@ -524,7 +502,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         let buttonList: [UIButton] = [self.discoverBtn, self.messagesBtn, self.profileBtn]
 
-        self.navigationMenu = MenuView(buttonList: buttonList, feedViewController: self, direction: .Right, startButton: self.menuButton, spacing: -10, buttonScalor: 0.7)
+        self.navigationMenu = MenuView(buttonList: buttonList, feedViewController: self, direction: .Right, startButton: self.menuButton, spacing: 0, buttonScalor: 0.7)
         self.navigationMenu.buttonSpinAngle = (CGFloat)(Float.pi)
         
         self.setMenuPhoto(profPhoto:profileURLString)
@@ -579,7 +557,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      ***************************************************************************************************/
     
     func setupNoPostsCollection(){
-        
+    
         //collectionview layout
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 5, left: 3, bottom: 0, right: 3)
@@ -604,7 +582,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.noPostCollectionView.delegate = self
         self.noPostCollectionView.dataSource = self
         
-        self.view.addSubview(noPostCollectionView)
+        self.tableView.addSubview(noPostCollectionView)
         self.noPostCollectionView.isHidden = true
     }
     
@@ -628,6 +606,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         //For now just grab all users -- TODO: Develop Algorithm for pulling in more relevant users to this array
         let usersRef: DatabaseReference = ref.child("Users")
+        self.discoverUserData.removeAllObjects()
         
         usersRef.observeSingleEvent(of: .value, with: { snapshot in
             
@@ -677,61 +656,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-    /*****************************************************
-     *
-     * NO POSTS COLLECTION VIEW DELEGATE METHODS
-     *
-     ******************************************************/
     
-    
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.discoverUserData.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let cell: NoPostsCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "noPostsCell", for: indexPath) as! NoPostsCollectionViewCell
-        let user: User = self.discoverUserData[indexPath.row] as! User
-        
-        let loadingInd: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-        loadingInd.hidesWhenStopped = true
-        loadingInd.center = cell.imageView.center
-        loadingInd.startAnimating()
-        
-        cell.imageView.layer.cornerRadius = cell.frame.width/2
-        cell.imageView.backgroundColor = colors.getBlackishColor()
-        
-        if user.profilePhoto != ""{
-            self.imageCache.getImage(urlString: user.profilePhoto, completion: { (image) in
-                
-                cell.imageView.image = image
-                loadingInd.stopAnimating()
-            })
-        }else{
-            cell.imageView.image = dataManager.defaultsUserPhoto
-        }
-        
-        cell.nameLbl.text = user.name
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let user: User = self.discoverUserData[indexPath.row] as! User
-        self.selectedUserUID = user.userID
-        self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
-        
-    }
-    
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout,sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
-    {
-        return self.assetThumbnailSize
-        
-    }
-    
-     
+
     /*****************************
      *
      * TABLEVIEW DELEGATE METHODS
@@ -747,7 +673,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return feedData.count
     }
     
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: FeedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "feedCell") as! FeedTableViewCell
@@ -782,21 +708,29 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         
         /*****************************
-        //CELL BUTTON CALLBACKS
+         //CELL BUTTON CALLBACKS
          ****************************/
         cell.userProfile = {
             if let userPostDict: NSDictionary = self.feedData[indexPath.row].user{
                 self.selectedUserUID = userPostDict.value(forKey: "uid") as! String
             }
+            if self.navigationMenu.open{
+                self.navigationMenu.close()
+            }
+            
             self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
         }
         
         cell.contentSelected = {
             
-            UIView.animate(withDuration: 0.4, animations: { 
+            if self.navigationMenu.open{
+                self.navigationMenu.close()
+            }
+            
+            UIView.animate(withDuration: 0.4, animations: {
                 self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
             })
-
+            
             self.dataManager.updateViewsList(post: cell.postData, completion: { views in
                 cell.viewCountLbl.text = String(views)
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
@@ -808,7 +742,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             self.moreButtonPressed(data: cell.postData, indexPath: indexPath)
         }
-
+        
         
         //setting cell content layout/appearance
         cell.contentImageBtn.layer.cornerRadius = cell.contentImageBtn.frame.height/2
@@ -890,7 +824,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 cell.contentImageBtn.setImage(image, for: .normal)
                 cell.loadingIndication.stopAnimating()
-
+                
             })
             
         case .Photo:
@@ -902,7 +836,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 cell.contentImageBtn.setImage(image, for:.normal)
                 cell.loadingIndication.stopAnimating()
-
+                
             })
             
             cell.previewContentView.layer.borderColor = colors.getMenuColor().cgColor
@@ -941,7 +875,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         //check if already liked this post
         if let likedDict: NSDictionary = feedData[indexPath.row].usersWhoLiked {
-
+            
             //if not in dict, set thumb to red
             if (likedDict.value(forKey: self.loggedInUser.userID) != nil){
                 
@@ -963,7 +897,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
             }
         }
-
+        
         
         //rounded Profile Image
         cell.profileImageBtn.layer.cornerRadius = cell.profileImageBtn.frame.height / 2
@@ -981,16 +915,83 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.moodLbl.isHidden = false
             cell.moodLbl.text = feedData[indexPath.row].mood
         }
-
+        
         return cell
     }
     
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
+        
         
         return 175.0
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*****************************************************
+     *
+     * NO POSTS COLLECTION VIEW DELEGATE METHODS
+     *
+     ******************************************************/
+    
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.discoverUserData.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell: NoPostsCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "noPostsCell", for: indexPath) as! NoPostsCollectionViewCell
+        let user: User = self.discoverUserData[indexPath.row] as! User
+        
+        let loadingInd: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        loadingInd.hidesWhenStopped = true
+        loadingInd.center = cell.imageView.center
+        loadingInd.startAnimating()
+        
+        cell.imageView.layer.cornerRadius = cell.frame.width/2
+        cell.imageView.backgroundColor = colors.getBlackishColor()
+        
+        if user.profilePhoto != ""{
+            self.imageCache.getImage(urlString: user.profilePhoto, completion: { (image) in
+                
+                cell.imageView.image = image
+                loadingInd.stopAnimating()
+            })
+        }else{
+            cell.imageView.image = dataManager.defaultsUserPhoto
+        }
+        
+        cell.nameLbl.text = user.name
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let user: User = self.discoverUserData[indexPath.row] as! User
+        self.selectedUserUID = user.userID
+        self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
+        
+    }
+    
+    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout,sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    {
+        return self.assetThumbnailSize
+        
+    }
+    
+     
 
     
     
@@ -1060,7 +1061,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-     /*****************************************
+    /*************************************************
      
      Function - postTypeSelected:
      
@@ -1070,7 +1071,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      
      calls cell.likeAction for indexPath passed
      
-     ***************************************************************************************/
+     ***************************************************/
+    
     @objc func postTypeSelected(_ sender: UIButton) {
         
         self.selectedPostTypeId = sender.tag
@@ -1080,8 +1082,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.performSegue(withIdentifier: "toCreatePostSegue", sender: self)
         
     }
-    
-    
+
     
    /*****************************************
     
@@ -1117,13 +1118,32 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             alert.dismiss(animated: true, completion: nil)
         }
         
+        let delete: UIAlertAction = UIAlertAction(title: String(format:"Expire Post", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            //set the expire time to the post creation time
+            let ref: DatabaseReference = Database.database().reference().child("Posts").child((Auth.auth().currentUser?.uid)!).child("expire_time")
+            ref.setValue(data.creationDate)
+            
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        
+        
         let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
             alert.dismiss(animated: true, completion: nil)
         }
         
-        alert.addAction(message)
-        alert.addAction(block)
+        
+        if (data.user.value(forKey: "uid") as? String  == Auth.auth().currentUser?.uid){
+            
+            alert.addAction(delete)
+        }else{
+            alert.addAction(message)
+            alert.addAction(block)
+            
+        }
+        
         alert.addAction(cancel)
+        
         self.present(alert, animated: true, completion: nil)
         
     }
@@ -1360,6 +1380,221 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     @IBAction func unwindToFeed(unwindSegue: UIStoryboardSegue) {
     
+        
+    }
+    
+    
+    
+  
+    /*************************************
+     *
+     * CUSTOM REFRESH CONTROL METHODS
+     *
+     *************************************/
+    
+    
+    func setupRefreshControl() {
+        print()
+        
+        // Programmatically inserting a UIRefreshControl
+        self.refreshControl = UIRefreshControl()
+        self.tableView.addSubview(self.refreshControl)
+        
+        // Setup the loading view, which will hold the moving graphics
+        self.refreshLoadingView = UIView(frame: self.refreshControl!.bounds)
+        self.refreshLoadingView.backgroundColor = UIColor.clear
+        
+        // Setup the color view, which will display the rainbowed background
+        self.refreshColorView = UIView(frame: self.refreshControl!.bounds)
+        self.refreshColorView.backgroundColor = UIColor.clear
+        self.refreshColorView.alpha = 0.30
+        
+        // Create the graphic image views
+//        self.compass_background = UIImageView(image: UIImage(named: "logoOutsideRing"))
+        self.compass_spinner = UIImageView(image: UIImage(named: "logoGlassOnly"))
+        self.compass_spinner.frame = CGRect(x: self.refreshControl.center.x - self.refreshControl.bounds.height/4, y:self.refreshControl.center.y - self.refreshLoadingView.bounds.height/4 ,width: self.refreshControl.bounds.height/2,height: self.refreshControl.bounds.height/2)
+        // Add the graphics to the loading view
+        self.refreshLoadingView.addSubview(self.compass_spinner)
+        
+        // Clip so the graphics don't stick out
+        self.refreshLoadingView.clipsToBounds = true;
+        
+        // Hide the original spinner icon
+        self.refreshControl!.tintColor = UIColor.clear
+        
+        // Add the loading and colors views to our refresh control
+        self.refreshControl!.addSubview(self.refreshColorView)
+        self.refreshControl!.addSubview(self.refreshLoadingView)
+        
+        // Initalize flags
+        self.isRefreshAnimating = false;
+        
+        // When activated, invoke our refresh function
+        self.refreshControl?.addTarget(self, action: #selector(refresh), for: UIControlEvents.valueChanged)
+    }
+    
+    
+    
+    /***************************************************************************************
+     
+     Function - refresh:
+     
+     Parameters - NA
+     
+     Returns: NA
+     
+     refreshes the current users following/followedby dictionaries, then calls getFeedData
+     
+     ***************************************************************************************/
+    
+    @objc func refresh(){
+        
+        ref.child("Following").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            //GET FOLLOWING LIST CONSTANT
+            var followingList: NSDictionary!
+            if let temp: NSDictionary = snapshot.value as? NSDictionary{
+                followingList = temp.value(forKey: "following_list") as! NSDictionary
+            }else{
+                followingList = [:]
+            }
+            
+            
+            // For now we get nil because we're not saving lists, so pass something else
+            if (followingList.count != 0){
+                
+                self.noPostsLbl.isHidden = true
+                self.getFeedData()
+                
+            }else{
+                
+                self.noPostsLbl.isHidden = false
+                self.getFeedData()
+            }
+        })
+    }
+    
+    
+
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        // Get the current size of the refresh controller
+        var refreshBounds = self.refreshControl!.bounds;
+        
+        // Distance the table has been pulled >= 0
+        let pullDistance = max(0.0, -self.refreshControl!.frame.origin.y);
+        
+        // Half the width of the table
+        let midX = self.tableView.frame.size.width / 2.0;
+        
+        let spinnerHeight = self.compass_spinner.bounds.size.height;
+        let spinnerHeightHalf = spinnerHeight / 2.0;
+        
+        let spinnerWidth = self.compass_spinner.bounds.size.width;
+        let spinnerWidthHalf = spinnerWidth / 2.0;
+        
+        // Calculate the pull ratio, between 0.0-1.0
+        let pullRatio = min( max(pullDistance, 0.0), 100.0) / 100.0;
+        
+        
+        // Set the Y coord of the graphics, based on pull distance
+        let spinnerY = pullDistance / 2.0 - spinnerHeightHalf;
+        
+        // Calculate the X coord of the graphics, adjust based on pull ratio
+
+        var spinnerX = midX - spinnerWidthHalf
+        
+        
+        
+        // If the graphics have overlapped or we are refreshing, keep them together
+        if (self.refreshControl!.isRefreshing) {
+            spinnerX = midX - spinnerWidthHalf;
+        }
+        
+        
+        var spinnerFrame = self.compass_spinner.frame;
+        spinnerFrame.origin.x = spinnerX;
+        spinnerFrame.origin.y = spinnerY;
+        
+        self.compass_spinner.frame = spinnerFrame;
+        // Set the encompassing view's frames
+        refreshBounds.size.height = pullDistance;
+        
+        self.refreshColorView.frame = refreshBounds;
+        self.refreshLoadingView.frame = refreshBounds;
+
+        // If we're refreshing and the animation is not playing, then play the animation
+        if (self.refreshControl!.isRefreshing && !self.isRefreshAnimating) {
+            self.animateRefreshView()
+        }
+        
+        print("pullDistance \(pullDistance), pullRatio: \(pullRatio), midX: \(midX), refreshing: \(self.refreshControl!.isRefreshing)")
+        
+    }
+    
+    func animateRefreshView() {
+        print()
+        
+        // Background color to loop through for our color view
+        var colorArray = [colors.getSeenPostColor(), colors.getMusicColor(), colors.getMenuColor(), colors.getPurpleColor()]
+        
+        // In Swift, static variables must be members of a struct or class
+        struct ColorIndex {
+            static var colorIndex = 0
+        }
+        
+        // Flag that we are animating
+        self.isRefreshAnimating = true;
+        
+        UIView.animate(withDuration:
+            Double(0.3),
+                       delay: Double(0.0),
+                       options: UIViewAnimationOptions.curveLinear,
+                       animations: {
+                        // Rotate the spinner by M_PI_2 = PI/2 = 90 degrees
+                    
+                        if (self.rotatePeriod == 1){
+                            self.rotatePeriod = 2
+                            self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi / 2))
+                        }else if (self.rotatePeriod == 2){
+                            self.rotatePeriod = 3
+                            self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi))
+                        }else if (self.rotatePeriod == 3){
+                            self.rotatePeriod = 4
+                            self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi) * 3/2)
+                        }else if (self.rotatePeriod == 4){
+                            self.rotatePeriod = 1
+                            self.compass_spinner.transform = CGAffineTransform(rotationAngle: 0)
+                        }
+                        
+                       
+                        //                self.compass_spinner.transform = CGAffineTransformRotate(self.compass_spinner.transform, CGFloat(Float.pi / 2))
+                        
+                        // Change the background color
+                        self.refreshColorView!.backgroundColor = colorArray[ColorIndex.colorIndex]
+                        ColorIndex.colorIndex = (ColorIndex.colorIndex + 1) % colorArray.count
+        },
+                       completion: { finished in
+                        // If still refreshing, keep spinning, else reset
+                        
+                        if (self.refreshControl!.isRefreshing) {
+                            self.animateRefreshView()
+                        }else {
+                            self.resetAnimation()
+                        }
+        }
+        )
+    }
+    
+    func resetAnimation() {
+        print()
+        
+        // Reset our flags and }background color
+        self.isRefreshAnimating = false;
+        self.refreshColorView.backgroundColor = UIColor.clear
+
         
     }
     
