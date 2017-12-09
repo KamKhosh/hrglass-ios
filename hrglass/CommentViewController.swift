@@ -18,7 +18,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     @IBOutlet weak var popupView: UIView!
     @IBOutlet weak var alphaView: UIView!
     @IBOutlet weak var addCommentTextView: UITextView!
-    
     @IBOutlet weak var noCommentsLbl: UILabel!
     @IBOutlet weak var postBtn: UIButton!
     @IBOutlet weak var keyboardHeightLayoutConstraint: NSLayoutConstraint!
@@ -32,16 +31,13 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     var placeholderText: String = "Say something..."
     var pickHeight: CGFloat = 0.0
     
+    let colors: Colors = Colors()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         //Keyboard Observer
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
-        
-//        let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-//        self.view.addGestureRecognizer(panGesture)
-//        panGesture.minimumNumberOfTouches = 1
-//        panGesture.delegate = self
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -65,7 +61,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
-
         self.alphaView.frame.size = CGSize(width: self.view.frame.size.width * 3.0 , height: self.view.frame.size.height * 3.0)
     }
     
@@ -116,11 +111,13 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
             let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIViewAnimationOptions.curveEaseInOut.rawValue
             let animationCurve:UIViewAnimationOptions = UIViewAnimationOptions(rawValue: animationCurveRaw)
+            
             if (endFrame?.origin.y)! >= UIScreen.main.bounds.size.height {
                 self.keyboardHeightLayoutConstraint?.constant = 0.0
             } else {
                 self.keyboardHeightLayoutConstraint?.constant = endFrame?.size.height ?? 0.0
             }
+            
             UIView.animate(withDuration: duration,
                            delay: TimeInterval(0),
                            options: animationCurve,
@@ -312,7 +309,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         cell.commentlbl.numberOfLines = 0;
         cell.commentlbl.lineBreakMode = NSLineBreakMode.byWordWrapping
-        cell.commentlbl.backgroundColor = UIColor.black
+        cell.commentlbl.backgroundColor = colors.getBlackishColor()
         let commentDict:NSDictionary = self.commentsArray[indexPath.row] as! NSDictionary
         let username: String = commentDict.value(forKey: "username") as! String
         let comment: String = commentDict.value(forKey: "comment") as! String
@@ -353,7 +350,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     
     /***********************************
      *
-     * ------ TEXTView DELEGATES -----
+     * ----- TEXTVIEW DELEGATES -----
      *
      ***********************************/
     

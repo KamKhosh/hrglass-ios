@@ -84,8 +84,6 @@ class MenuView: UIView{
         
         super.init(frame:backgroundFrameFor())
         setupViews()
-
-        
     }
 
     
@@ -111,8 +109,8 @@ class MenuView: UIView{
 
         case .Down:
 
-            size = CGSize(width: self.startButton.bounds.width, height: self.getMenuHeight())
-            origin = CGPoint(x: self.startButton.bounds.minX, y: self.startButton.bounds.maxY)
+            size = CGSize(width: self.buttonSize.width * buttonScalor, height: self.getMenuHeight())
+            origin = CGPoint(x: self.startCenter.x + self.buttonSize.width, y: self.startButton.frame.maxY + self.buttonSize.height * 2 + spacing)
 
         case .Left:
 
@@ -306,12 +304,12 @@ class MenuView: UIView{
             
             if show{
                 self.backgroundImageView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-//                print(self.backgroundImageView.center)
                 self.backgroundImageView.center = self.backgroundImageViewCenter
                 self.backgroundImageView.isHidden = false
                 self.backgroundImageView.alpha = 1.0
                 
             }else{
+                
                 self.backgroundImageView.transform = CGAffineTransform(scaleX: 0.1, y: 1.0)
                 self.backgroundImageView.center = self.startCenter
                 self.backgroundImageView.alpha = 0.0

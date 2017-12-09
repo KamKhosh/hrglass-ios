@@ -4,7 +4,6 @@
 //
 //  Created by Justin Hershey on 5/25/17.
 //
-//
 
 
 import UIKit
@@ -100,7 +99,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 //    var secondaryTrimmedVideoPath: String = ""
 //    var secondarySelectedThumbnail: UIImage!
 //    var hasSecondarySavedPost: Bool = false
-//
 //    var selectedTextColor: UIColor!
 //    var selectedTextBackroungColor: UIColor!
     
@@ -116,6 +114,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var songPicker: MPMediaPickerController!
     var editorVC: UIVideoEditorController!
     var photoEditor: PhotoEditorViewController!
+    
+    
     //set to true by previous view controller if the post was retrieved from a saved stat
     var postWasSaved: Bool = false
     
@@ -127,13 +127,16 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     @IBOutlet weak var currentTabView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var postContentView: UIView!
-    @IBOutlet weak var navigationBar: UINavigationBar!
+//    @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var squareImageBtn: UIButton!
     @IBOutlet weak var circleImagebtn: UIButton!
     @IBOutlet weak var editThumbnailBtn: UIButton!
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     @IBOutlet var keyboardHeightLayoutConstraint: NSLayoutConstraint?
+    
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var topContainerView: UIView!
     
     
     /********************************
@@ -156,29 +159,19 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         //In case phone is in silent mode
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
 
-        //set nav bar
-        self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
         
+        self.view.bringSubview(toFront: self.navView)
         //removing bottom navigation line
-        self.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationBar.shadowImage = UIImage()
+//        self.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        self.navigationBar.shadowImage = UIImage()
         
         //swipe down gesture setup -- selector: swipeDownAction
         let swipeDown: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeDownAction))
         swipeDown.direction = .down
         swipeDown.delegate = self
         self.view.addGestureRecognizer(swipeDown)
+    
         
-        //SETUP VIEWS
-        self.setupTabBarDetails()
-        self.setupContentSubviews()
-        self.setupTabViews()
-        self.setupMediaAccess()
-        self.setupPlayBtn()
-        self.setupMoodMenu()
-        
-        //set current tab view frame
-        self.currentTabView.frame = CGRect(x: 0,y: self.tabBar.frame.maxY, width: self.view.frame.width, height: self.view.frame.height -  self.tabBar.frame.maxY)
         
         do {
             try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
@@ -198,7 +191,25 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        //on 6+ phones the collection view is slighly off and needs to be recentered on viewDidAppear
+        if self.moodMenu == nil{
+            //if the mood menu is nil, so are the rest of the content subviews, configure them
+            self.currentTabView.frame = CGRect(x: 0,y: self.topContainerView.frame.maxY,width: self.view.frame.width, height:self.view.frame.maxY - self.topContainerView.frame.maxY)
+            //setting static frames here since larger screens cause unwanted behviour
+            
+            //set thumbnail sizes (applicible to both photos and videos collection views)
+            self.assetThumbnailSize = CGSize(width:self.currentTabView.bounds.width/3, height:self.currentTabView.bounds.width/3)
+            
+            //SETUP VIEWS
+            self.setupTabBarDetails()
+            self.setupContentSubviews()
+            self.setupTabViews()
+            self.setupMediaAccess()
+            self.setupPlayBtn()
+            self.setupMoodMenu()
+            self.setupSliderButtons()
+
+            self.photoCollectionView.isHidden = false
+        }
         
         if tabPassedFromParent != 0{
             //tab view button clicked by user in previous view controller
@@ -213,11 +224,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.tabPassedFromParent = 0
         }else{
             self.tabBar.selectedItem = self.tabBar.items?[0]
-            
         }
         
         
         if postWasSaved{
+            
             //if post was saved, retrieve data from documents and user defaults and set them in the corresponding views
             switch self.selectedCategory {
                 
@@ -275,7 +286,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
                 print("Music")
                 self.setMusicItemData(mpMediaItem: self.selectedObject as! MPMediaItem)
-                
                 
             case .Link:
                 
@@ -437,7 +447,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         sadBtn.addTarget(self, action: #selector(self.sadAction), for: .touchUpInside)
         angryBtn.addTarget(self, action: #selector(self.angryAction), for: .touchUpInside)
         shockedBtn.addTarget(self, action: #selector(self.shockedAction), for: .touchUpInside)
-        
+
         moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, direction: .Down, startButton: self.moodBtn, spacing: -10.0)
         
         self.view.addSubview(moodMenu)
@@ -511,8 +521,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
-    
-    
     /*****************************
      *
      *    VIDEO EDITING
@@ -522,8 +530,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     @IBAction func editThumbnailAction(_ sender: Any) {
         
         self.performSegue(withIdentifier: "toThumbnailView", sender: self)
-        
     }
+    
     
     
     //edit vidwo storyboard action
@@ -531,6 +539,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.editorVC = UIVideoEditorController()
         editorVC.delegate = self
+        
         //max video lent is 10 minutes or 600 seconds
         editorVC.videoMaximumDuration = 600
         editorVC.videoQuality = .typeHigh
@@ -587,13 +596,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
-    
     /*****************************
      *
      *    POST ACTIONS/METHODS
      *
      ****************************/
-
 
     //goto submit view controller
     @IBAction func nextAction(_ sender: Any) {
@@ -605,10 +612,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
-    
-    
     //Resize picture to square or circle
-    
     @IBAction func squareImageAction(_ sender: Any) {
         
         self.playBtn.isHidden = true
@@ -617,7 +621,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.squareImageBtn.layer.borderColor = UIColor.darkGray.cgColor
         self.squareImageBtn.layer.borderWidth = 2
         
-        self.postPhotoView.frame = CGRect(x: 0, y:self.navigationBar.frame.maxY, width:self.view.frame.width, height:self.tabBar.frame.minY - self.navigationBar.frame.maxY - 10)
+//        self.postPhotoView.frame = CGRect(x: 0, y:self.navigationBar.frame.maxY, width:self.view.frame.width, height:self.tabBar.frame.minY - self.navigationBar.frame.maxY - 10)
         
         self.playBtn.center = postPhotoView.center
         
@@ -657,6 +661,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *    RECORDING METHODS
      *
      **************************/
+    
     func startRecording() {
         
         self.playBtn.setImage(UIImage(named: "play"), for: .normal)
@@ -777,7 +782,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
 
     
-    
     /************************************
      *
      *  VIDEO PROCESSING LOADING VIEW
@@ -806,11 +810,14 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     
+    
+    
     /*************************************************
      *
      *     PLAYBACK METHODS -- AUDIO and VIDEO
      *
      *************************************************/
+    
     @objc func playBtnAction() {
         
         if self.selectedCategory == .Recording{
@@ -825,12 +832,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
                 preparePlayer()
                 audioPlayer.play()
-                
+        
             }else{
                 
                 audioPlayer.stop()
                 playBtn.setImage(UIImage(named: "play"), for: .normal)
-                
             }
             
         }else if self.selectedCategory == .Video{
@@ -883,18 +889,14 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func appleMusicPlayTrackId() {
         
         let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
-        
         applicationMusicPlayer.setQueue(with: collection)
     }
-    
-    
     
     
     
     //CLImageEditor Functions
     func presentImageEditorWithImage(image:UIImage){
     
-        
         photoEditor = PhotoEditorViewController(nibName:"PhotoEditorViewController",bundle: Bundle(for: PhotoEditorViewController.self))
         
         //PhotoEditorDelegate
@@ -904,7 +906,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         photoEditor.image = image
         
         //Stickers that the user will choose from to add on the image
-//        photoEditor.stickers.append(UIImage(named: "sticker" )!)
+        //photoEditor.stickers.append(UIImage(named: "sticker" )!)
         
         //Optional: To hide controls - array of enum control
         photoEditor.hiddenControls = [.share]
@@ -933,6 +935,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     func doneEditing(image: UIImage) {
+        
         //edited image
         self.setPhotoView(image: image)
         self.selectedObject = image
@@ -963,7 +966,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         if (moodMenu.open){
             
             moodMenu.close()
-            
         }else{
             if !textSlider.isHidden{
                self.toggleTextColorSliderVisibility()
@@ -971,7 +973,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             moodMenu.show()
             self.view.bringSubview(toFront: moodMenu)
-            
         }
     }
     
@@ -1225,6 +1226,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func getMedia(){
         
         let fetchOptions = PHFetchOptions()
+
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending:false)]
         self.photosAsset = PHAsset.fetchAssets(with: .image, options: fetchOptions) as! PHFetchResult<AnyObject>
         
@@ -1390,12 +1392,18 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *
      *********************************/
     
+    
+    
+
+    
     //Sets up corresponding tab views, moves all views to right of visible screen except the photos collectionview
     func recenterResize(){
         
-        self.currentTabView.frame = CGRect(x: 0,y: self.tabBar.frame.maxY, width: self.view.frame.width, height: self.view.frame.height -  self.tabBar.frame.maxY)
+//        let height: CGFloat = self.view.frame.height - self.tabBar.frame.maxY - 5
+//        let rect: CGRect = CGRect(x: 0,y: self.tabBar.frame.maxY + 5, width: self.view.frame.width, height: height)
+//        self.currentTabView.frame = rect
         
-        let rightCenter = CGPoint(x: self.currentTabView.center.x + self.currentTabView.frame.width, y: self.currentTabView.center.y)
+        let rightCenter = CGPoint(x: self.currentTabView.center.x + self.view.frame.width, y: self.currentTabView.center.y)
         let nib = UINib(nibName: "AddPostCollectionViewCell", bundle:nil)
         
         setupPhotosCollectionView(center: self.currentTabView.center, cellNib: nib)
@@ -1432,7 +1440,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.view.addSubview(textPostView)
         self.view.addSubview(cameraView)
         
-        
+        self.photoCollectionView.isHidden = true
 //        panGesture = UIPanGestureRecognizer(target: self, action:#selector(self.handlePanGesture(panGesture:)))
 
     }
@@ -1447,9 +1455,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         layout.minimumLineSpacing = 0
         layout.scrollDirection = .vertical
         
-        //set thumbnail sizes (applicible to both photos and videos collection views)
-        self.assetThumbnailSize = CGSize(width:self.currentTabView.bounds.width/3, height:self.currentTabView.bounds.width/3)
-        layout.itemSize = assetThumbnailSize
+        
+        layout.itemSize = self.assetThumbnailSize
         
         //set photos collection attributes
         self.photoCollectionView = UICollectionView(frame: self.currentTabView.bounds, collectionViewLayout: layout)
@@ -1458,10 +1465,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.photoCollectionView.tag = 1
         self.photoCollectionView.allowsSelection = true
         self.photoCollectionView.allowsMultipleSelection = false
-        self.photoCollectionView.center = self.currentTabView.center
+        self.photoCollectionView.center = center
         self.photoCollectionView.backgroundColor = ourColors.getBlackishColor()
         self.photoCollectionView.delegate = self
         self.photoCollectionView.dataSource = self
+        
         
     }
     
@@ -1478,6 +1486,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         //set videos collection view attributes
         self.videoCollectionView = UICollectionView(frame: CGRect(x: self.currentTabView.center.x + self.currentTabView.frame.width, y: self.currentTabView.center.y, width: self.currentTabView.frame.width, height:self.currentTabView.frame.height), collectionViewLayout: layout)
+        
+        
         
         self.videoCollectionView.register(cellNib, forCellWithReuseIdentifier: "addPostCell")
         self.videoCollectionView.tag = 2
@@ -1510,8 +1520,13 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textPostView.delegate = self
         self.textPostView.textAlignment = .center
         
+    }
+    
+    
+    func setupSliderButtons(){
+        
         //setup color slider buttons
-        self.backgroundColorBtn = UIButton(frame: CGRect(x: 15,y: self.tabBar.frame.minY - 50, width: 30,height: 30))
+        self.backgroundColorBtn = UIButton(frame: CGRect(x: 15,y: self.currentTabView.frame.minY - 90, width: 30,height: 30))
         self.backgroundColorBtn.clipsToBounds = true
         self.backgroundColorBtn.layer.cornerRadius = backgroundColorBtn.frame.width / 2
         self.backgroundColorBtn.backgroundColor = ourColors.getBlackishColor()
@@ -1519,7 +1534,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundColorBtn.layer.borderWidth = 1.0
         self.backgroundColorBtn.addTarget(self, action: #selector(toggleBackgroundColorSliderVisibility), for: .touchUpInside)
         
-        self.textColorBtn = UIButton(frame: CGRect(x: self.textPostView.frame.width - 40,y:self.tabBar.frame.minY - 50,width: 30,height: 30))
+        //
+        self.textColorBtn = UIButton(frame: CGRect(x: self.view.frame.width - 45,y:self.currentTabView.frame.minY - 90,width: 30,height: 30))
         self.textColorBtn.clipsToBounds = true
         self.textColorBtn.layer.cornerRadius = textColorBtn.frame.width / 2
         self.textColorBtn.backgroundColor = ourColors.getBlackishColor()
@@ -1542,8 +1558,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.backgroundSlider.previewEnabled = true
         self.backgroundSlider.addTarget(self, action: #selector(changedBackgroundColor(_:)), for: .valueChanged)
         self.backgroundSlider.isHidden = true
-
-        self.textSlider = ColorSlider(frame: CGRect(x: self.textPostView.frame.width - 35,y: self.textColorBtn.frame.minY - 10 - self.textPostView.frame.height * 0.7 ,width:20, height:self.textPostView.frame.height * 0.7))
+        
+        self.textSlider = ColorSlider(frame: CGRect(x: self.view.frame.width - 45,y: self.textColorBtn.frame.minY - 10 - self.textPostView.frame.height * 0.7 ,width:20, height:self.textPostView.frame.height * 0.7))
         
         self.textSlider.orientation = .vertical
         self.textSlider.borderWidth = 2.0
@@ -1564,6 +1580,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.hideColorBtns()
         
     }
+    
+    
     
     //RECORDING VIEW, TAG 4
     func setupRecordingView(center: CGPoint){
@@ -1936,7 +1954,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             let asset: PHAsset = self.photosAsset[indexPath.item] as! PHAsset
             
-            PHImageManager.default().requestImage(for: asset, targetSize: self.assetThumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
+            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: self.assetThumbnailSize.width * 4, height: self.assetThumbnailSize.height * 4), contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
                 if result != nil {
                     cell.imageView.image = result
                 }
@@ -1959,7 +1977,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             cell.durationLbl.text = String(Int(asset.duration)) + "s"
             
             cell.playImage.isHidden = false
-            PHImageManager.default().requestImage(for: asset, targetSize: self.assetThumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
+            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: self.assetThumbnailSize.width * 4, height: self.assetThumbnailSize.height * 4), contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
                 if result != nil {
                     cell.imageView.image = result
                 }
@@ -1997,6 +2015,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
+        
+        
+        let options: PHImageRequestOptions = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
         //PHOTO COLLECTION
         if (collectionView.tag == 1){
             
@@ -2007,8 +2029,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             let asset: PHAsset = self.photosAsset[indexPath.item] as! PHAsset
             
+            
             //get selected image asset
-            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: self.postContentView.frame.size.width * 3, height:self.postContentView.frame.size.height * 3), contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
+            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: self.assetThumbnailSize.width * 4, height: self.assetThumbnailSize.height * 4), contentMode: .aspectFill, options: options, resultHandler: {(result, info)in
+                
                 if result != nil {
                     
                     //set photo and selected object data
@@ -2035,7 +2059,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.selectedCategory = .Video
             
             //get selected asset
-            PHImageManager.default().requestImage(for: asset, targetSize: self.postContentView.frame.size, contentMode: .aspectFill, options: nil, resultHandler: {(result, info)in
+            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: self.assetThumbnailSize.width * 4, height: self.assetThumbnailSize.height * 4), contentMode: .aspectFill, options: options, resultHandler: {(result, info)in
                 
                 if result != nil {
                     
@@ -2408,7 +2432,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         dismiss(animated: true, completion: {
             
             self.tabBar.selectedItem = self.tabBar.items?[4]
-
+            
         })
     }
     

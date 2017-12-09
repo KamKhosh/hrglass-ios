@@ -1428,7 +1428,7 @@ class DataManager {
     
     /*******************************************************************************
      *
-     *  GET URL FOR PHASSET =- VIDEO ONLY
+     *  GET URL FOR PHASSET -- VIDEO ONLY
      *
      * - parameters: PHASSET, NAME, completion
      * -completion returns a URL
@@ -1438,14 +1438,16 @@ class DataManager {
     
     func getURLForPHAsset(videoAsset: PHAsset, name: String, completion:@escaping (URL) -> ()){
         
-        let dataManager = DataManager()
+        //must set this option or we won't be able to retrieve items in the cloud
+        let options = PHVideoRequestOptions()
+        options.isNetworkAccessAllowed = true
         
-        PHImageManager().requestAVAsset(forVideo: videoAsset, options: nil) { (asset, audioMix, args) in
+        PHImageManager().requestAVAsset(forVideo: videoAsset, options: options) { (asset, audioMix, args) in
             
             if let vAsset: AVURLAsset = asset as? AVURLAsset{
                 
                 let fileManager = FileManager()
-                let path = dataManager.documentsPathForFileName(name: name)
+                let path = self.documentsPathForFileName(name: name)
                 
                 var success: Bool = false
                 do {
@@ -1483,7 +1485,7 @@ class DataManager {
                 
                 //Output URL
                 let fileManager = FileManager()
-                let path = dataManager.documentsPathForFileName(name: name)
+                let path = self.documentsPathForFileName(name: name)
                 
                 var success: Bool = false
                 do {

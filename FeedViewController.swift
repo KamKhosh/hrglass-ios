@@ -49,7 +49,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var compass_spinner : UIImageView!
     var isRefreshAnimating = false
     var rotatePeriod = 1
-    
+    var fadeBackground: Bool = false
     
     //Current User
     var loggedInUser: User!
@@ -269,38 +269,57 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     @IBAction func settingsAction(_ sender: Any) {
-        self.navigationMenu.close()
-        self.moveIconCenter()
+        
+        if self.navigationMenu != nil{
+            self.navigationMenu.close()
+            self.moveIconCenter()
+        }
+        
         self.performSegue(withIdentifier: "toSettingsSegue", sender: nil)
     }
     
     @objc func profileButtonAction (){
         
-        self.navigationMenu.close()
-        self.moveIconCenter()
+        if self.navigationMenu != nil{
+            self.navigationMenu.close()
+            self.moveIconCenter()
+        }
         self.performSegue(withIdentifier: "toMyProfileSegue", sender: nil)
         
     }
     
     func homeButtonAction(){
-        self.navigationMenu.close()
-        self.moveIconCenter()
-        self.addPostMenu.close()
+        if self.navigationMenu != nil{
+            self.navigationMenu.close()
+            self.moveIconCenter()
+        }
+        if self.addPostMenu != nil{
+            self.addPostMenu.close()
+        }
+        
     }
     
     @objc func discoverButtonAction (){
-        self.navigationMenu.close()
-        self.addPostMenu.close()
-        self.moveIconCenter()
+        if self.navigationMenu != nil{
+            self.navigationMenu.close()
+            self.moveIconCenter()
+        }
+        if self.addPostMenu != nil{
+            self.addPostMenu.close()
+        }
         performSegue(withIdentifier: "toDiscoverSegue", sender: nil)
     }
     
     
     @objc func messagesButtonAction (){
         
-        self.navigationMenu.close()
-        self.addPostMenu.close()
-        self.moveIconCenter()
+        if self.navigationMenu != nil{
+            self.navigationMenu.close()
+            self.moveIconCenter()
+        }
+        if self.addPostMenu != nil{
+            self.addPostMenu.close()
+        }
         performSegue(withIdentifier: "toInboxSegue", sender: nil)
     }
     
@@ -370,7 +389,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     self.noPostsLbl.isHidden = true
                     self.noPostCollectionView.isHidden = true
                 }
-                
             }
             
             //stop loading animations
@@ -446,7 +464,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.linkBtn.center = center
         self.linkBtn.tag = 5
         self.linkBtn.addTarget(self, action: #selector(self.postTypeSelected), for: .touchUpInside)
-
         
         let buttonList: [UIButton] = [self.photoBtn, self.videoBtn, self.textBtn, self.recordBtn, self.musicBtn, self.linkBtn, self.cameraBtn]
 
@@ -484,15 +501,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.profileBtn.layer.cornerRadius = buttonFrame.size.width * 0.35
         self.profileBtn.imageView?.contentMode = .scaleAspectFill
         self.profileBtn.clipsToBounds = true
-        
-        
         self.profileBtn.addTarget(self, action: #selector(self.profileButtonAction), for: .touchUpInside)
         
         self.discoverBtn = UIButton(frame: CGRect.zero)
         self.discoverBtn.setImage(UIImage(named:"users")?.transform(withNewColor: UIColor.white), for: .normal)
         self.discoverBtn.center = center
         self.discoverBtn.addTarget(self, action: #selector(self.discoverButtonAction), for: .touchUpInside)
-        
         
         self.messagesBtn = UIButton(frame: CGRect.zero)
         self.messagesBtn.setImage(UIImage(named:"mail")?.transform(withNewColor: UIColor.white), for: .normal)
@@ -1550,26 +1564,38 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                        delay: Double(0.0),
                        options: UIViewAnimationOptions.curveLinear,
                        animations: {
+                        
                         // Rotate the spinner by M_PI_2 = PI/2 = 90 degrees
-                    
                         if (self.rotatePeriod == 1){
                             self.rotatePeriod = 2
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi / 2))
-                            self.refreshColorView!.alpha = 0.5
+
                         }else if (self.rotatePeriod == 2){
                             self.rotatePeriod = 3
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi))
-                            self.refreshColorView!.alpha = 0.4
+
                         }else if (self.rotatePeriod == 3){
                             self.rotatePeriod = 4
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi) * 3/2)
-                            self.refreshColorView!.alpha = 0.3
+
                         }else if (self.rotatePeriod == 4){
                             self.rotatePeriod = 1
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: 0)
-                            self.refreshColorView!.alpha = 0.1
+                            
+                            
+                            //toggle fadeBackground
+                            if (self.fadeBackground){
+                                self.fadeBackground = false
+                            }else{
+                                self.fadeBackground = true
+                            }
                         }
                         
+                        if self.fadeBackground {
+                            self.refreshColorView!.alpha = self.refreshColorView!.alpha - 0.1
+                        }else{
+                            self.refreshColorView!.alpha = self.refreshColorView!.alpha + 0.1
+                        }
                         
                         
         },

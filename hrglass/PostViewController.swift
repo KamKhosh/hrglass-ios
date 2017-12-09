@@ -34,6 +34,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     var imageCache: ImageCache = ImageCache()
     var videoCache: VideoStore = VideoStore()
     let awsManager: AWSManager = AWSManager()
+    let colors: Colors = Colors()
     
     //Audio/Video Players
     var avPlayerViewController: AVPlayerViewController!
@@ -395,8 +396,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     //Adding Gradient Sublayer
                     let gradient: CAGradientLayer = CAGradientLayer()
                     gradient.frame = self.blurredMusicImageView.frame
-                    gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
-                    gradient.locations = [0.0, 1.0]
+                    gradient.colors = [UIColor.clear.cgColor, self.colors.getBlackishColor().cgColor]
+                    gradient.locations = [0.0, 0.9]
                     self.blurredMusicImageView.layer.insertSublayer(gradient, at: 0)
                 })
                 
@@ -417,7 +418,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             case .Photo:
                 
-                print("")
                 imageCache.getImage(urlString: self.postData.value(forKey: "data") as! String, completion: { (image) in
                     self.contentImageView.image = image
                 })
@@ -1211,7 +1211,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @objc func playerDidFinishPlayingPrimary(note: NSNotification) {
         
 //        self.avPlayerViewController.dismiss(animated: false, completion: nil)
-        
         self.avPlayerViewController.view.removeFromSuperview()
         self.playContentBtn.isHidden = false
         NotificationCenter.default.removeObserver(self)
