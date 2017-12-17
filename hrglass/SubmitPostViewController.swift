@@ -41,10 +41,10 @@ class SubmitPostViewController: UIViewController {
     var selectedObject: AnyObject!
     var selectedCategory: Category = .None
     var selectedMood: Mood = .None
-    var selectedShape: String = ""
     var selectedThumbnail: UIImage!
     var selectedVideoPath: String = ""
     var selectedMusicItem: AnyObject!
+    
     //secondary post data
 //    var secondarySelectedObject: AnyObject!
 //    var secondarySelectedCategory: Category = .None
@@ -1615,7 +1615,7 @@ class SubmitPostViewController: UIViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
-        if (segue.identifier == "unwindToAddPost"){
+        if (segue.identifier == "unwindToMoodSegue"){
             
             if transferring{
                  self.awsManager.cancelRequest()

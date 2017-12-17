@@ -4,7 +4,6 @@
 //
 //  Created by Justin Hershey on 5/17/17.
 //
-//
 
 import UIKit
 import Firebase
@@ -27,6 +26,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     let ref: DatabaseReference = Database.database().reference()
     
+    
+    
     /*******************************
      *
      *  LIFECYCLE
@@ -41,7 +42,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         //Delegate Setup
         self.textFieldDelegateSetup()
         self.scrollView.delegate = self
-        
         self.scrollView.isScrollEnabled = false
         
         // Setup Facebook Login Button
@@ -144,14 +144,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     }
     
     
-    
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
         
             //login to firebase
-        
-        
-        
         if ((AccessToken.current?.authenticationToken) != nil) {
+            
             let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
             
             
@@ -165,7 +162,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                     
                     self.stopLoginIndicator(success: false)
                     
-                    self.showActionSheetWithTitle(title: "Error", message: "Facebook login failed")
+                    self.showActionSheetWithTitle(title: "Error", message: "Facebook-Firebase login failed")
                     
                 }else if error == nil {
                     
@@ -183,7 +180,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                             
                             self.getFBData(uid: (user?.uid)!, completion: { data in
                                 
-                                
                                 //setup initial following -- auto follow hr.glass
                                 let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
                                 let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
@@ -191,7 +187,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                                 followingList.setValue(newFollowing)
                                 let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
                                 followingCount.setValue(1)
-                                
                                 
                                 self.stopLoginIndicator(success: true)
                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
@@ -205,14 +200,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             
             self.showActionSheetWithTitle(title: "Facebook login Cancelled", message: "")
         }
-        
     }
+    
     
     //GET FB USER DATA -- WRITE TO FIREBASE
     func getFBData(uid: String, completion:@escaping (NSDictionary) -> ()){
         
         let connection = GraphRequestConnection()
         let params = ["fields" : "id, email, name"]
+        
         connection.add(GraphRequest(graphPath: "/me", parameters:params)) { httpResponse, result in
             switch result {
             case .success(let response):
@@ -221,7 +217,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                 let email: String = response.dictionaryValue?["email"] as! String
                 let name: String = response.dictionaryValue?["name"] as! String
                 
-                let userData: NSDictionary = ["email":email,"username":"", "name":name, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":"", "followed_by_count":0, "following_count": 0, ]
+                let userData: NSDictionary = ["email":email,"username":"", "name":name, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":""]
                 
                 let userRef = Database.database().reference().child("Users").child(uid)
                 
@@ -281,6 +277,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
        
     }
 
+    
     func stopLoginIndicator(success: Bool) {
         
         self.loginIndicationView.stopAnimating()
@@ -293,9 +290,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             self.loginBtn.setTitle("Log in", for: .normal)
             self.loginBtn.isUserInteractionEnabled = true
         }
-        
-        
     }
+    
     
     func addBottomLine(forView: UITextField, tag: Int){
         //adds a line beneath the view in the parameters
@@ -307,7 +303,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         view.tag = tag
         
         self.scrollContentView.addSubview(view)
-        
     }
     
     
@@ -325,7 +320,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         self.loginAction(self)
-        
         return true
     }
     
@@ -361,7 +355,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         if (scrollView.contentOffset.y == 0){
             view.endEditing(true)
         }
-        
     }
     
     

@@ -369,6 +369,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      
      ***************************************************************************************/
     
+    
     func getFeedData(){
         
         dataManager.getFeedPosts(userId: (Auth.auth().currentUser?.uid)!, completion: { data in
@@ -401,7 +402,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
         })
     }
-    
     
     
     
@@ -617,7 +617,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func getPublicUsers(){
         
-        //For now just grab all users -- TODO: Develop Algorithm for pulling in more relevant users to this array
+        //For now just grab all users -- TODO: Develope Algorithm for pulling in more relevant users to this array
         let usersRef: DatabaseReference = ref.child("Users")
         self.discoverUserData.removeAllObjects()
         
@@ -734,6 +734,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
         }
         
+        
         cell.contentSelected = {
             
             if self.navigationMenu.open{
@@ -765,7 +766,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.previewContentView.backgroundColor = UIColor.white
         cell.likeCountLbl.text = String(feedData[indexPath.row].likes)
         cell.viewCountLbl.text = String(feedData[indexPath.row].views)
-        //cell.categoryLbl.text = feedData[indexPath.row].category.rawValue
         cell.linkLbl.isHidden = true
         cell.postId = feedData[indexPath.row].postId as String
         cell.profileImageBtn.setImage(self.dataManager.clearImage, for: .normal)
@@ -1471,7 +1471,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }else{
                 followingList = [:]
             }
-            
             
             // For now we get nil because we're not saving lists, so pass something else
             if (followingList.count != 0){

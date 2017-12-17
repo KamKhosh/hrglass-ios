@@ -84,7 +84,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var selectedObject: AnyObject!
     var selectedCategory: Category = .None
     var selectedMood: Mood = .None
-    var moodMenu: MenuView!
     var selectedShape: String = "circle"
     var trimmedVideoPath: String = ""
     var selectedThumbnail: UIImage!
@@ -191,7 +190,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if self.moodMenu == nil{
+        if self.photoCollectionView == nil{
             //if the mood menu is nil, so are the rest of the content subviews, configure them
             self.currentTabView.frame = CGRect(x: 0,y: self.topContainerView.frame.maxY,width: self.view.frame.width, height:self.view.frame.maxY - self.topContainerView.frame.maxY)
             //setting static frames here since larger screens cause unwanted behviour
@@ -205,7 +204,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.setupTabViews()
             self.setupMediaAccess()
             self.setupPlayBtn()
-            self.setupMoodMenu()
             self.setupSliderButtons()
 
             self.photoCollectionView.isHidden = false
@@ -412,47 +410,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
     }
     
-    
-    /***********************
-     *
-     * Mood Button METHODS
-     *
-     **********************/
-    
-    func setupMoodMenu(){
-        
-        let center = self.moodBtn.center
-        moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
-        
-        let sadBtn: UIButton = UIButton(frame: CGRect.zero)
-        let funnyBtn: UIButton = UIButton(frame: CGRect.zero)
-        let angryBtn: UIButton = UIButton(frame: CGRect.zero)
-        let shockedBtn: UIButton = UIButton(frame: CGRect.zero)
-        let afraidBtn: UIButton = UIButton(frame: CGRect.zero)
-        
-        afraidBtn.setTitle(Mood.Afraid.rawValue, for: .normal)
-        funnyBtn.setTitle(Mood.Funny.rawValue, for: .normal)
-        angryBtn.setTitle(Mood.Angry.rawValue, for: .normal)
-        sadBtn.setTitle(Mood.Sad.rawValue, for: .normal)
-        shockedBtn.setTitle(Mood.Shocked.rawValue, for: .normal)
-        
-        funnyBtn.center = center
-        sadBtn.center = center
-        shockedBtn.center = center
-        afraidBtn.center = center
-        angryBtn.center = center
-    
-        afraidBtn.addTarget(self, action: #selector(self.afraidAction), for: .touchUpInside)
-        funnyBtn.addTarget(self, action: #selector(self.funnyAction), for: .touchUpInside)
-        sadBtn.addTarget(self, action: #selector(self.sadAction), for: .touchUpInside)
-        angryBtn.addTarget(self, action: #selector(self.angryAction), for: .touchUpInside)
-        shockedBtn.addTarget(self, action: #selector(self.shockedAction), for: .touchUpInside)
 
-        moodMenu = MenuView.init(buttonList: [sadBtn,funnyBtn,angryBtn,shockedBtn,afraidBtn], addPostViewController: self, direction: .Down, startButton: self.moodBtn, spacing: -10.0)
-        
-        self.view.addSubview(moodMenu)
-        moodMenu.isHidden = true
-    }
     
     
     
@@ -607,7 +565,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         if selectedObject != nil{
             
-            performSegue(withIdentifier: "toSubmitPostSegue", sender: self)
+            performSegue(withIdentifier: "toMoodSegue", sender: self)
         }
     }
     
@@ -894,7 +852,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
-    //CLImageEditor Functions
+    //PhotoEditor Functions
     func presentImageEditorWithImage(image:UIImage){
     
         photoEditor = PhotoEditorViewController(nibName:"PhotoEditorViewController",bundle: Bundle(for: PhotoEditorViewController.self))
@@ -917,18 +875,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         //Present the View Controller
         present(photoEditor, animated: true, completion: nil)
         
-        
-//        guard let editor = CLImageEditor(image: image, delegate: self) else {
-//
-//            return;
-//        }
-        
-//        editor.theme.backgroundColor = UIColor.white
-//        editor.theme.toolbarColor = UIColor.white
-//        editor.theme.toolbarTextColor = UIColor.lightGray
-//        editor.theme.toolIconColor = "black"
-//
-//        self.present(editor, animated: true, completion: {});
     }
 
     
@@ -957,61 +903,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 //    }
 
     
-    /***************
-     * MOOD ACTIONS
-     ***************/
-    
-    @IBAction func moodBtnAtion(_ sender: Any) {
-        //open moodMenu
-        if (moodMenu.open){
-            
-            moodMenu.close()
-        }else{
-            if !textSlider.isHidden{
-               self.toggleTextColorSliderVisibility()
-            }
-            
-            moodMenu.show()
-            self.view.bringSubview(toFront: moodMenu)
-        }
-    }
-    
-    //set mood as afraid emoji
-    @objc func afraidAction(){
-        
-        self.selectedMood = .Afraid
-        self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
-        self.moodMenu.close()
-    }
-    
-    //set mood as sad emoji
-    @objc func sadAction(){
-        self.selectedMood = .Sad
-        self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
-        self.moodMenu.close()
-    }
-    
-    //set mood as funny emoji
-    @objc func funnyAction(){
-        self.selectedMood = .Funny
-        self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
-        self.moodMenu.close()
-    }
-    
-    //set mood as shocked emoji
-    @objc func shockedAction(){
-        self.selectedMood = .Shocked
-        self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
-        self.moodMenu.close()
-    }
-    
-    //set mood as angry emoji
-    @objc func angryAction(){
-        self.selectedMood = .Angry
-        self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
-        self.moodMenu.close()
-    }
-    
+
 
     
 
@@ -2506,26 +2398,25 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         self.applicationMusicPlayer.stop()
         
-        if segue.identifier == "toSubmitPostSegue"{
-
-            let vc: SubmitPostViewController = segue.destination as! SubmitPostViewController
+        if segue.identifier == "toMoodSegue"{
+            
+            let vc: MoodViewController = segue.destination as! MoodViewController
             vc.selectedMood = self.selectedMood
             vc.selectedObject = self.selectedObject
             vc.selectedCategory = self.selectedCategory
-            vc.selectedShape = self.selectedShape
             vc.loggedInUser = self.loggedInUser
             vc.selectedVideoPath = self.trimmedVideoPath
             vc.selectedThumbnail = self.selectedThumbnail
             vc.postWasSaved = self.postWasSaved
             vc.selectedMusicItem = self.selectedMusicItem
-//            if self.hasSecondarySavedPost{
-//                
-//                vc.secondarySelectedCategory = self.secondarySelectedCategory
-//                vc.secondarySelectedObject = self.secondarySelectedObject
-//                vc.hasSecondaryPost = true
-//            }
+            //            if self.hasSecondarySavedPost{
+            //
+            //                vc.secondarySelectedCategory = self.secondarySelectedCategory
+            //                vc.secondarySelectedObject = self.secondarySelectedObject
+            //                vc.hasSecondaryPost = true
+            //            }
             
-        }else if segue.identifier == "unwindToCreateCustomPostSegue"{
+        } else if segue.identifier == "unwindToCreateCustomPostSegue"{
             
             self.tabBar(self.tabBar, didSelect: (self.tabBar.items?[0])!)
             

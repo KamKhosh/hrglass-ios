@@ -8,7 +8,6 @@
 import UIKit
 import Firebase
 import FacebookCore
-import Instabug
 import MediaPlayer
 
 
@@ -24,12 +23,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         SDKApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         UIApplication.shared.statusBarStyle = .lightContent
-        Instabug.start(withToken: "27a08143d8d90ae625d668c2087beecf", invocationEvent: .shake)
         
         do {
             try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
         } catch _ {
         }
+
         return true
     }
     

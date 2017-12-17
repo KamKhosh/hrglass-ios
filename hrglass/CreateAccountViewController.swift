@@ -103,7 +103,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         //if any of the fields are black the underline will be changed to red
         
-        
         if(fullnameField.text == ""){
             print("Fullname Empty")
             let views: [UIView] = self.scrollContentView.subviews
@@ -158,8 +157,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 let fullname: String = fullnameField.text!
                 let username: String = usernameField.text!
 
-                
-                
                 createAccountBtn.backgroundColor = UIColor.lightGray
                 self.startLoginIndicator()
                 
@@ -365,7 +362,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 let name: String = response.dictionaryValue?["name"] as! String
                 
                 //set firebase userdata dicrionary and save
-                let userData: NSDictionary = ["email":email,"username":"", "name":name, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":"", "followed_by_count":0, "following_count": 0, ]
+                let userData: NSDictionary = ["email":email,"username":"", "name":name, "bio":"", "isPrivate": false, "coverPhoto":"", "profilePhoto":""]
                 
                 let userRef = self.ref.child("Users").child(uid)
                 
@@ -424,8 +421,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         if(passwordField.isFirstResponder){
             
             self.scrollView.scrollRectToVisible(passwordField.frame, animated: true)
-            
         }
+            
         else if(confirmPasswordField.isFirstResponder){
             
             self.scrollView.scrollRectToVisible(confirmPasswordField.frame, animated: true)

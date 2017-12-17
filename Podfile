@@ -17,8 +17,9 @@ target 'hrglass' do
     pod 'AWSCognito'
     pod 'AWSS3'
     pod 'RKNotificationHub'
-    pod 'Instabug'
     pod 'iOSPhotoEditor'
+    pod 'Fabric', '~> 1.7.2'
+    pod 'Crashlytics', '~> 3.9.3'
 
 
 end

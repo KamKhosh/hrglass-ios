@@ -34,11 +34,16 @@ enum Category: String{
 enum Mood: String {
     
     case Funny = "😂"
-    case Sad = "😥"
-    case Shocked = "😮"
+    case Fire = "🔥"
+    case Love = "😍"
+    case Sad = "😔"
+    case Shocked = "😱"
     case Afraid = "😨"
+    case Cool = "😎"
+    case Bravo = "👏"
+    case Silly = "😋"
     case Angry = "😡"
-    case None = "✏️"
+    case None = "🚫"
 
 }
 

@@ -65,6 +65,7 @@
 		5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */; };
 		5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7197AD1F1D502900411A08 /* AWSManager.swift */; };
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
+		5E8CDA701FE5AFE40008AC25 /* MoodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */; };
 		5EB1A7701FD1C4CD008F625E /* BreathingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */; };
 		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
 		5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */; };
@@ -147,6 +148,7 @@
 		5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedUserCell.swift; sourceTree = "<group>"; };
 		5E7197AD1F1D502900411A08 /* AWSManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
+		5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodViewController.swift; sourceTree = "<group>"; };
 		5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreathingAnimation.swift; sourceTree = "<group>"; };
 		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostTableViewCell.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 				5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */,
 				5E60F5371F42270900569F74 /* ColorSlider.swift */,
 				5E3CBC781F76D6450073322B /* AddSecondaryPostViewController.swift */,
+				5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */,
 			);
 			name = AddPostView;
 			sourceTree = "<group>";
@@ -427,6 +430,7 @@
 				5E24BD781EB275800047ED50 /* Resources */,
 				0CA942712D98CDCDE3F2D560 /* [CP] Embed Pods Frameworks */,
 				22221F5CB54E99E098C3CF09 /* [CP] Copy Pods Resources */,
+				5E337FFA1FE06B44007B7D67 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -512,8 +516,6 @@
 				"${BUILT_PRODUCTS_DIR}/FacebookLogin/FacebookLogin.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
-				"${PODS_ROOT}/Instabug/Instabug.framework",
-				"${PODS_ROOT}/Instabug/Instabug.framework.dSYM",
 				"${BUILT_PRODUCTS_DIR}/Kanna/Kanna.framework",
 				"${BUILT_PRODUCTS_DIR}/RKNotificationHub/RKNotificationHub.framework",
 				"${BUILT_PRODUCTS_DIR}/URLEmbeddedView/URLEmbeddedView.framework",
@@ -533,8 +535,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookLogin.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Instabug.framework",
-				"${DWARF_DSYM_FOLDER_PATH}/Instabug.framework.dSYM",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kanna.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKNotificationHub.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/URLEmbeddedView.framework",
@@ -564,6 +564,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-hrglass/Pods-hrglass-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		5E337FFA1FE06B44007B7D67 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
 		};
 		8545D3C4B285FBD7B5BE5579 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -618,6 +631,7 @@
 				5E24BDAC1EB27EB10047ED50 /* FeedTableViewCell.swift in Sources */,
 				5E32A8581ED4705000AEF9DA /* AllPostsCollectionViewCell.swift in Sources */,
 				5E3537FF1F204F99009D121B /* VideoStore.swift in Sources */,
+				5E8CDA701FE5AFE40008AC25 /* MoodViewController.swift in Sources */,
 				5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */,
 				5E3098151EBC3457001AC1A6 /* SettingsViewController.swift in Sources */,
 				5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */,
@@ -788,6 +802,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = hrglass/hrglass.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = YKN8DC38G3;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -816,6 +831,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = hrglass/hrglass.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = YKN8DC38G3;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

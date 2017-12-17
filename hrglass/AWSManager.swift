@@ -69,7 +69,6 @@ class AWSManager {
 
     func uploadPhotoAction(resourceURL: URL, fileName: String, type: String, completion:@escaping(Bool) -> ()){
         
-        
         let key = "\(uid)/images/\(fileName).\(type)"
         
         self.photoTransferRequest = AWSS3TransferManagerUploadRequest()!
