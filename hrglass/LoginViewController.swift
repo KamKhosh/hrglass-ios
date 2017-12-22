@@ -16,12 +16,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var scrollContentView: UIView!
-
     @IBOutlet weak var loginBtn: UIButton!
-
     @IBOutlet weak var loginIndicationView: UIActivityIndicatorView!
     
     let ref: DatabaseReference = Database.database().reference()

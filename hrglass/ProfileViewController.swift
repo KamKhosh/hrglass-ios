@@ -12,7 +12,7 @@ import URLEmbeddedView
 import AVKit
 import AVFoundation
 import iOSPhotoEditor
-import Crashlytics
+
 
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CropViewControllerDelegate{
@@ -141,8 +141,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 })
             }
         }
-        
-        Crashlytics.sharedInstance().crash()
     }
     
     

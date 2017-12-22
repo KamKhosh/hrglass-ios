@@ -169,14 +169,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         swipeDown.direction = .down
         swipeDown.delegate = self
         self.view.addGestureRecognizer(swipeDown)
-    
-        
         
         do {
             try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
         } catch _ {
         }
-        
     }
     
     

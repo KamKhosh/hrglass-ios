@@ -1568,15 +1568,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         if (self.rotatePeriod == 1){
                             self.rotatePeriod = 2
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi / 2))
-
+                            
                         }else if (self.rotatePeriod == 2){
                             self.rotatePeriod = 3
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi))
-
+                            
                         }else if (self.rotatePeriod == 3){
                             self.rotatePeriod = 4
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi) * 3/2)
-
+                            
                         }else if (self.rotatePeriod == 4){
                             self.rotatePeriod = 1
                             self.compass_spinner.transform = CGAffineTransform(rotationAngle: 0)
@@ -1606,8 +1606,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         }else {
                             self.resetAnimation()
                         }
-        }
-        )
+        })
     }
     
     func resetAnimation() {
