@@ -2208,7 +2208,7 @@
                                         <rect key="frame" x="0.0" y="383.5" width="375" height="50"/>
                                         <subviews>
                                             <tabBar contentMode="scaleToFill" barStyle="black" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xcS-ed-nCs">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                                <rect key="frame" x="0.0" y="-0.5" width="375" height="50"/>
                                                 <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <items>
                                                     <tabBarItem tag="1" title="" image="gallery" id="IU0-qY-3qw"/>
@@ -2376,22 +2376,14 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3bP-R3-DIg">
-                                <rect key="frame" x="188" y="647" width="0.0" height="0.0"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="36"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="LBP-Gn-Vl3" firstAttribute="width" secondItem="vsM-Cq-WlM" secondAttribute="width" multiplier="0.5" id="1xB-uq-eLY"/>
                             <constraint firstItem="dwp-tY-eGl" firstAttribute="width" secondItem="vsM-Cq-WlM" secondAttribute="width" id="DDb-6M-Fj6"/>
-                            <constraint firstItem="3bP-R3-DIg" firstAttribute="centerX" secondItem="vsM-Cq-WlM" secondAttribute="centerX" id="Dhk-nb-yyf"/>
                             <constraint firstItem="Phs-9I-ycb" firstAttribute="centerX" secondItem="vsM-Cq-WlM" secondAttribute="centerX" id="G0l-Pm-Ak2"/>
-                            <constraint firstItem="aEH-7B-McP" firstAttribute="top" secondItem="3bP-R3-DIg" secondAttribute="bottom" constant="20" id="Uli-dF-FfU"/>
                             <constraint firstItem="LBP-Gn-Vl3" firstAttribute="centerY" secondItem="vsM-Cq-WlM" secondAttribute="centerY" id="cQO-OU-rKw"/>
-                            <constraint firstItem="3bP-R3-DIg" firstAttribute="top" secondItem="Phs-9I-ycb" secondAttribute="bottom" constant="20" id="pRv-Ao-Y02"/>
+                            <constraint firstItem="aEH-7B-McP" firstAttribute="top" secondItem="Phs-9I-ycb" secondAttribute="bottom" constant="40" id="qJh-S9-84w"/>
                             <constraint firstItem="LBP-Gn-Vl3" firstAttribute="centerX" secondItem="vsM-Cq-WlM" secondAttribute="centerX" id="qyW-Dy-B0B"/>
                             <constraint firstItem="Phs-9I-ycb" firstAttribute="width" secondItem="vsM-Cq-WlM" secondAttribute="width" id="vMZ-J7-Dcl"/>
                             <constraint firstItem="dwp-tY-eGl" firstAttribute="centerX" secondItem="vsM-Cq-WlM" secondAttribute="centerX" id="yO2-Na-M4B"/>
@@ -2400,7 +2392,6 @@
                     </view>
                     <connections>
                         <outlet property="moodBtn" destination="LBP-Gn-Vl3" id="zxc-f5-pDw"/>
-                        <outlet property="moodLbl" destination="3bP-R3-DIg" id="auB-CP-YoZ"/>
                         <outlet property="navigationView" destination="dwp-tY-eGl" id="GV9-Be-tUe"/>
                         <outlet property="nextBtn" destination="Fgr-Ih-QRK" id="pll-If-nYl"/>
                         <segue destination="5Ky-gb-qHo" kind="show" identifier="toSubmitPostSegue" id="Gae-Rs-uCJ"/>
@@ -4106,7 +4097,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="Edw-b2-iiL"/>
         <segue reference="Mnx-q4-8ia"/>
-        <segue reference="Xr8-Nk-0I2"/>
+        <segue reference="0q8-Ka-CvW"/>
         <segue reference="dIA-KB-ijf"/>
         <segue reference="DPy-7D-OlM"/>
         <segue reference="IeI-FX-dAA"/>

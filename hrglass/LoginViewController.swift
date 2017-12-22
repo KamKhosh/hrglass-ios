@@ -23,7 +23,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     let ref: DatabaseReference = Database.database().reference()
     
-    
+    var fbLoginBtn: LoginButton!
     
     /*******************************
      *
@@ -42,7 +42,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         self.scrollView.isScrollEnabled = false
         
         // Setup Facebook Login Button
-        let fbLoginBtn = LoginButton.init(readPermissions: [ .publicProfile, .email ])
+        fbLoginBtn = LoginButton.init(readPermissions: [ .publicProfile, .email ])
         fbLoginBtn.delegate = self 
         fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.minY - 50)
         
@@ -63,6 +63,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.minY - 50)
+    }
     
     
     /************
@@ -143,60 +147,75 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
         
-            //login to firebase
-        if ((AccessToken.current?.authenticationToken) != nil) {
-            
-            let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
-            
-            
-            self.startLoginIndicator()
         
-            Auth.auth().signIn(with: credential) { (user, error) in
+        switch result {
+        case .failed(let error):
+            print(error)
+            self.showActionSheetWithTitle(title: "Facebook login Failed", message: error.localizedDescription)
+        case .cancelled:
+            print("User cancelled login.")
+            self.showActionSheetWithTitle(title: "Facebook login Cancelled", message: "")
+            
+        case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+            print("Logged in!")
+            //login to firebase
+            if ((AccessToken.current?.authenticationToken) != nil) {
                 
-                if let error = error {
+                let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
+                
+                self.startLoginIndicator()
+                
+                Auth.auth().signIn(with: credential) { (user, error) in
                     
-                    print(error.localizedDescription)
-                    
-                    self.stopLoginIndicator(success: false)
-                    
-                    self.showActionSheetWithTitle(title: "Error", message: "Facebook-Firebase login failed")
-                    
-                }else if error == nil {
-                    
-                    //Check if firebase Userdata exists, if not create user
-                    let ref = Database.database().reference().child("Users").child((user?.uid)!)
-                    
-                    ref.observeSingleEvent(of: .value, with: { snapshot in
+                    if let error = error {
                         
-                        if let _ = snapshot.value as? NSDictionary{
+                        print(error.localizedDescription)
+                        
+                        self.stopLoginIndicator(success: false)
+                        
+                        self.showActionSheetWithTitle(title: "Error", message: "Facebook-Firebase login failed")
+                        
+                    }else if error == nil {
+                        
+                        //Check if firebase Userdata exists, if not create user
+                        let ref = Database.database().reference().child("Users").child((user?.uid)!)
+                        
+                        ref.observeSingleEvent(of: .value, with: { snapshot in
                             
-                            self.stopLoginIndicator(success: true)
-                            self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
-                
-                        }else{
-                            
-                            self.getFBData(uid: (user?.uid)!, completion: { data in
-                                
-                                //setup initial following -- auto follow hr.glass
-                                let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
-                                let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
-                                
-                                followingList.setValue(newFollowing)
-                                let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
-                                followingCount.setValue(1)
+                            if let _ = snapshot.value as? NSDictionary{
                                 
                                 self.stopLoginIndicator(success: true)
                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                                 
-                            })
-                        }
-                    })
+                            }else{
+                                
+                                self.getFBData(uid: (user?.uid)!, completion: { data in
+                                    
+                                    //setup initial following -- auto follow hr.glass
+                                    let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                                    let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
+                                    
+                                    followingList.setValue(newFollowing)
+                                    let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
+                                    followingCount.setValue(1)
+                                    
+                                    self.stopLoginIndicator(success: true)
+                                    self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
+                                    
+                                })
+                            }
+                        })
+                    }
                 }
+            }else{
+                
+                self.showActionSheetWithTitle(title: "Facebook Token nil", message: "odd")
             }
-        }else{
-            
-            self.showActionSheetWithTitle(title: "Facebook login Cancelled", message: "")
         }
+            
+        
+        
+        
     }
     
     

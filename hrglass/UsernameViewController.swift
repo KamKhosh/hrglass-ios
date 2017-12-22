@@ -30,7 +30,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
         super.viewDidLoad()
         self.usernameField.delegate = self
-        self.addBottomLine(forView: usernameField, tag: 1)
+        
         
         //if parent view is from account, show back button and change button title
         if parentView == "accountView"{
@@ -48,7 +48,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         swipeDown.direction = .down
         swipeDown.delegate = self
         self.view.addGestureRecognizer(swipeDown)
-        
+        self.addBottomLine(forView: usernameField, tag: 1)
         
     }
     
@@ -179,7 +179,5 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
             
             
         }
-        
     }
-
 }

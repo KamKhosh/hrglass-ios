@@ -285,60 +285,76 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
         //login to firebase
-        let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
         
-        //use facebook credential to login to firebase
-        Auth.auth().signIn(with: credential) { (user, error) in
-            // ...
-            if let error = error {
-                //Firebase with facebook Login Successful
-                print(error.localizedDescription)
-                let alert = UIAlertController(title: "Alert", message: "Facebook login failed", preferredStyle: .alert)
-                
-                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                
-                alert.addAction(defaultAction)
-                
-                self.present(alert, animated: true, completion: nil)
-                
-                return
-                
-            }else if error == nil {
- 
-                //firebase with facebook login successfull
-                let ref = Database.database().reference().child("Users").child((user?.uid)!)
-                
-                //get user data
-                ref.observeSingleEvent(of: .value, with: { snapshot in
+        switch result {
+        case .failed(let error):
+            print(error)
+            self.showActionSheetWithTitle(title: "Facebook Login Failed", message: error.localizedDescription)
+        case .cancelled:
+            print("User cancelled login.")
+            self.showActionSheetWithTitle(title: "Facebook Login Cancelled", message: "")
+            
+        case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+            print("Logged in!")
+            //Do further code...
+            let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
+            
+            //use facebook credential to login to firebase
+            Auth.auth().signIn(with: credential) { (user, error) in
+                // ...
+                if let error = error {
+                    //Firebase with facebook Login Successful
+                    print(error.localizedDescription)
+                    let alert = UIAlertController(title: "Alert", message: "Facebook login failed", preferredStyle: .alert)
                     
-                    if let _ = snapshot.value as? NSDictionary{
-                        //if the user already exists in firebase
-                        self.stopLoginIndicator(success: true)
-                        self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
+                    let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    
+                    alert.addAction(defaultAction)
+                    
+                    self.present(alert, animated: true, completion: nil)
+                    
+                    return
+                    
+                }else if error == nil {
+                    
+                    //firebase with facebook login successfull
+                    let ref = Database.database().reference().child("Users").child((user?.uid)!)
+                    
+                    //get user data
+                    ref.observeSingleEvent(of: .value, with: { snapshot in
                         
-                    }else{
-                        //if the user doesn't already exist in firebase. Get FB data and write to database
-                        
-                        self.getFBData(uid: (user?.uid)!, completion: { data in
-                            
-                            //setup initial following -- auto follow hr.glass
-                            let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
-                            let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
-                            
-                            followingList.setValue(newFollowing)
-                            let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
-                            followingCount.setValue(1)
-                            
-                            
+                        if let _ = snapshot.value as? NSDictionary{
+                            //if the user already exists in firebase
                             self.stopLoginIndicator(success: true)
                             self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                             
-                        })
-                    }
-                })
-                
+                        }else{
+                            //if the user doesn't already exist in firebase. Get FB data and write to database
+                            
+                            self.getFBData(uid: (user?.uid)!, completion: { data in
+                                
+                                //setup initial following -- auto follow hr.glass
+                                let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                                let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
+                                
+                                followingList.setValue(newFollowing)
+                                let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
+                                followingCount.setValue(1)
+                                
+                                
+                                self.stopLoginIndicator(success: true)
+                                self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
+                                
+                            })
+                        }
+                    })
+                    
+                }
             }
         }
+        
+        
+        
     }
     
     
@@ -381,6 +397,18 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     }
     
     
+    
+    func showActionSheetWithTitle(title:String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        
+        alert.addAction(defaultAction)
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        
+    }
     
 
 

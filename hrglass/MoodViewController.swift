@@ -27,7 +27,6 @@ class MoodViewController: UIViewController {
     
     @IBOutlet weak var moodBtn: UIButton!
     
-    @IBOutlet weak var moodLbl: UILabel!
     @IBOutlet weak var nextBtn: UIButton!
     @IBOutlet weak var navigationView: UIView!
     
@@ -37,7 +36,7 @@ class MoodViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         self.setupMoodMenu()
-        self.showMoodMenu()
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -45,6 +44,11 @@ class MoodViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.showMoodMenu()
+    }
 
     
     // MARK: - Navigation
@@ -68,7 +72,6 @@ class MoodViewController: UIViewController {
  
     
     @IBAction func unwindToMoodSegue(unwindSegue: UIStoryboardSegue) {
-        
         
     }
     
@@ -107,8 +110,6 @@ class MoodViewController: UIViewController {
         fireBtn.setTitle(Mood.Fire.rawValue, for: .normal)
         coolBtn.setTitle(Mood.Cool.rawValue, for: .normal)
         noneBtn.setTitle(Mood.None.rawValue, for: .normal)
-        
-        
         
         funnyBtn.center = center
         sadBtn.center = center
@@ -230,7 +231,6 @@ class MoodViewController: UIViewController {
         
         self.selectedMood = .None
         self.moodBtn.setImage(UIImage(named: "bwEmoji"), for: .normal)
-        self.moodToText()
         self.moodBtn.setTitle("", for: .normal)
         self.closeMoodMenu()
     }
@@ -240,7 +240,6 @@ class MoodViewController: UIViewController {
         
         self.selectedMood = mood
         self.moodBtn.setImage(nil, for: .normal)
-        self.moodToText()
         self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
         self.closeMoodMenu()
         
@@ -292,38 +291,6 @@ class MoodViewController: UIViewController {
     
     
     
-    func moodToText(){
-        
-        switch self.selectedMood {
-        case .Afraid:
-            self.moodLbl.text = "Afraid"
-        case .Angry:
-            self.moodLbl.text = "Angry"
-        case .Shocked:
-            self.moodLbl.text = "Shocked"
-        case .Silly:
-            self.moodLbl.text = "Silly"
-        case .Sad:
-            self.moodLbl.text = "Sad"
-        case .Bravo:
-            self.moodLbl.text = "Bravo"
-        case .Cool:
-            self.moodLbl.text = "Cool"
-        case .Fire:
-            self.moodLbl.text = "Fire"
-        case .Funny:
-            self.moodLbl.text = "Funny"
-        case .Love:
-            self.moodLbl.text = "Love"
-        default:
-            self.moodLbl.text = ""
-        }
-        
-        
-        
-        
-    }
-    
     
     
     //calculate the button center based on the button tag
@@ -354,9 +321,4 @@ class MoodViewController: UIViewController {
         self.performSegue(withIdentifier: "toSubmitPostSegue", sender: self)
     }
     
-    
-    
-    
-    
-
 }

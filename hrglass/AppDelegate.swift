@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
-        //pause music
+        //stop music
         MPMusicPlayerController.applicationMusicPlayer.stop()
     }
 
@@ -71,6 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return SDKApplicationDelegate.shared.application(application, open: url)
     }
+    
 
 }
 
