@@ -14,7 +14,6 @@
 		5E1403691F3101500024EBFF /* InboxTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1403681F3101500024EBFF /* InboxTableViewCell.swift */; };
 		5E174AAB1FA91ED90034B33E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E174AAA1FA91ED90034B33E /* Images.xcassets */; };
 		5E2032251EFB17740006D2CE /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2032241EFB17740006D2CE /* UsernameViewController.swift */; };
-		5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */; };
 		5E23089D1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E23089B1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift */; };
 		5E23089E1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E23089C1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib */; };
 		5E24BD7E1EB275800047ED50 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E24BD7D1EB275800047ED50 /* AppDelegate.swift */; };
@@ -32,6 +31,7 @@
 		5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E28F4C51EECAAE400E74B01 /* MenuView.swift */; };
 		5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E29FD841EDFA0D100555CCB /* ImageCache.swift */; };
 		5E2A89671F44FCF6002AD645 /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2A89661F44FCF6002AD645 /* PostViewController.swift */; };
+		5E2AFD251FF43416001A68A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E2AFD241FF43416001A68A7 /* GoogleService-Info.plist */; };
 		5E2B0B271EBFB21200F8DEF3 /* BlockedAccountsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B0B261EBFB21200F8DEF3 /* BlockedAccountsViewController.swift */; };
 		5E2B8CAC1EC8EAEC00119A6D /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B8CAB1EC8EAEC00119A6D /* AccountViewController.swift */; };
 		5E2DCFD81F660A6E00211001 /* MessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DCFD71F660A6E00211001 /* MessageCollectionViewCell.swift */; };
@@ -50,7 +50,6 @@
 		5E3537FD1F2034AA009D121B /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3537FB1F2034AA009D121B /* AVKit.framework */; };
 		5E3537FF1F204F99009D121B /* VideoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3537FE1F204F99009D121B /* VideoStore.swift */; };
 		5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35D7571EC508AF00A41633 /* ProfileViewController.swift */; };
-		5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */; };
 		5E3721651FC4DC620032F67B /* NoPostCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E3721641FC4DC620032F67B /* NoPostCollectionViewCell.xib */; };
 		5E3721671FC4E2690032F67B /* NoPostsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3721661FC4E2690032F67B /* NoPostsCollectionViewCell.swift */; };
 		5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */; };
@@ -84,7 +83,6 @@
 		5E174AAA1FA91ED90034B33E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5E2032231EFB07BD0006D2CE /* hrglass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = hrglass.entitlements; sourceTree = "<group>"; };
 		5E2032241EFB17740006D2CE /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
-		5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateCustomPostViewController.swift; sourceTree = "<group>"; };
 		5E23089B1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostCollectionViewCell.swift; sourceTree = "<group>"; };
 		5E23089C1EF07D3A00A69E46 /* AddPostCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddPostCollectionViewCell.xib; sourceTree = "<group>"; };
 		5E24BD7A1EB275800047ED50 /* hrglass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hrglass.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,6 +104,7 @@
 		5E28F4C51EECAAE400E74B01 /* MenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		5E29FD841EDFA0D100555CCB /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		5E2A89661F44FCF6002AD645 /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		5E2AFD241FF43416001A68A7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E2B0B261EBFB21200F8DEF3 /* BlockedAccountsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedAccountsViewController.swift; sourceTree = "<group>"; };
 		5E2B8CAB1EC8EAEC00119A6D /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		5E2DCFD71F660A6E00211001 /* MessageCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -124,7 +123,6 @@
 		5E3537FB1F2034AA009D121B /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		5E3537FE1F204F99009D121B /* VideoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoStore.swift; sourceTree = "<group>"; };
 		5E35D7571EC508AF00A41633 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E3721641FC4DC620032F67B /* NoPostCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoPostCollectionViewCell.xib; sourceTree = "<group>"; };
 		5E3721661FC4E2690032F67B /* NoPostsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPostsCollectionViewCell.swift; sourceTree = "<group>"; };
 		5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -206,8 +204,8 @@
 		5E24BD711EB275800047ED50 = {
 			isa = PBXGroup;
 			children = (
-				5E36BFDC1EB7B8BE008DAC7C /* GoogleService-Info.plist */,
 				5E174AAA1FA91ED90034B33E /* Images.xcassets */,
+				5E2AFD241FF43416001A68A7 /* GoogleService-Info.plist */,
 				5E24BD7C1EB275800047ED50 /* hrglass */,
 				5E24BD7B1EB275800047ED50 /* Products */,
 				4AD7672E33FE95F97E22C1D4 /* Pods */,
@@ -283,7 +281,6 @@
 				5E254C571ECCC30900CFBFCE /* LoginViewController.swift */,
 				5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */,
 				5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */,
-				5E2032241EFB17740006D2CE /* UsernameViewController.swift */,
 			);
 			name = LoginViews;
 			sourceTree = "<group>";
@@ -295,7 +292,6 @@
 				5E32DCBE1F560C78004E6AA1 /* SelectThumbnailViewController.swift */,
 				5E375C091F4A11DD009AC14E /* AddPostCollectionCell */,
 				5E28BF3A1ED79219006E653B /* AddPostViewController.swift */,
-				5E21023D1EFD7CF600F3B667 /* CreateCustomPostViewController.swift */,
 				5E3BAC441F00282E0007197A /* SubmitPostViewController.swift */,
 				5E60F5371F42270900569F74 /* ColorSlider.swift */,
 				5E3CBC781F76D6450073322B /* AddSecondaryPostViewController.swift */,
@@ -338,6 +334,7 @@
 		5E35D7561EC5089E00A41633 /* ProfileView */ = {
 			isa = PBXGroup;
 			children = (
+				5E2032241EFB17740006D2CE /* UsernameViewController.swift */,
 				5E35D7571EC508AF00A41633 /* ProfileViewController.swift */,
 				5E378C7D1ECA533800B8A873 /* ProfileCollectionViewCell.swift */,
 				5E254C541ECB775800CFBFCE /* ProfileTableViewCell.swift */,
@@ -491,8 +488,8 @@
 				5E3721651FC4DC620032F67B /* NoPostCollectionViewCell.xib in Resources */,
 				5E174AAB1FA91ED90034B33E /* Images.xcassets in Resources */,
 				5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */,
-				5E36BFDD1EB7B8BE008DAC7C /* GoogleService-Info.plist in Resources */,
 				5E24BD831EB275800047ED50 /* Main.storyboard in Resources */,
+				5E2AFD251FF43416001A68A7 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,7 +608,6 @@
 				5E3CBC8F1F7AD6870073322B /* CommentViewController.swift in Sources */,
 				5E1403671F3101370024EBFF /* RequestTableViewCell.swift in Sources */,
 				5E24BDAA1EB27CBA0047ED50 /* FeedViewController.swift in Sources */,
-				5E21023E1EFD7CF600F3B667 /* CreateCustomPostViewController.swift in Sources */,
 				5E3CBC931F7AE91D0073322B /* RKNotificationHub.swift in Sources */,
 				5E254C5A1ECCC35D00CFBFCE /* WelcomeViewController.swift in Sources */,
 				5E0D9FA81F841D9E006AFB18 /* TableViewCellDelegate.swift in Sources */,
@@ -810,7 +806,7 @@
 					"$(PROJECT_DIR)/build/Debug-iphoneos/CLImageEditor",
 				);
 				INFOPLIST_FILE = hrglass/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -840,7 +836,7 @@
 					"$(PROJECT_DIR)/build/Debug-iphoneos/CLImageEditor",
 				);
 				INFOPLIST_FILE = hrglass/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hrglass;
 				PRODUCT_NAME = "$(TARGET_NAME)";

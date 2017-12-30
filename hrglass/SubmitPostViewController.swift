@@ -18,11 +18,10 @@ import MediaPlayer
 class SubmitPostViewController: UIViewController {
     
     @IBOutlet weak var navigationBar: UINavigationBar!
-    
     @IBOutlet weak var postImagePreview: UIImageView!
-    var linkContentView: UILabel!
-    
     @IBOutlet weak var postBtn: UIButton!
+    
+    var linkContentView: UILabel!
     var currentUserId: String!
     var loggedInUser: User!
     
@@ -62,8 +61,8 @@ class SubmitPostViewController: UIViewController {
     @IBOutlet weak var postPreviewWidth: NSLayoutConstraint!
     @IBOutlet weak var postPreviewHeight: NSLayoutConstraint!
     @IBOutlet weak var postLabel: UILabel!
-    @IBOutlet weak var addExtraLbl: UILabel!
-    @IBOutlet weak var uniquePostLbl: UILabel!
+    @IBOutlet weak var moodLbl: UILabel!
+
     
     //extra content button
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -149,16 +148,18 @@ class SubmitPostViewController: UIViewController {
         
         self.postImagePreview.layer.borderColor = dataManager.getUIColorForCategory(category: self.selectedCategory).cgColor
         
-        self.stackView = UIStackView(frame: CGRect(x: 30 ,y: self.addExtraLbl.frame.maxY + 15,width: self.view.frame.width - 60,height: 50))
+        self.stackView = UIStackView(frame: CGRect(x: 30 ,y: self.moodLbl.frame.maxY + 15,width: self.view.frame.width - 60,height: 50))
         self.stackView.axis = .horizontal
         self.stackView.distribution = .fillEqually
-        
-
-        
         self.postBtn.layer.borderWidth = 1.0
         self.postBtn.layer.borderColor = colors.getMenuColor().cgColor
         self.postBtn.layer.cornerRadius = 3.0
         self.postBtn.clipsToBounds = true
+        
+        
+        if self.selectedMood != .None{
+            self.moodLbl.text = self.selectedMood.rawValue
+        }
     }
 
     
@@ -282,7 +283,6 @@ class SubmitPostViewController: UIViewController {
             
             if primaryPost{
                 
-                
                 self.buttonArray.add(self.videoBtn)
                 //Add play button so we know it's a video
                 let playImageView: UIImageView = UIImageView(frame: CGRect(x: self.postImagePreview.frame.minX - 10, y: self.postImagePreview.frame.maxY - 20, width: 20, height:20))
@@ -394,9 +394,7 @@ class SubmitPostViewController: UIViewController {
         }
         
         self.view.addSubview(self.stackView)
-        
-        
-        
+
     }
     
     
@@ -491,6 +489,8 @@ class SubmitPostViewController: UIViewController {
                             
                             if (self.selectedMusicItem != nil){
                                 //music added, set songString in dataDictionary and submit
+                                
+                                self.uploadSongThumbnail(image:self.selectedThumbnail)
                                 self.getSongStringWith(completion: { (string) in
                                     
                                     dataDictionary.setValue(string, forKey: "songString")
@@ -538,7 +538,6 @@ class SubmitPostViewController: UIViewController {
                         if success{
                             
                             print("Success thumbnail uploaded")
-                            
                         }else{
                             
                             print("Failure, try again?")
@@ -595,6 +594,8 @@ class SubmitPostViewController: UIViewController {
                         let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": linkString, "category":"Link", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
                         
                         if (self.selectedMusicItem != nil){
+                            
+                            self.uploadSongThumbnail(image:self.selectedThumbnail)
                             self.getSongStringWith(completion: { (string) in
                                 
                                 dataDictionary.setValue(string, forKey: "songString")
@@ -641,22 +642,7 @@ class SubmitPostViewController: UIViewController {
                     
                     let uploadImage: UIImage = self.postImagePreview.image!
                     
-                    //convert uiimage to JPG
-                    let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-                    self.dataManager.saveImageForPath(imageData: data, name: "thumbnail")
-                    let path = self.dataManager.documentsPathForFileName(name: "thumbnail.jpg")
-                    
-                    
-                    self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "thumbnail", type: "jpg", completion: { (success) in
-                        
-                        if success{
-                            
-                            print("Success thumbnail uploaded")
-                        }else{
-                            
-                            print("Failure, try again?")
-                        }
-                    })
+                    self.uploadSongThumbnail(image:uploadImage)
                     
                     var toExport: URL!
                     if let temp: URL = item.assetURL {
@@ -802,6 +788,8 @@ class SubmitPostViewController: UIViewController {
                             let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Text", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
                             
                             if (self.selectedMusicItem != nil){
+                                
+                                self.uploadSongThumbnail(image:self.selectedThumbnail)
                                 self.getSongStringWith(completion: { (string) in
                                     
                                     dataDictionary.setValue(string, forKey: "songString")
@@ -923,6 +911,38 @@ class SubmitPostViewController: UIViewController {
             }
         })
     }
+    
+    
+    
+    
+    
+    
+    //uploads image to AWS S3 with name thumbnail.jpg for logged in user
+    
+    func uploadSongThumbnail(image: UIImage){
+        
+        //convert uiimage to JPG
+        let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
+        self.dataManager.saveImageForPath(imageData: data, name: "thumbnail")
+        let path = self.dataManager.documentsPathForFileName(name: "thumbnail.jpg")
+        
+        
+        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "thumbnail", type: "jpg", completion: { (success) in
+            
+            if success{
+                
+                print("Success thumbnail uploaded")
+            }else{
+                
+                print("Failure, try again?")
+            }
+        })
+        
+        
+    }
+    
+    
+    
     
     
     

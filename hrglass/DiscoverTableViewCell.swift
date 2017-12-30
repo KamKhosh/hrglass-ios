@@ -58,7 +58,7 @@ class DiscoverTableViewCell: UITableViewCell {
             }
             
             followBtn.setTitleColor(colors.getSearchBarColor(), for: .normal)
-            followBtn.backgroundColor = UIColor.white
+            followBtn.backgroundColor = UIColor.clear
             
             if let followAction = self.countObj{
                 followAction()

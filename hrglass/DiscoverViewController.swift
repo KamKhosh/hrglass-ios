@@ -9,13 +9,15 @@
 import UIKit
 import Firebase
 
-class DiscoverViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DiscoverViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
 
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var backItemBtn: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var discoverUserData: NSMutableArray = NSMutableArray()
+    var masterUserData: NSMutableArray = NSMutableArray()
     var userIdArray: NSMutableArray = NSMutableArray()
     
     var loadingAnimation: BreathingAnimation!
@@ -24,6 +26,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     let currentUserId = Auth.auth().currentUser?.uid
     let dataManager: DataManager = DataManager()
     var imageCache: ImageCache = ImageCache()
+    
     var requestArray: NSMutableArray = []
     
     var showRequestData: Bool = false
@@ -45,6 +48,9 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.searchBar.delegate = self
+        self.searchBar.showsCancelButton = true
         
         self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
         
@@ -178,6 +184,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                             
                             
                             self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+                            self.masterUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
                         }
                     }
                     
@@ -194,6 +201,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                         if (keyString != self.currentUserId){
                             
                             self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+                            self.masterUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
 //                            self.userIdArray.add(keyString)
                             
                         }
@@ -232,6 +240,65 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         
     }
     
+    
+    
+    /************************
+     *
+     *  Search Bar Delegate
+     *
+     ************************/
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        //manipulate discoverDataArray
+        print("Search String \(String(describing: searchBar.text))")
+        self.discoverUserData.removeAllObjects()
+        
+        if (searchBar.text == "") {
+            discoverUserData.addObjects(from: self.masterUserData as! [Any])
+            self.tableView.reloadData()
+            return
+        }
+        
+        for user in self.masterUserData{
+            let userObj: User = user as! User
+            if (userObj.name.localizedCaseInsensitiveContains(searchText)){
+                discoverUserData.add(userObj)
+            }
+//            if (user.name.localizedCaseInsensitiveContainsString:searchBar.text) {
+//                discoverUserData.add(user);
+//            }
+        }
+        self.tableView.reloadData()
+        
+        
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        if searchBar.text == "Search"{
+            searchBar.text = ""
+        }
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        if searchBar.text == ""{
+            searchBar.text = "Search"
+        }
+    }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        return true
+    }
+
     
     
     /******************************

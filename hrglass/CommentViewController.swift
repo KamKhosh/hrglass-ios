@@ -129,28 +129,41 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     func setCommentData(){
         
         if self.commentData != nil{
-            
+
             for key in commentData.allKeys{
-                commentsArray.add(commentData.value(forKey: key as! String) as! NSDictionary)
+                self.commentsArray.add(commentData.value(forKey: key as! String) as! NSDictionary)
             }
+            
+            
+            let descriptor: NSSortDescriptor =  NSSortDescriptor(key: "created", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))
+            let sortedResults: NSArray = self.commentsArray.sortedArray(using: [descriptor]) as NSArray
+            self.commentsArray = NSMutableArray(array: sortedResults)
+
             self.tableView.reloadData()
+
         }else{
             
             self.dataManager.getCommentDataFromFirebase(uid: self.viewingUserId, completion: { (snapshot) in
                 
-                self.commentData = snapshot
-
-                for key in self.commentData.allKeys{
-                    self.commentsArray.add(self.commentData.value(forKey: key as! String) as! NSDictionary)
+                if (snapshot != [:]){
+                    self.commentData = snapshot
+                    
+                    for key in self.commentData.allKeys{
+                        self.commentsArray.add(self.commentData.value(forKey: key as! String) as! NSDictionary)
+                    }
+                    
+                    
+                    let descriptor: NSSortDescriptor =  NSSortDescriptor(key: "created", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))
+                    let sortedResults: NSArray = self.commentsArray.sortedArray(using: [descriptor]) as NSArray
+                    self.commentsArray = NSMutableArray(array: sortedResults)
                 }
-                
                 self.tableView.reloadData()
             })
         }
     }
     
     
-    
+
     
     //Transition away from comments view
     @IBAction func minimizeAction(_ sender: Any) {
@@ -266,18 +279,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         return size.height
     }
     
-//    func heightForView(text:NSAttributedString, font:UIFont, width:CGFloat) -> CGFloat{
-//        let label:UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: CGFloat.greatestFiniteMagnitude))
-//        label.numberOfLines = 0
-//        label.lineBreakMode = NSLineBreakMode.byWordWrapping
-//        label.font = font
-//        label.attributedText = text
-//        label.sizeToFit()
-//        
-//        return label.frame.height
-//    }
-//    
-    
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if commentsArray.count == 0{
@@ -295,7 +297,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         let data: NSDictionary = self.commentsArray[indexPath.row] as! NSDictionary
         let text = getAttributedCellText(username: data.value(forKey: "username") as! String, comment: data.value(forKey: "comment") as! String)
 
-        let height: CGFloat = findHeightForText(text: text.string, havingWidth: self.popupView.frame.width - 40, andFont: UIFont.systemFont(ofSize: 14.0))
+        let height: CGFloat = findHeightForText(text: text.string, havingWidth: self.popupView.frame.width - 40, andFont: UIFont.systemFont(ofSize: 19.0))
         
         return height
         
@@ -309,7 +311,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         cell.commentlbl.numberOfLines = 0;
         cell.commentlbl.lineBreakMode = NSLineBreakMode.byWordWrapping
-        cell.commentlbl.backgroundColor = colors.getBlackishColor()
+//        cell.commentlbl.backgroundColor = colors.getBlackishColor()
         let commentDict:NSDictionary = self.commentsArray[indexPath.row] as! NSDictionary
         let username: String = commentDict.value(forKey: "username") as! String
         let comment: String = commentDict.value(forKey: "comment") as! String
@@ -336,12 +338,12 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         
         
         //Use Attributed text to bold the username
-        let attributedString = NSMutableAttributedString(string: fullString, attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14.0)])
+        let attributedString = NSMutableAttributedString(string: fullString, attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 16.0)])
         
-        let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14.0)]
+        let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 18.0)]
         let whiteAttribute = [NSAttributedStringKey.foregroundColor: UIColor.white]
-        attributedString.addAttributes(boldFontAttribute, range: NSMakeRange(0, username.count + 2))
-        attributedString.addAttributes(whiteAttribute, range:NSMakeRange(0, fullString.count))
+        attributedString.addAttributes(boldFontAttribute, range: NSMakeRange(0, username.count))
+        attributedString.addAttributes(whiteAttribute, range:NSMakeRange(0, attributedString.length))
         
         return attributedString
     }

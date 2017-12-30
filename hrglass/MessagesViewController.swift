@@ -298,9 +298,11 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         
-        let lastIndex: IndexPath = IndexPath(item: self.messages.count - 1, section: 0)
+        if self.messages.count > 0{
+             let lastIndex = IndexPath(item: self.messages.count - 1, section: 0)
+            self.collectionView.scrollToItem(at:lastIndex , at: UICollectionViewScrollPosition.bottom, animated: true)
+        }
         
-        self.collectionView.scrollToItem(at:lastIndex , at: UICollectionViewScrollPosition.bottom, animated: true)
 //        let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
         
 //        if numLines > 1{

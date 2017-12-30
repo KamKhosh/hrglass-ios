@@ -126,7 +126,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     @IBOutlet weak var currentTabView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var postContentView: UIView!
-//    @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var squareImageBtn: UIButton!
     @IBOutlet weak var circleImagebtn: UIButton!
@@ -170,10 +169,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         swipeDown.delegate = self
         self.view.addGestureRecognizer(swipeDown)
         
-        do {
-            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
-        } catch _ {
-        }
+
     }
     
     
@@ -186,6 +182,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        do {
+            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
+        } catch _ {
+        }
         
         if self.photoCollectionView == nil{
             //if the mood menu is nil, so are the rest of the content subviews, configure them
@@ -651,6 +652,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.hideResizeButtons()
         
         if success {
+            
+            do {
+                try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
+            } catch _ {
+            }
             
             recordButton.setTitle("Tap to Re-record", for: .normal)
             
@@ -1799,19 +1805,18 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 count = photosAsset.count
             }
             
-            print("Items in Section: ")
-            print(count)
+            print("Items in Section: \(count)")
+
             
         }else if (collectionView.tag == 2){
             
             if (videosAsset != nil){
                 
                count = videosAsset.count
-                
             }
             
-            print("Items in Section: ")
-            print(count)
+            print("Items in Section: \(count)")
+
             
         }
     
@@ -1904,8 +1909,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-        
-        
+
         let options: PHImageRequestOptions = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
         //PHOTO COLLECTION
@@ -2113,10 +2117,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             }
             
             
+            
             UIView.animate(withDuration: 0.3, animations: {
                 
                 self.linkTextField.center = self.currentTabView.center
-                
             })
         }else if(textField == self.textPostView){
             //text post view
@@ -2127,7 +2131,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             if(self.textPostView.text! != ""){
                 
                 self.setTextImage()
-                
                 self.selectedCategory = .Text
                 self.postPhotoView.layer.borderColor = ourColors.getTextPostColor().cgColor
                 self.playBtn.isHidden = false
@@ -2140,9 +2143,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             //move view back to under the tab bar
             UIView.animate(withDuration: 0.3, animations: {
-                
                 self.textPostView.center = self.currentTabView.center
-                
             })
         }
     }
@@ -2152,7 +2153,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
         self.tabBar.isHidden = true
-
         self.hideResizeButtons()
         self.hideVideoEditingBtns()
             
@@ -2163,7 +2163,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 if(self.keyboardHeight == 0.0){
                     
                     self.linkTextField.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.linkTextField.frame.height * 2 + 300))
-                    
                 }else{
                     
                     self.linkTextField.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.linkTextField.frame.height * 2 + self.keyboardHeight))
@@ -2178,17 +2177,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             UIView.animate(withDuration: 0.4, animations: {
                 
                 if(self.keyboardHeight == 0.0){
-                    
                     self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + 300 ))
-                    
                 }else{
-                    
                     self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + self.keyboardHeight))
                 }
             })
-            
         }
-
     }
     
     
@@ -2256,20 +2250,25 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         if (self.selectedCategory != .Video && self.selectedCategory != .Recording){
             
+            let image: UIImage = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
             self.musicLbl.text = String(format:"%@ by: %@", title, artist)
             self.musicLbl.isHidden = false
             self.selectedMusicItem = mpMediaItem
             self.appleMusicPlayTrackId()
             
+            
             if self.selectedCategory == .None || self.selectedCategory == .Music{
-                
+                //set image as main preview image
                 self.postPhotoView.layer.borderColor = self.ourColors.getMusicColor().cgColor
-                let image: UIImage = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
+                
                 self.setPhotoView(image: image)
                 self.selectedObject = mpMediaItem
                 self.selectedCategory = .Music
                 self.playBtn.setImage(UIImage(named:"play"), for: .normal)
                 self.playBtn.isHidden = false
+            }else{
+                //set image as thumnail image to be used later
+                self.selectedThumbnail = image
             }
             
         }else{
@@ -2281,6 +2280,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
     }
     
+    
     @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             // we got back an error!
@@ -2289,7 +2289,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             present(ac, animated: true)
         }
     }
-    
     
     
     /******************************************************
@@ -2319,9 +2318,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         print("User selected Cancel tell me what to do")
         
         dismiss(animated: true, completion: {
-            
             self.tabBar.selectedItem = self.tabBar.items?[4]
-            
         })
     }
     
@@ -2393,8 +2390,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        self.applicationMusicPlayer.stop()
-        
         if segue.identifier == "toMoodSegue"{
             
             let vc: MoodViewController = segue.destination as! MoodViewController
@@ -2435,13 +2430,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
             }
         }
+        
+        self.applicationMusicPlayer.stop()
     }
     
     
     
-    @IBAction func unwindToAddPost(unwindSegue: UIStoryboardSegue) {
-        
-        
-    }
+    @IBAction func unwindToAddPost(unwindSegue: UIStoryboardSegue) {}
     
 }

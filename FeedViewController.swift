@@ -12,7 +12,7 @@ import URLEmbeddedView
 import AVKit
 import AVFoundation
 import MediaPlayer
-
+import Crashlytics
 
 class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate{
     
@@ -53,7 +53,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     //Current User
     var loggedInUser: User!
-    
     
     //savedPost
     var savedPost: NSDictionary!
@@ -121,14 +120,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let uid = Auth.auth().currentUser?.uid
         awsManager = AWSManager(uid: uid!)
         
-//        self.refreshControl = UIRefreshControl()
-        
-//        refreshControl.backgroundColor = colors.getBlackishColor()
-//        refreshControl.tintColor = UIColor.clear
-//        refreshControl.alpha = 0.2
-//        self.refreshControl.addTarget(self, action: #selector (refresh), for: .valueChanged)
-//        self.tableView.addSubview(self.refreshControl)
-        
+        //did resign active notification listener
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
         
         self.setupRefreshControl()
         
@@ -221,16 +215,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-
-//    func loadCustomRefreshContents() {
-//        let refreshContents = Bundle.main.loadNibNamed("CustomRefreshControl", owner: self, options: nil)
-//
-//        customRefreshView = refreshContents?.first as! CustomRefreshControlView
-//        customRefreshView.frame = refreshControl.bounds
-//        customRefreshView.spinView.startAnimating()
-//        refreshControl.addSubview(customRefreshView)
-//    }
     
+    @objc func appMovedToBackground(){
+        
+        if self.addPostMenu != nil{
+            addPostMenu.close()
+        }
+        
+        if self.navigationMenu != nil{
+            navigationMenu.close()
+        }
+    }
     
     /*********************************
      *
@@ -239,6 +234,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      *********************************/
     
     @IBAction func menuAction(_ sender: Any) {
+        
         if (navigationMenu != nil){
             
             if (navigationMenu.open){
@@ -296,7 +292,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if self.addPostMenu != nil{
             self.addPostMenu.close()
         }
-        
     }
     
     @objc func discoverButtonAction (){
@@ -352,6 +347,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.moveIconCenter()
         self.performSegue(withIdentifier: "toMessagesView", sender: self)
     }
+    
     
     
     
@@ -590,7 +586,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.noPostCollectionView.register(cellNib, forCellWithReuseIdentifier: "noPostsCell")
         self.noPostCollectionView.allowsSelection = true
         self.noPostCollectionView.allowsMultipleSelection = false
-        //        self.noPostCollectionView.center = self.currentTabView.center
         self.noPostCollectionView.backgroundColor = colors.getBlackishColor()
         self.noPostCollectionView.delegate = self
         self.noPostCollectionView.dataSource = self
@@ -655,8 +650,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         if (keyString != Auth.auth().currentUser?.uid){
                             
                             self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
-                            //                            self.userIdArray.add(keyString)
-                            
                         }
                     }
                     self.noPostCollectionView.isHidden = false
@@ -693,7 +686,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let colors:Colors = Colors()
         
         cell.postData = feedData[indexPath.row]
-        
+        cell.playImageView.image = UIImage(named: "playTriagle")?.transform(withNewColor: UIColor.darkGray)
         //USER DATA DICTIONARY
         let user: NSDictionary = feedData[indexPath.row].user
         
@@ -784,9 +777,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         case .Music:
             
             print("Music")
-            
             cell.previewContentView.layer.borderColor = colors.getMusicColor().cgColor
-            
+        
             let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
             
             //just set the photo for now until we get AWS setup
@@ -798,7 +790,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 cell.contentImageBtn.setImage(image, for: .normal)
                 cell.loadingIndication.stopAnimating()
-                
             })
             
         case .Link:
@@ -809,7 +800,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             dataManager.setURLView(urlString: feedData[indexPath.row].data as String, completion: { (image, label) in
                 
                 cell.contentImageBtn.setImage(image, for:.normal)
-                
                 cell.linkLbl.adjustsFontSizeToFitWidth = true
                 cell.linkLbl.numberOfLines = 3
                 cell.linkLbl.backgroundColor = UIColor.darkGray
@@ -818,7 +808,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 cell.linkLbl.textAlignment = .center
                 cell.linkLbl.textColor = UIColor.white
                 cell.linkLbl.isHidden = false
-                
             })
             
         case .Video:
@@ -882,7 +871,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         //set like button to white icon
-        let newImage: UIImage = UIImage.init(named: "thumbs up")!
+        let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
         cell.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
         
         
@@ -921,7 +910,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         
         //Hide the mood lbl if none is selected
-        if (feedData[indexPath.row].mood == "✏️"){
+        if (feedData[indexPath.row].mood == "🚫"){
             cell.moodLbl.isHidden = true
             
         }else{
@@ -1283,7 +1272,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }else if (segue.identifier == "toDiscoverSegue"){
             
             let discoverVC = segue.destination as! DiscoverViewController
-            
             discoverVC.imageCache = self.imageCache
             self.imageCache = ImageCache()
             
@@ -1407,7 +1395,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     
     func setupRefreshControl() {
-        print()
         
         // Programmatically inserting a UIRefreshControl
         self.refreshControl = UIRefreshControl()
@@ -1540,7 +1527,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.animateRefreshView()
         }
         
-        print("pullDistance \(pullDistance), pullRatio: \(pullRatio), midX: \(midX), refreshing: \(self.refreshControl!.isRefreshing)")
+//        print("pullDistance \(pullDistance), pullRatio: \(pullRatio), midX: \(midX), refreshing: \(self.refreshControl!.isRefreshing)")
         
     }
     

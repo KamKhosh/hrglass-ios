@@ -10,14 +10,13 @@ import UIKit
 
 class ProgressView: UIView {
 
-
-    
     let colors: Colors = Colors()
     var loadingFrame: UIView!
     var backgroudLoadingColor: UIColor!
     var percentageComplete: CGFloat = 0;
-    
     var cornerRadius: CGFloat = 3.0
+    
+    
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -35,6 +34,7 @@ class ProgressView: UIView {
         super.init(coder: aDecoder)
         
     }
+    
     
     
     func setupLoadingFrame(){
@@ -59,7 +59,6 @@ class ProgressView: UIView {
                     
                     self.loadingFrame.center = CGPoint(x:self.center.x - (self.bounds.width * (1 - self.percentageComplete)), y: self.center.y)
                 })
-                
             })
             
             print(loadingFrame.center)

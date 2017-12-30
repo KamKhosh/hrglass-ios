@@ -9,6 +9,7 @@ import UIKit
 import Firebase
 import FacebookCore
 import MediaPlayer
+import Fabric
 
 
 @UIApplicationMain
@@ -20,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Override point for customization after application launch.
         FirebaseApp.configure()
-        
+        Fabric.sharedSDK().debug = true
         SDKApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         UIApplication.shared.statusBarStyle = .lightContent
         

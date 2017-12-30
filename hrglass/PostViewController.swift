@@ -1130,7 +1130,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         loadingView.center = self.postContainerPlaceholder.center
         
 //        if(primary){
-            self.firstPostView.addSubview(loadingView)
+        self.firstPostView.addSubview(loadingView)
 //        }else{
 //            self.secondaryPostView.addSubview(loadingView)
 //        }
@@ -1146,26 +1146,29 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //            case .success(let url):
         
         let player = AVPlayer(url: URL(string:urlString)!)
-                self.avPlayerViewController = AVPlayerViewController()
-                self.avPlayerViewController.player = player
-                self.avPlayerViewController.view.frame = self.contentImageView.bounds
-                self.avPlayerViewController.delegate = self
-                player.volume = 2
-                
-                if primary{
-                    self.contentImageView.addSubview(self.avPlayerViewController.view)
-                    player.play()
-                    NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlayingPrimary(note:)),
-                                                           name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
-                }else{
-                    self.secondaryContentImageView.addSubview(self.avPlayerViewController.view)
-                    player.play()
-                    NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlayingSeconadary(note:)),
-                                                           name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
-                }
-                
-                
-                
+        self.avPlayerViewController = AVPlayerViewController()
+        self.avPlayerViewController.player = player
+        self.avPlayerViewController.view.frame = self.firstPostView.bounds
+        self.avPlayerViewController.delegate = self
+        player.volume = 2
+        
+        
+        
+        if primary{
+            
+            self.firstPostView.addSubview(self.avPlayerViewController.view)
+            player.play()
+            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlayingPrimary(note:)),
+                                                   name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+        }else{
+            self.secondaryContentImageView.addSubview(self.avPlayerViewController.view)
+            player.play()
+            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlayingSeconadary(note:)),
+                                                   name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+        }
+        
+        
+        
                 
                 
 //            case .failure(let error):

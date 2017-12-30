@@ -39,9 +39,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         //Firebase Reference
         ref = Database.database().reference()
         
-        //View Setup
-        self.setupView()
-        
         //Delegate Setup
         self.textFieldDelegateSetup()
         self.scrollView.delegate = self
@@ -82,6 +79,9 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         fbLoginBtn.center = CGPoint(x: self.createAccountBtn.frame.midX, y: self.createAccountBtn.frame.maxY + 30)
         
         self.scrollContentView.addSubview(fbLoginBtn)
+        
+        //View Setup -- bottom lines
+        self.setupView()
     }
     
     
@@ -294,7 +294,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             print("User cancelled login.")
             self.showActionSheetWithTitle(title: "Facebook Login Cancelled", message: "")
             
-        case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+        case .success(grantedPermissions: let granted, declinedPermissions: let declined, token: let token):
             print("Logged in!")
             //Do further code...
             let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
@@ -319,7 +319,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                     
                     //firebase with facebook login successfull
                     let ref = Database.database().reference().child("Users").child((user?.uid)!)
-                    
+
+                    print((user?.uid)!)
                     //get user data
                     ref.observeSingleEvent(of: .value, with: { snapshot in
                         
@@ -334,13 +335,12 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             self.getFBData(uid: (user?.uid)!, completion: { data in
                                 
                                 //setup initial following -- auto follow hr.glass
-                                let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                                let newFollowing: NSDictionary = ["sL7fW1Qa3LOnK3FCUqvr5cl3Mft1":0]
                                 let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
                                 
                                 followingList.setValue(newFollowing)
                                 let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
                                 followingCount.setValue(1)
-                                
                                 
                                 self.stopLoginIndicator(success: true)
                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)

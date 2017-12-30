@@ -134,7 +134,7 @@ class FeedTableViewCell: UITableViewCell {
                 self.likedByUser = false
                 
                 //set image to normal color
-                let newImage: UIImage = UIImage.init(named: "thumbs up")!
+                let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
                 
                 //decrement like count
@@ -197,7 +197,7 @@ class FeedTableViewCell: UITableViewCell {
                 self.likedByUser = true
                 
                 //set thumb to be red tint
-                let newImage: UIImage = UIImage.init(named: "thumbs up")!
+                let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
             
 //                let likeCount: Int = Int(self.likeCountLbl.text!)!

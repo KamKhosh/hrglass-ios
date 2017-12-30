@@ -34,7 +34,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
        
-        self.setupView()
+        
         
         //Delegate Setup
         self.textFieldDelegateSetup()
@@ -66,6 +66,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.minY - 50)
+        self.setupView()
     }
     
     
@@ -192,7 +193,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                                 self.getFBData(uid: (user?.uid)!, completion: { data in
                                     
                                     //setup initial following -- auto follow hr.glass
-                                    let newFollowing: NSDictionary = ["lGDGX2kvNBVkXUPKavqMoVzHil43":0]
+                                    let newFollowing: NSDictionary = ["sL7fW1Qa3LOnK3FCUqvr5cl3Mft1":0]
                                     let followingList = self.ref.child("Following").child((user?.uid)!).child("following_list")
                                     
                                     followingList.setValue(newFollowing)

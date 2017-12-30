@@ -69,6 +69,7 @@ class WelcomeViewController: UIViewController {
         Auth.auth().addStateDidChangeListener { (auth, user) in
             
             if(Auth.auth().currentUser != nil){
+                
                 //user not nil
                 
                 //disable login/create buttons

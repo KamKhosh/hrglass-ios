@@ -14,7 +14,6 @@ import AVFoundation
 import iOSPhotoEditor
 
 
-
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CropViewControllerDelegate{
     
     
@@ -35,7 +34,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //IMPORTANT: Must set currentlyViewingUser and currentlyViewingUID in prepare segue in this VC's parent
     var currentlyViewingUser: User!
     var currentlyViewingUID: String = ""
-    
     
     var follwBtnIsUnfollow: Bool = false
     var isChoosingProfile: Bool = false
@@ -67,7 +65,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
         
         self.profileTableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
-        
         
         //If the current user was set before in prepare for segue
         if currentlyViewingUser != nil{
@@ -141,6 +138,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 })
             }
         }
+        
     }
     
     
@@ -176,7 +174,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             self.performSegue(withIdentifier: "unwindToDiscover", sender: self)
         }
-        
     }
     
     
@@ -309,7 +306,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     
-    
+    //Uploads new image data to AWS and sets the download URL in the users profile, if they have an active post, it will set the url in the post data as well
     func uploadProfilePhoto(completion: @escaping (String) -> ()){
         //always overwrite with same name profilePhoto.jpg
         let imageName: String = "profilePhoto.jpg"
@@ -319,6 +316,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         //for profilePhotos, the imagePicker delegate already saves the profile Image to documents. We just need to get the path here
         let path = dataManager.documentsPathForFileName(name: "profilePhoto.jpg")
+        
         
         //upload
         self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "profilePhoto", type:"jpg", completion:{ success in
@@ -330,10 +328,18 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 //store downloadURL
                 let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
                 
+                
+                //if the current user has an active post, set the profile photo
+                let postRef = self.ref.child("Posts").child(self.currentlyViewingUser.userID as String)
+                postRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if(snapshot.exists()){
+                        postRef.child("user").child("profilePhoto").setValue(downloadURL)
+                    }
+                })
+                
+                
                 self.currentlyViewingUser.profilePhoto = downloadURL as String
-                
                 profileRef.child("profilePhoto").setValue(downloadURL)
-                
                 completion(downloadURL)
                 
             }else{
@@ -350,7 +356,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     
-    
     /************************
      *
      * IMAGE PICKER DELEGATE
@@ -359,56 +364,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        
-//        //if picture is edited use the edited version
-//        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage{
-//
-//            if (isChoosingProfile){
-//                //setting the profile picture
-//                let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-//                let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-//
-//                cell.profilePhoto.contentMode = .scaleAspectFill
-//
-//                //get data representation and save to documents path
-//                let data: Data = UIImageJPEGRepresentation(editedImage, 0.8)! as Data
-//                dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
-//
-//                cell.profilePictureIndicator.startAnimating()
-//
-//                //upload photo
-//                self.uploadProfilePhoto(completion: { (url) in
-//                    print(url)
-//
-//                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
-//                    self.profileTableView.reloadData()
-//                    cell.profilePictureIndicator.stopAnimating()
-//                })
-//
-//            }else{
-//                //setting the cover photo
-//                coverPhoto.contentMode = .scaleAspectFill
-//                coverPhoto.image = editedImage
-//
-//                //upload photo
-//                self.uploadCoverPhoto(completion: { (url) in
-//                    print(url)
-//                    self.imageCache.replacePhotoForKey(url: url, image: editedImage)
-//
-//                })
-//            }
-//        }
-        
-//        else{
-            //else use the original
-            if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                dismiss(animated: true, completion: nil)
-                self.presentImageEditorWithImage(image: pickedImage)
-            }
-            
-//        }
-        
-        
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            dismiss(animated: true, completion: nil)
+            self.presentImageEditorWithImage(image: pickedImage)
+        }
     }
     
     
@@ -477,19 +436,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
             
             cell.profilePhoto.contentMode = .scaleAspectFill
-            
+            cell.profilePhoto.image = image
             let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
             dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
             
-            cell.profilePictureIndicator.startAnimating()
-            self.profileTableView.reloadData()
-            
+//            self.profileTableView.reloadData()
+
             self.uploadProfilePhoto(completion: { (url) in
                 print(url)
                 
                 self.imageCache.replacePhotoForKey(url: url, image: image)
-                self.profileTableView.reloadData()
-                cell.profilePictureIndicator.stopAnimating()
+
             })
             
         }else{
@@ -509,26 +466,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         print("Canceled")
         cropNavController.dismiss(animated: true, completion: nil)
     }
-    
-    
-    
-
-    
-//
-//    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-//
-//        let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-//        let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-//
-//        cell.profilePhoto.contentMode = .scaleAspectFill
-//        cell.profilePhoto.image = image
-//        self.profileTableView.reloadData()
-//
-//        editor.dismiss(animated: true, completion: nil)
-//
-//    }
-//
-    
     
     
     
@@ -574,8 +511,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                             self.latestPostData.category = Category(rawValue: postData.value(forKey: "category") as! String)!
                         }
                     }
-                    
-                    
+
                     self.profileTableView.reloadData()
                     
                 } else{
@@ -603,6 +539,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell: ProfileTableViewCell = profileTableView.dequeueReusableCell(withIdentifier: "profileCell") as! ProfileTableViewCell
         
         cell.bioTextView.delegate = self
+        
+        //remove liked post if it isn't an active post
+    
+        
         cell.likedDataArray = self.likedDataArray
         
         if currentlyViewingUser != nil{
@@ -644,28 +584,21 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         
-        
         cell.followBtn.layer.cornerRadius = 5.0
         cell.followBtn.layer.borderColor = colors.getMenuColor().cgColor
         cell.followBtn.layer.borderWidth = 1
-        
         cell.latestPostBackground.layer.cornerRadius = cell.latestPostBackground.frame.width / 2
         cell.latestPostImageButton.layer.cornerRadius = cell.latestPostImageButton.frame.width / 2
         cell.latestPostBackground.layer.borderWidth = 5.0
-        
         cell.latestPostImageButton.clipsToBounds = true
         cell.latestPostImageButton.setBackgroundImage(dataManager.clearImage, for: .normal)
-        
         cell.postIndicator.startAnimating()
         cell.profilePictureIndicator.startAnimating()
-        
         cell.bioTextView.textColor = UIColor.white
-        
         cell.user = self.currentlyViewingUser
         cell.likedCollectionView.reloadData()
         
         
-        //use enum switch to determine UIImageView Image
         
         if self.latestPostData != nil{
             
@@ -673,9 +606,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.latestPostImageButton.isHidden = false
             cell.playImageView.isHidden = true
             cell.noRecentPostsLbl.isHidden = true
-            
             cell.latestPostBackground.layer.borderColor = self.dataManager.getUIColorForCategory(category: self.latestPostData.category).cgColor
-
+            
+            //use enum switch to determine UIImageView Image
             switch self.latestPostData.category {
                 
             case .Link:
@@ -899,12 +832,23 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             if let likedPosts: NSDictionary = snapshot.value as? NSDictionary
             {
                 
-                let totalCount: Int = likedPosts.count
+                //remove expired posts
+                let trimmedPosts: NSMutableDictionary = NSMutableDictionary()
                 
+                for (key, expireTime) in likedPosts{
+                    let expired: Double = Double(expireTime as! String)!
+                    let now: Double = Date().millisecondsSince1970
+                    
+                    if expired > now{
+                        trimmedPosts.setValue(expireTime, forKey: key as! String)
+                    }
+                }
+                
+                //count non-expired posts
+                let totalCount: Int = trimmedPosts.count
                 var i: Int = 0
                 
-                for (key, _) in likedPosts{
-                    
+                for (key, _) in trimmedPosts{
                     
                     let postUserId = key as! String
                     
@@ -976,11 +920,14 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
      *
      ****************************/
     
+    
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        textView.frame.size = CGSize(width: self.view.frame.width - 95 - textView.frame.minX, height:textView.frame.size.height)
         return true
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
+        
         
         //change background and text
         textView.backgroundColor = UIColor.white
@@ -995,6 +942,14 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         textView.textColor = UIColor.white
         self.currentlyViewingUser.bio = textView.text
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("bio").setValue(textView.text)
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if(text == "\n") {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
     }
     
     
@@ -1015,6 +970,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     {
         arg.translatesAutoresizingMaskIntoConstraints = true
         arg.sizeToFit()
+        arg.frame.size = CGSize(width: self.view.frame.width - 95 - arg.frame.minX, height:arg.frame.size.height)
         arg.isScrollEnabled = false
     }
     

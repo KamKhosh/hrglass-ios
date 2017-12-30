@@ -18,9 +18,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     var parentView: String = "feedView"
     var dataManager: DataManager = DataManager()
     
-    
     @IBOutlet weak var submitBtn: UIButton!
-    
     @IBOutlet weak var backBtn: UIButton!
     
     
@@ -48,10 +46,15 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         swipeDown.direction = .down
         swipeDown.delegate = self
         self.view.addGestureRecognizer(swipeDown)
-        self.addBottomLine(forView: usernameField, tag: 1)
         
     }
     
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.addBottomLine(forView: usernameField, tag: 1)
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -177,7 +180,8 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
             
         }else if segue.identifier == "unwindToFeed"{
             
-            
+            let vc: FeedViewController = segue.destination as! FeedViewController
+            vc.loggedInUser.username = self.usernameField.text!
         }
     }
 }

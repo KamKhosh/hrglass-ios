@@ -26,9 +26,7 @@ class ChangePasswordViewController: UIViewController {
         
         super.viewDidLoad()
         
-        self.addBottomLine(forView: oldPasswordField, tag: 1)
-        self.addBottomLine(forView: newPasswordField, tag: 2)
-        self.addBottomLine(forView: confirmPasswordField, tag: 3)
+        
 
         
         confirmPasswordField.attributedPlaceholder =
@@ -42,6 +40,14 @@ class ChangePasswordViewController: UIViewController {
         
     }
 
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.addBottomLine(forView: oldPasswordField, tag: 1)
+        self.addBottomLine(forView: newPasswordField, tag: 2)
+        self.addBottomLine(forView: confirmPasswordField, tag: 3)
+    }
     
     
     override func didReceiveMemoryWarning() {

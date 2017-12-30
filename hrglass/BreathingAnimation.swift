@@ -47,7 +47,7 @@ class BreathingAnimation: UIView {
     }
     
     
-        func timerAnimate(){
+    @objc func timerAnimate(){
     
     
             self.isHidden = false
