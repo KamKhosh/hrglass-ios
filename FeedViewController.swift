@@ -100,6 +100,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var addPostButton: UIButton!
     @IBOutlet weak var logoImageView: UIImageView!
     
+    
+    var cornerRadius:CGFloat = 0.0
+    
     /*********************************
      *
      * --------- LIFECYCLE ----------
@@ -207,6 +210,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
+
     
 
     override func didReceiveMemoryWarning() {
@@ -657,7 +661,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }
                 
             })
-            
         })
     }
     
@@ -702,16 +705,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.profileImageBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
         }
         
-        
-        
         //PostData update for feedData callback
         cell.newUsersDict = {
             
             self.feedData[indexPath.row] = cell.postData
         }
         let fullname: String = (user.value(forKey: "name") as? String)!
-        
-        
         
         /*****************************
          //CELL BUTTON CALLBACKS
@@ -744,16 +743,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             })
         }
         
-        
         cell.moreBtnSelected = {
             
             self.moreButtonPressed(data: cell.postData, indexPath: indexPath)
         }
         
-        
         //setting cell content layout/appearance
-        cell.contentImageBtn.layer.cornerRadius = cell.contentImageBtn.frame.height/2
-        cell.previewContentView.layer.cornerRadius = cell.previewContentView.frame.height/2
+        cell.contentImageBtn.layer.cornerRadius = self.cornerRadius/2
+        cell.previewContentView.layer.cornerRadius = self.cornerRadius/2
         cell.previewContentView.layer.borderWidth = 2.0
         cell.contentImageBtn.clipsToBounds = true
         cell.previewContentView.backgroundColor = UIColor.white
@@ -855,12 +852,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             cell.contentImageBtn.setImage(self.dataManager.clearImage, for: .normal)
             cell.contentImageBtn.imageView?.contentMode = .scaleAspectFill
+            
             //default is photo for now
             self.imageCache.getImage(urlString: feedData[indexPath.row].data, completion: { image in
                 
                 cell.contentImageBtn.setImage(image, for:.normal)
                 cell.loadingIndication.stopAnimating()
-                
             })
             
             cell.previewContentView.layer.borderColor = colors.getTextPostColor().cgColor
@@ -869,6 +866,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             print("No Category")
         }
+        
         
         //set like button to white icon
         let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
@@ -904,7 +902,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //rounded Profile Image
         cell.profileImageBtn.layer.cornerRadius = cell.profileImageBtn.frame.height / 2
         cell.profileImageBtn.clipsToBounds = true
-        
         cell.moreBtn.setImage(UIImage(named:"more")?.transform(withNewColor: UIColor.white), for: .normal)
         cell.viewsBtn.setImage(UIImage(named:"eye")?.transform(withNewColor: UIColor.white), for: .normal)
         
@@ -924,20 +921,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        
+        self.cornerRadius = 175.0 * 0.75
         return 175.0
     }
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     /*****************************************************
      *

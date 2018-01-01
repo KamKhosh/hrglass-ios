@@ -1961,11 +1961,26 @@ extension UIImage {
     
     convenience init(view: UIView) {
         
-        UIGraphicsBeginImageContext(view.frame.size)
-        view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, true, 0)
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         self.init(cgImage: (image?.cgImage!)!)
+        
+    }
+    
+    
+    //since we are centering the text vertically, we need to calculate the new minY
+    convenience init(textView: UITextView) {
+        
+        let numLines: CGFloat = textView.contentSize.height / textView.font!.lineHeight
+        print()
+        UIGraphicsBeginImageContextWithOptions(CGSize(width:textView.frame.size.width ,height:textView.frame.size.height), true, 0)
+        textView.drawHierarchy(in: CGRect(x: textView.bounds.minX,y: textView.bounds.midY - (textView.font!.lineHeight * numLines)/2 ,width: textView.frame.size.width, height: textView.frame.size.height), afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.init(cgImage: (image?.cgImage!)!)
+        
         
     }
 }

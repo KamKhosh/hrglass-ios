@@ -17,7 +17,7 @@ import AWSS3
 import iOSPhotoEditor
 
 
-class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, MPMediaPickerControllerDelegate, PhotoEditorDelegate{
+class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, MPMediaPickerControllerDelegate, PhotoEditorDelegate, UITextViewDelegate{
 
     
     //DEMO COLOR
@@ -44,7 +44,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var photoCollectionView: UICollectionView!
 //    var musicTableView: UITableView!
     var recordingView: UIView!
-    var textPostView: UITextField!
+    var textPostView: UITextView!
     var cameraView: UIImageView!
     var playBtn: UIButton!
     var recordButton: UIButton!
@@ -79,6 +79,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var textSlider: ColorSlider!
     var backgroundColorBtn: UIButton!
     var textColorBtn: UIButton!
+    var textSizeBtn: UIButton!
+    var textFontBtn: UIButton!
+    var fontSize: CGFloat = 12.0
+    var fontType: String = "System"
     
     //primary post data
     var selectedObject: AnyObject!
@@ -152,7 +156,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         postRef = self.ref.child("Posts").child(currentUserID!)
         
         //set keyboard notification
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
         
         //In case phone is in silent mode
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
@@ -205,6 +209,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.setupSliderButtons()
 
             self.photoCollectionView.isHidden = false
+            self.textPostView.centerVertically()
         }
         
         if tabPassedFromParent != 0{
@@ -345,8 +350,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
         }else if self.textPostView.isFirstResponder{
             
-            self.textPostView.resignFirstResponder()
-            
+            self.textPostView.endEditing(true)
+
         }
 //        else if self.musicSearch.isFirstResponder{
 //            
@@ -411,9 +416,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 
     
     
-    
-    
-    
     /*****************************
      *
      * TEXT SLIDER ACTIONS/METHODS
@@ -421,8 +423,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      ****************************/
 
     func setTextImage(){
-
-        let image: UIImage = UIImage(view: self.textPostView)
+        self.textPostView.centerVertically()
+//        let view = textPostView.snapshotView(afterScreenUpdates: false)
+        
+        let image: UIImage = UIImage(textView: self.textPostView)
         self.selectedObject = image
         self.setPhotoView(image: image)
         
@@ -433,7 +437,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     @objc func changedBackgroundColor(_ slider: ColorSlider) {
         let color = slider.color
         self.textPostView.backgroundColor = color
+        
         self.backgroundColorBtn.backgroundColor = color
+        self.textPostView.centerVertically()
         
         self.setTextImage()
     }
@@ -444,9 +450,43 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         let color = slider.color
         self.textPostView.textColor = color
         self.textColorBtn.backgroundColor = color
+        self.textPostView.centerVertically()
         
        self.setTextImage()
     }
+    
+    
+    @objc func toggleTextSize(){
+        
+        var size: CGFloat = 0.0
+        if self.fontSize == 12.0{
+            
+            size = 20.0
+        }else if self.fontSize == 20.0{
+            
+            size = 40.0
+        }else if self.fontSize == 40.0{
+            size = 80.0
+        }else if self.fontSize == 80.0{
+            size = 12.0
+        }
+        self.setFontSize(size: size)
+        
+    }
+    
+    
+    @objc func toggleFont(){
+        
+        if self.fontType == "System"{
+            self.fontType = "Avenir"
+        }else if self.fontType == "Avenir"{
+            self.fontType = "Chalkboard"
+        }else if self.fontType == "Chalkboard"{
+            self.fontType = "System"
+        }
+        setFont(font: self.fontType)
+    }
+    
     
     
     //also toggles the resize buttons visibility as well as the background color slider
@@ -469,9 +509,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.hideVideoEditingBtns()
         if self.textSlider.isHidden{
             self.textSlider.isHidden = false
-            
+
         }else{
             self.textSlider.isHidden = true
+
         }
     }
     
@@ -857,7 +898,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     //PhotoEditor Functions
     func presentImageEditorWithImage(image:UIImage){
-    
+        
+        
         photoEditor = PhotoEditorViewController(nibName:"PhotoEditorViewController",bundle: Bundle(for: PhotoEditorViewController.self))
         
         //PhotoEditorDelegate
@@ -888,25 +930,17 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         //edited image
         self.setPhotoView(image: image)
         self.selectedObject = image
+        
+        
         photoEditor.dismiss(animated: true, completion: nil)
+        self.textPostView.centerVertically()
     }
     
     func canceledEditing() {
         photoEditor.dismiss(animated: true, completion: nil)
+        self.textPostView.centerVertically()
     }
     
-    
-    
-//    func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-//
-//        self.setPhotoView(image: image)
-//        self.selectedObject = image
-//        editor.dismiss(animated: true, completion: nil)
-//
-//    }
-
-    
-
 
     
 
@@ -1236,10 +1270,13 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //hide the color slider buttons
-    func hideColorBtns(){
+    func hideTextBtns(){
         
         self.backgroundColorBtn.isHidden = true
         self.textColorBtn.isHidden = true
+        self.textFontBtn.isHidden  = true
+        self.textSizeBtn.isHidden = true
+        
     }
     
     //show the color sliders
@@ -1251,10 +1288,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     //show the color slider buttons
-    func showColorBtns(){
+    func showTextBtns(){
         
         self.backgroundColorBtn.isHidden = false
         self.textColorBtn.isHidden = false
+        self.textFontBtn.isHidden  = false
+        self.textSizeBtn.isHidden = false
     }
     
     
@@ -1402,11 +1441,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func setupTextPostView(center: CGPoint){
     
         //set textPostView attributes
-        self.textPostView = UITextField(frame:CGRect.zero)
+        self.textPostView = UITextView(frame:CGRect.zero)
         self.textPostView.frame.size = self.currentTabView.frame.size
-        self.textPostView.placeholder = "What's on your mind?"
-        textPostView.attributedPlaceholder =
-            NSAttributedString(string: "What's on your mind?", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
+        self.textPostView.text = "What's on your mind?"
+        
+//        textPostView.attributedPlaceholder =
+//            NSAttributedString(string: "What's on your mind?", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         self.textPostView.backgroundColor = ourColors.getBlackishColor()
         self.textPostView.tintColor = UIColor.white
         self.textPostView.textColor = UIColor.white
@@ -1414,6 +1454,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textPostView.tag = 3
         self.textPostView.delegate = self
         self.textPostView.textAlignment = .center
+        self.textPostView.centerVertically()
         
     }
     
@@ -1440,9 +1481,33 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textColorBtn.setTitle("T", for: .normal)
         self.textColorBtn.setTitleColor(.white, for: .normal)
         
+        
+        self.textFontBtn = UIButton(frame: CGRect(x: 15,y:self.backgroundColorBtn.frame.minY - 50,width: 30,height: 30))
+        self.textFontBtn.clipsToBounds = true
+//        self.textFontBtn.layer.cornerRadius = textColorBtn.frame.width / 2
+        self.textFontBtn.backgroundColor = UIColor.clear
+//        self.textFontBtn.layer.borderColor = UIColor.white.cgColor
+//        self.textFontBtn.layer.borderWidth = 1.0
+        self.textFontBtn.addTarget(self, action: #selector(toggleFont), for: .touchUpInside)
+        self.textFontBtn.setTitle("F", for: .normal)
+        self.textFontBtn.setTitleColor(.white, for: .normal)
+        
+        self.textSizeBtn = UIButton(frame: CGRect(x: 15,y:self.textFontBtn.frame.minY - 50,width: 30,height: 30))
+        self.textSizeBtn.clipsToBounds = true
+//        self.textSizeBtn.layer.cornerRadius = textColorBtn.frame.width / 2
+        self.textSizeBtn.backgroundColor = UIColor.clear
+//        self.textSizeBtn.layer.borderColor = UIColor.white.cgColor
+//        self.textSizeBtn.layer.borderWidth = 1.0
+        self.textSizeBtn.addTarget(self, action: #selector(toggleTextSize), for: .touchUpInside)
+        self.textSizeBtn.setTitle("S", for: .normal)
+        self.textSizeBtn.setTitleColor(.white, for: .normal)
+
+        
         //add buttons to view
         self.view.addSubview(backgroundColorBtn)
         self.view.addSubview(textColorBtn)
+        self.view.addSubview(textSizeBtn)
+        self.view.addSubview(textFontBtn)
         
         
         //set color slider attributes
@@ -1472,10 +1537,72 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.textPostView.bringSubview(toFront: textSlider)
         self.textPostView.bringSubview(toFront: backgroundSlider)
         
-        self.hideColorBtns()
+        self.hideTextBtns()
         
     }
+
     
+    func setFontSize(size:CGFloat){
+        self.fontSize = size
+        if size == 12.0{
+            self.textSizeBtn.setTitle("S", for: .normal)
+            
+        }else if size == 20.0{
+            self.textSizeBtn.setTitle("M", for: .normal)
+            
+        }else if size == 40.0{
+            self.textSizeBtn.setTitle("L", for: .normal)
+        }
+        else if size == 80.0{
+            self.textSizeBtn.setTitle("XL", for: .normal)
+        }
+        
+        //setting font size will also trigger set font to update the text image
+        self.setFont(font: self.fontType)
+        
+
+    }
+    
+    func getFont() -> UIFont{
+        
+        var font: UIFont = UIFont.init()
+        
+        if self.fontType == "System"{
+            font = UIFont.systemFont(ofSize: self.fontSize)
+        }else if self.fontType == "Avenir"{
+            font = UIFont(name: "AvenirNextCondensed-Bold", size: self.fontSize)!
+
+        }else if self.fontType == "Chalkboard"{
+            font = UIFont(name: "ChalkboardSE-Light", size: self.fontSize)!
+        }
+        
+        return font
+    }
+    
+    
+    //should be called when
+    func setFont(font:String){
+        
+        self.fontType = font
+        
+        if self.fontType == "System"{
+            self.textFontBtn.titleLabel?.font = UIFont.systemFont(ofSize: 20.0)
+            self.textPostView.font = UIFont.systemFont(ofSize: self.fontSize)
+        }else if self.fontType == "Avenir"{
+            self.textFontBtn.titleLabel?.font = UIFont(name: "AvenirNextCondensed-Bold", size: 20.0)
+            self.textPostView.font = UIFont.init(name: "AvenirNextCondensed-Bold", size: self.fontSize)
+        }else if self.fontType == "Chalkboard"{
+            self.textFontBtn.titleLabel?.font = UIFont(name: "ChalkboardSE-Light", size: 20.0)
+            self.textPostView.font = UIFont.init(name: "ChalkboardSE-Light", size: self.fontSize)
+        }
+        
+//        self.adjustUITextViewHeight(arg: self.textPostView)
+        self.textFontBtn.setTitle("F", for: .normal)
+        self.textPostView.centerVertically()
+        
+        self.setTextImage()
+
+    }
     
     
     //RECORDING VIEW, TAG 4
@@ -1615,8 +1742,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     //tab bar select delegate, calls moveViews based on tab bar item tag
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         
-        self.hideColorBtns()
+        self.hideTextBtns()
         self.hideColorSliders()
+//        self.currentTabView.backgroundColor = UIColor.clear
         
         if (self.isFirstResponder){
             self.resignFirstResponder()
@@ -1640,7 +1768,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             case 3:
                 print("Text Post Chosen")
                 moveViews(newView: self.textPostView)
-                self.showColorBtns()
+                self.showTextBtns()
                 
             case 4:
                 print("Recording Chosen")
@@ -1961,7 +2089,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                     //sets default result as thumbnail image
                     self.setPhotoView(image: result!)
                     self.postPhotoView.layer.borderColor = self.ourColors.getPurpleColor().cgColor
-                    
+                    self.musicLbl.isHidden = true
+                    self.selectedMusicItem = nil
                     self.playBtn.setImage(UIImage(named: "play"), for: .normal)
                     
                     self.hideResizeButtons()
@@ -2089,6 +2218,98 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 //    }
     
     
+    /*****************************
+     *
+     *     TEXT VIEW DELEGATE
+     *
+     ****************************/
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        
+        self.textPostView.centerVertically()
+        textView.autocorrectionType = .yes
+        
+        if textView.text == "What's on your mind?"{
+            textView.text = ""
+        }
+        
+        if (textView == self.textPostView){
+            
+            self.hideColorSliders()
+            self.hideTextBtns()
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                
+                if(self.keyboardHeight == 0.0){
+                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + 300 ))
+                }else{
+                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + self.keyboardHeight))
+                }
+            })
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
+        
+//        if numLines > {
+//
+//            self.adjustUITextViewHeight(arg: textView)
+//            self.textPostView.center = CGPoint(x: self.textPostView.center.x,y: self.currentTabView.frame.height - self.textPostView.frame.height/2)
+//        }else {
+//            textView.isScrollEnabled = true
+//        }
+
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        if(text == "\n")
+        {
+//            textView.resignFirstResponder()
+            textView.endEditing(true)
+            return false
+        }
+        return true
+    }
+    
+    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+        return true
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        
+        if(textView == self.textPostView){
+            //text post view
+            //set the text field data as a photo to allow the user to edit with CLImage Editor
+            
+            self.showTextBtns()
+        
+            UIView.animate(withDuration: 0.3, animations: {
+                self.textPostView.center = self.currentTabView.center
+                
+            }, completion: { (success) in
+                
+                if(self.textPostView.text! != ""){
+                    
+                    textView.autocorrectionType = .no
+                    self.setTextImage()
+                    self.selectedCategory = .Text
+                    self.postPhotoView.layer.borderColor = self.ourColors.getTextPostColor().cgColor
+                    self.playBtn.isHidden = false
+                    self.playBtn.setImage(UIImage(named:"cropClear"), for: .normal)
+                    //                self.showResizeButtons()
+                    
+                }else{
+                    self.postPhotoView.isHidden = true
+                }
+                
+            })
+            
+        }
+    }
+    
+
     
     
     /*****************************
@@ -2096,7 +2317,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *     TEXT FIELD DELEGATE
      *
      ****************************/
-    
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         
@@ -2122,31 +2342,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
                 self.linkTextField.center = self.currentTabView.center
             })
-        }else if(textField == self.textPostView){
-            //text post view
-            //set the text field data as a photo to allow the user to edit with CLImage Editor
-            
-            self.showColorBtns()
-            
-            if(self.textPostView.text! != ""){
-                
-                self.setTextImage()
-                self.selectedCategory = .Text
-                self.postPhotoView.layer.borderColor = ourColors.getTextPostColor().cgColor
-                self.playBtn.isHidden = false
-                self.playBtn.setImage(UIImage(named:"cropClear"), for: .normal)
-//                self.showResizeButtons()
-                
-            }else{
-                self.postPhotoView.isHidden = true
-            }
-            
-            //move view back to under the tab bar
-            UIView.animate(withDuration: 0.3, animations: {
-                self.textPostView.center = self.currentTabView.center
-            })
         }
     }
+    
     
     
     
@@ -2169,19 +2367,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 }
             })
             
-        }else if (textField == self.textPostView){
-            
-            self.hideColorSliders()
-            self.hideColorBtns()
-            
-            UIView.animate(withDuration: 0.4, animations: {
-                
-                if(self.keyboardHeight == 0.0){
-                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + 300 ))
-                }else{
-                    self.textPostView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.textPostView.frame.height/2 + self.keyboardHeight))
-                }
-            })
         }
     }
     
@@ -2250,7 +2435,12 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         if (self.selectedCategory != .Video && self.selectedCategory != .Recording){
             
-            let image: UIImage = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
+            //set image
+            var image: UIImage = UIImage(named:"default_music")!
+            if mpMediaItem.artwork?.image != nil{
+                image = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
+            }
+            
             self.musicLbl.text = String(format:"%@ by: %@", title, artist)
             self.musicLbl.isHidden = false
             self.selectedMusicItem = mpMediaItem
@@ -2437,5 +2627,20 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     @IBAction func unwindToAddPost(unwindSegue: UIStoryboardSegue) {}
+    
+    
+    
+}
+
+
+extension UITextView {
+    
+    func centerVertically() {
+        let fittingSize = CGSize(width: bounds.width, height: CGFloat.greatestFiniteMagnitude)
+        let size = sizeThatFits(fittingSize)
+        let topOffset = (bounds.size.height - size.height * zoomScale) / 2
+        let positiveTopOffset = max(1, topOffset)
+        contentOffset.y = -positiveTopOffset
+    }
     
 }

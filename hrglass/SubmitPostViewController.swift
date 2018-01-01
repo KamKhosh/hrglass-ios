@@ -17,7 +17,7 @@ import MediaPlayer
 
 class SubmitPostViewController: UIViewController {
     
-    @IBOutlet weak var navigationBar: UINavigationBar!
+//    @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var postImagePreview: UIImageView!
     @IBOutlet weak var postBtn: UIButton!
     
@@ -57,12 +57,14 @@ class SubmitPostViewController: UIViewController {
     
     
     @IBOutlet weak var musicLbl: UILabel!
+    
     //Preview Shape Constraints
     @IBOutlet weak var postPreviewWidth: NSLayoutConstraint!
     @IBOutlet weak var postPreviewHeight: NSLayoutConstraint!
     @IBOutlet weak var postLabel: UILabel!
     @IBOutlet weak var moodLbl: UILabel!
 
+    @IBOutlet weak var accessoryImageView: UIImageView!
     
     //extra content button
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -88,13 +90,7 @@ class SubmitPostViewController: UIViewController {
         self.activityIndicator.stopAnimating()
         
         self.awsManager = AWSManager.init(uid: (Auth.auth().currentUser?.uid)!)
-        
-        self.navigationBar.frame.size = CGSize(width: self.view.frame.width, height: 80)
-        
-        //removing bottom navigation line
-        self.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationBar.shadowImage = UIImage()
-        
+
         currentUserId = Auth.auth().currentUser?.uid
         self.ref = Database.database().reference()
         self.postRef = self.ref.child("Posts").child(currentUserId!)
@@ -284,11 +280,8 @@ class SubmitPostViewController: UIViewController {
             if primaryPost{
                 
                 self.buttonArray.add(self.videoBtn)
-                //Add play button so we know it's a video
-                let playImageView: UIImageView = UIImageView(frame: CGRect(x: self.postImagePreview.frame.minX - 10, y: self.postImagePreview.frame.maxY - 20, width: 20, height:20))
-                playImageView.image = UIImage(named: "playTriagle")
-                
-                self.view.addSubview(playImageView)
+                accessoryImageView.image = UIImage(named: "playTriagle")?.transform(withNewColor: UIColor.darkGray)
+                accessoryImageView.isHidden = false
                 
                 //Set the Photo
                 if self.selectedThumbnail == nil{
@@ -365,12 +358,17 @@ class SubmitPostViewController: UIViewController {
             self.postImagePreview.layer.borderColor = colors.getMusicColor().cgColor
             
             let mediaitem = self.selectedObject as! MPMediaItem
-            let image: UIImage = (mediaitem.artwork?.image(at: self.postImagePreview.frame.size))!
-            self.postImagePreview.image = image
             
-            let musicImage: UIImageView = UIImageView(frame: CGRect(x: self.postImagePreview.frame.maxX - 20, y: self.postImagePreview.frame.maxY - 20, width: 20, height:20))
-            musicImage.image = UIImage(named: "music")
-            self.view.addSubview(musicImage)
+            
+            //set image
+            var image: UIImage = UIImage(named:"default_music")!
+            if mediaitem.artwork?.image != nil{
+                image = (mediaitem.artwork?.image(at: self.postImagePreview.frame.size))!
+            }
+            
+            self.postImagePreview.image = image
+            self.accessoryImageView.image = UIImage(named: "music")
+            self.accessoryImageView.isHidden = false
             
         case .Link:
             
@@ -458,6 +456,7 @@ class SubmitPostViewController: UIViewController {
                 
                 self.transferring = true
                 self.progressView = ProgressView(frame: self.postBtn.bounds)
+                self.progressView.backgroundColor = UIColor.clear
                 self.postBtn.addSubview(self.progressView)
                 
                 switch self.selectedCategory {
@@ -580,8 +579,6 @@ class SubmitPostViewController: UIViewController {
                     
                     self.selectedObject = linkString as AnyObject
                     
-
-                    
                     if(linkString != ""){
                         
                         
@@ -624,18 +621,21 @@ class SubmitPostViewController: UIViewController {
                     print("Music Selected")
                     
                     let item: MPMediaItem = self.selectedObject as! MPMediaItem
+                    var title: String = ""
+                    var artist: String = ""
+                    var album: String = ""
                     
-                    guard let title: String = item.title else{
+                    if let t: String = item.title {
                         print("no title")
-                        return
+                        title = t
                     }
-                    guard let artist: String = item.artist else{
+                    if let a: String = item.artist{
                         print("no artist")
-                        return
+                        artist = a
                     }
-                    guard let album: String = item.albumTitle else{
+                    if let at: String = item.albumTitle{
                         print("no title")
-                        return
+                        album = at
                     }
                     
                     var songString = String(format: "%@:%@:%@", title, artist, album)
@@ -661,7 +661,7 @@ class SubmitPostViewController: UIViewController {
                                     self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
                                         if success{
                                             
-                                            songString = songString + ":apple"
+                                            songString = songString + ":local"
                                             let downloadURL: String = String(format:"%@/%@/audio/music.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
                                             
                                             let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
@@ -685,15 +685,19 @@ class SubmitPostViewController: UIViewController {
                                 }else {
                                     //if URL is nil, the song is not exportable and we just need to write the itunes search criteria
                                     
-                                    songString = songString + ":local"
+                                    songString = songString + ":apple"
                                     let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
                                     
                                     //                            if self.hasSecondaryPost{
                                     //                                self.postSecondaryData(primaryData: dataDictionary)
                                     //                            }else{
                                     self.submitPost(dataDictionary: dataDictionary)
+                                    
+                                    self.progressUpdateTimer(category: .Recording)
                                     //                            }
                                     self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                    
+                                    
                                 }
                                 
                             }else{
@@ -714,8 +718,9 @@ class SubmitPostViewController: UIViewController {
                         //                            }else{
                         self.submitPost(dataDictionary: dataDictionary)
                         //                            }
-                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                         
+                        self.progressUpdateTimer(category: .Recording)
+                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                         
                     }
                     
@@ -1333,7 +1338,6 @@ class SubmitPostViewController: UIViewController {
             self.progressView.removeFromSuperview()
             alert.dismiss(animated: true, completion: nil)
             self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-            
         }
         
         alert.addAction(ok)
@@ -1359,7 +1363,6 @@ class SubmitPostViewController: UIViewController {
             if let expireString: String = snapshot.value as? String{
                 
                 let expireTime: Double = Double(expireString)!
-                
                 let now: Double = Date().millisecondsSince1970
                 
                 if now > expireTime{
@@ -1380,8 +1383,6 @@ class SubmitPostViewController: UIViewController {
     
     
     
-    
-    
     func postFailedAlert(title: String, message: String){
         
         let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -1395,13 +1396,11 @@ class SubmitPostViewController: UIViewController {
             self.progressView.removeFromSuperview()
             
             alert.dismiss(animated: true, completion: nil)
-            
         }
         
         alert.addAction(ok)
         
         self.present(alert, animated: true, completion: nil)
-        
     }
 
     
@@ -1412,7 +1411,6 @@ class SubmitPostViewController: UIViewController {
      * SavePostForLater -- saves dictionary conaining post data to defaults
      *
      *  if the post contains secondary data, it will also save that data
-     *
      *
      *****************************************************************************/
     
@@ -1431,7 +1429,6 @@ class SubmitPostViewController: UIViewController {
             category = self.selectedCategory
             object = self.selectedObject
             dataKey = "savedPostData"
-            
         }
         
 //        else{
@@ -1445,9 +1442,7 @@ class SubmitPostViewController: UIViewController {
         if (category != .Video){
             
             self.dataManager.savePostData(category: category, data: object!, primary: primary, completion:{ value in
-            
-                
-                
+
 //                if (!self.hasSecondaryPost){
                     let dataPath = value
                     postData.setValue(dataPath, forKey:"data")
@@ -1502,7 +1497,6 @@ class SubmitPostViewController: UIViewController {
             
             self.dataManager.savePostData(category: category, data: object!, primary: primary, completion:{ value in
                 
-                
 //                if (!self.hasSecondaryPost){
                 
                     postData.setValue(self.selectedVideoPath, forKey:"data")
@@ -1543,8 +1537,6 @@ class SubmitPostViewController: UIViewController {
     
     
     
-    
-    
     func progressUpdateTimer(category: Category){
     
         self.postLabel.text = "Uploading..."
@@ -1563,6 +1555,8 @@ class SubmitPostViewController: UIViewController {
             
         case .Recording:
             
+            print("Recording Upload")
+            
             timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.audioTimer), userInfo: nil, repeats: true)
             
         case .Music:
@@ -1572,7 +1566,6 @@ class SubmitPostViewController: UIViewController {
         default:
             print("default")
         }
-        
     }
     
     
@@ -1582,7 +1575,6 @@ class SubmitPostViewController: UIViewController {
             
             self.awsManager.videoUploadProgressCheck()
             self.progressView.percentageComplete = CGFloat(self.awsManager.videoUploadProgress)
-            
             self.progressView.updateProgress()
 //            print(self.progressView.loadingFrame.frame.width)
 //            print(self.progressView.percentageComplete)
@@ -1640,7 +1632,6 @@ class SubmitPostViewController: UIViewController {
             if transferring{
                  self.awsManager.cancelRequest()
             }
-           
         }
 //        else if (segue.identifier == "toAddSecondPost"){
 //            

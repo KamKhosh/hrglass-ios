@@ -351,17 +351,17 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                             })
                         }else{
                             //apple music not authorized
+                            //play the content preview
+                            
                         }
                     })
                     
                     
-                    
-                    
                 }else if (source == "local"){
                     //TODO: play song.mp4 from s3
-                    
-                    
-                    
+                    self.songLength = (self.applicationMusicPlayer.nowPlayingItem?.playbackDuration)! * 1000
+                    self.playPauseSongAction(self)
+                
                 }else{
                 
                     //add other sources later
@@ -370,6 +370,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 
                 
                 //set the song art as the background image adding a blur and gradient layer
+                
+                //Note: This code could be very helpful for future blurs
                 imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
                     
                     self.songImageView.image = image
@@ -399,6 +401,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     gradient.colors = [UIColor.clear.cgColor, self.colors.getBlackishColor().cgColor]
                     gradient.locations = [0.0, 0.9]
                     self.blurredMusicImageView.layer.insertSublayer(gradient, at: 0)
+                    
                 })
                 
                 
@@ -456,7 +459,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 self.dataManager.setURLView(urlString: self.postData.data as String, completion: { (image, label) in
                     
                     self.contentImageView.image = image
-                    
                     self.linkLbl.adjustsFontSizeToFitWidth = true
                     self.linkLbl.numberOfLines = 3
                     self.linkLbl.backgroundColor = UIColor.darkGray
@@ -486,7 +488,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     func songProgressTimerStart (){
         
         self.songTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.updatePlaybackViews), userInfo: nil, repeats: true)
-        
     }
     
     //song timer selector -- updates the songLegthSlider every 1 second
@@ -494,7 +495,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         if self.applicationMusicPlayer.playbackState == .playing{
             
             let millis = TimeInterval(self.applicationMusicPlayer.currentPlaybackTime * 1000)
-//            print(millis/self.songLength)
+            print(millis/self.songLength)
             self.songTimeSpentLbl.text = self.applicationMusicPlayer.currentPlaybackTime.minuteSecond
             
             self.songLengthSlider.setValue(Float(millis/self.songLength * 100), animated: true)
@@ -508,7 +509,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             }
             
         }else if(avMusicPlayer != nil){
-            
+            print("AVPlayer not nil")
             
         }
     }
@@ -769,7 +770,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBAction func songSliderAction(_ sender: Any) {
         
         print(self.songLengthSlider.value)
-        let newPosition = TimeInterval(self.songLengthSlider.value) / 10 * self.songLength
+        var newPosition = 0.0
+        if self.songLength != 0{
+            newPosition = TimeInterval(self.songLengthSlider.value) / 10 * self.songLength
+        }
+        
             
         if (self.applicationMusicPlayer.playbackState == .playing){
     // seeking isn't quite working so removing for now
@@ -800,6 +805,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     }
                     
                     if (self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused){
+                        self.playPauseSongAction(self)
                         self.applicationMusicPlayer.stop()
                     }
                     
@@ -1093,6 +1099,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                         }
                         
                         if self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused{
+                            self.playPauseSongAction(self)
                             self.applicationMusicPlayer.stop()
                         }
                         self.willMove(toParentViewController: nil)
@@ -1134,17 +1141,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //        }else{
 //            self.secondaryPostView.addSubview(loadingView)
 //        }
-        
-        
-        loadingView.startAnimating()
-        
-//        self.videoCache.getFileWith(stringUrl: urlString) { (result) in
-        
-            loadingView.stopAnimating()
-//            self.avPlayerViewController.load
-//            switch result {
-//            case .success(let url):
-        
+
         let player = AVPlayer(url: URL(string:urlString)!)
         self.avPlayerViewController = AVPlayerViewController()
         self.avPlayerViewController.player = player
@@ -1244,6 +1241,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "toCommentsView"{
+            
             let commentsVC: CommentViewController = segue.destination as! CommentViewController
             
             commentsVC.viewingUserId = self.postData.user.value(forKey: "uid") as! String

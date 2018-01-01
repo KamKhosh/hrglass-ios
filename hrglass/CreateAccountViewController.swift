@@ -103,6 +103,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         //if any of the fields are black the underline will be changed to red
         
+        
         if(fullnameField.text == ""){
             print("Fullname Empty")
             let views: [UIView] = self.scrollContentView.subviews
@@ -120,9 +121,18 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 }
             }
         }else if(emailField.text == ""){
-            //TODO: add validator to make sure this is infact an email
+        
             
             print("email Empty")
+            let views: [UIView] = self.scrollContentView.subviews
+            for view in views {
+                if view.tag == 3{
+                    view.layer.borderColor = UIColor.red.cgColor
+                }
+            }
+        }else if !self.isValidEmail(testStr: emailField.text!){
+            
+            //email address validation
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
                 if view.tag == 3{
@@ -224,6 +234,13 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         self.present(alert, animated: true, completion: nil)
     }
 
+    
+    func isValidEmail(testStr:String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailTest.evaluate(with: testStr)
+    }
     
 
     //setup textField delegates

@@ -374,9 +374,9 @@
 			isa = PBXGroup;
 			children = (
 				5E815E6E1F2A97C800F7A975 /* PhotoView.swift */,
+				5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */,
 				5E2A89661F44FCF6002AD645 /* PostViewController.swift */,
 				5E3CBC8E1F7AD6870073322B /* CommentViewController.swift */,
-				5E3CBC941F7AF3080073322B /* CommentTableViewCell.swift */,
 			);
 			name = PostPopupView;
 			sourceTree = "<group>";

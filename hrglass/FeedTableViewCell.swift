@@ -78,7 +78,7 @@ class FeedTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+        self.previewContentView.layer.cornerRadius = self.previewContentView.frame.height/2
     }
     
 
