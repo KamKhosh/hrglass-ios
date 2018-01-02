@@ -17,24 +17,20 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     var colors: Colors = Colors()
     var nameString: String = ""
     
-    @IBOutlet weak var nameLbl: UILabel!
     var parentView: String = "feed"
-    
     let placeholderText: String = "Type Message..."
-    
     var dataManager: DataManager = DataManager()
     
+    @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var messageTextView: UITextView!
-    
     @IBOutlet weak var navigationBar: UINavigationBar!
-    
     @IBOutlet weak var collectionView: UICollectionView!
-
     @IBOutlet weak var sendBtn: UIButton!
-    
     @IBOutlet weak var keyboardHeightLayoutConstraint: NSLayoutConstraint!
     
     var messagesId: String = ""
+    
+    
     
     
     /*******************************************
@@ -42,7 +38,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
      * -------------- LIFECYCLE
      *
      *******************************************/
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,9 +51,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.messageTextView.layer.borderColor = UIColor.white.cgColor
         self.messageTextView.layer.borderWidth = 0.5
         self.messageTextView.layer.cornerRadius = 3.0
-        
         self.nameLbl.text = nameString
-        
         self.messageTextView.delegate = self
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
@@ -86,6 +79,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     @objc func keyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
+            
             let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
             let duration:TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
             let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
@@ -106,12 +100,12 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     
     
+    
     /*******************************************
      *
      * ---------- MESSAGE METHODS -----------
      *
      *******************************************/
-    
     
     func getMessageThreadId(){
         
@@ -133,17 +127,15 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     func getMessages(){
         
         let messagesRef: DatabaseReference = Database.database().reference().child("Messages").child(messagesId)
-        
+
         messagesRef.observe(.childAdded, with: { (snapshot) in
             
             if let message: NSDictionary = snapshot.value as? NSDictionary{
                 
                 self.messages.add(message)
-                
                 self.collectionView.reloadData()
-                
+        
             }
-            
             let lastIndex: IndexPath = IndexPath(item: self.messages.count - 1, section: 0)
             self.collectionView.scrollToItem(at:lastIndex , at: UICollectionViewScrollPosition.bottom, animated: true)
         })
@@ -174,10 +166,17 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
                     
                     self.messagesId = convoId as String
                     self.postMessage(messageData: messageData)
+                    
+                    //observer won't be set until the path actually exits when the first message is sent. If that is the case, manually add the message
+                    //    then set the observer
+                    if self.messages.count == 0{
+                        self.getMessages()
+                    }
                 })
             }else{
                 
                 postMessage(messageData: messageData)
+                
             }
         }
     }
@@ -186,18 +185,15 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     func postMessage(messageData: NSDictionary){
         
         let objectId: String = messageData.value(forKey: "created") as! String
-        
         let messagesRef: DatabaseReference = Database.database().reference().child("Messages").child(self.messagesId).child(objectId)
-        
         messagesRef.setValue(messageData)
         
         self.messageTextView.text = ""
         self.messageTextView.resignFirstResponder()
         self.messageTextView.endEditing(true)
         self.collectionView.reloadData()
+        
     }
-    
-    
     
     
     /***********************************
@@ -206,39 +202,35 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
      *
      ***********************************/
     
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         
         var cell: MessageCollectionViewCell = MessageCollectionViewCell()
         
         let messageData: NSDictionary = self.messages[indexPath.row] as! NSDictionary
         let myUid = Auth.auth().currentUser?.uid
-        
         let text = messageData.value(forKey: "body") as! String
-        let radius: CGFloat = 13.0
-
+        let radius: CGFloat = 15.0
+        
         
         if (messageData.value(forKey: "sender") as? String == myUid){
             
             cell = collectionView.dequeueReusableCell(withReuseIdentifier: "messageCellRight", for: indexPath) as! MessageCollectionViewCell
-            
             cell.textView.backgroundColor = colors.getMenuColor()
             cell.textView.textColor = UIColor.white
             cell.textView.clipsToBounds = true
             cell.textView.layer.cornerRadius = radius
             cell.textView.text = text
-            
+            cell.textView.frame.size = CGSize(width:cell.textView.contentSize.width, height: cell.textView.frame.height)
 
         }else{
             
             cell = collectionView.dequeueReusableCell(withReuseIdentifier: "messageCellLeft", for: indexPath) as! MessageCollectionViewCell
-            
             cell.textView.backgroundColor = UIColor.lightGray
             cell.textView.textColor = UIColor.black
             cell.textView.clipsToBounds = true
             cell.textView.layer.cornerRadius = radius
             cell.textView.text = text
+            cell.textView.frame.size = CGSize(width:cell.textView.contentSize.width, height: cell.textView.frame.height)
         }
         
         return cell
@@ -249,12 +241,9 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     {
         
         let messageData: NSDictionary = self.messages[indexPath.row] as! NSDictionary
-
         let width: CGFloat = self.collectionView.frame.width * 3/4
         let text = messageData.value(forKey: "body") as! String
-        
         let height: CGFloat = self.calculateHeight(inString: text, withWidth: width)
-        
         let size: CGSize = CGSize(width: self.collectionView.frame.width, height: height + 15)
         //adjust height of cell based on text
         
@@ -263,14 +252,14 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     
-    
-    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.messages.count
+        
     }
     
     
@@ -288,13 +277,12 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     
+    
     /***********************************
      *
      * ------ TEXTView DELEGATES -----
      *
      ***********************************/
-    
-    
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         
@@ -304,15 +292,11 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         
 //        let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
-        
 //        if numLines > 1{
 //            self.adjustUITextViewHeight(arg: textView)
 //           self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - keyboardHeightLayoutConstraint.constant - self.messageTextView.frame.height/2)
-        
 //        }
-        
 //        self.adjustUITextViewHeight(arg: textView)
-        
         
         if(textView.text == self.placeholderText){
             textView.text = ""
@@ -330,26 +314,34 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         
         self.messageTextView.frame.size = CGSize (width: self.view.frame.width - sendBtn.frame.width, height: 40)
-        self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - self.messageTextView.frame.height/2)
+//        self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - self.messageTextView.frame.height/2)
+        if #available(iOS 11.0, *) {
+            self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - self.view.safeAreaInsets.bottom - self.messageTextView.frame.height/2)
+        } else {
+            // Fallback on earlier versions
+            self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - self.messageTextView.frame.height/2)
+        }
+        
     }
 
     
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
-            if(text == "\n")
-            {
-                self.messageTextView.resignFirstResponder
-                self.messageTextView.endEditing(true)
-                return false
-            }
-            
-            return true
+        if(text == "\n")
+        {
+            self.messageTextView.resignFirstResponder
+            self.messageTextView.endEditing(true)
+            return false
+        }
+        
+        return true
     }
     
 
     func textViewDidChange(_ textView: UITextView) {
         let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
+        
         
         if numLines > 1{
             self.adjustUITextViewHeight(arg: textView)
@@ -360,15 +352,37 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     
+    
+    
+//    func adjustUITextViewHeight(arg : UITextView)
+//    {
+//
+//        let fixedWidth = arg.frame.size.width
+//        arg.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//        let newSize = arg.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//        var newFrame = arg.frame
+//        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+//        arg.frame = newFrame
+//        //arg.translatesAutoresizingMaskIntoConstraints = true
+//        //arg.sizeToFit()
+//        //arg.isScrollEnabled = false
+//    }
+    
+    
+    
     func adjustUITextViewHeight(arg : UITextView)
     {
         
         let fixedWidth = arg.frame.size.width
+        
+        
         arg.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         let newSize = arg.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         var newFrame = arg.frame
         newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         arg.frame = newFrame
+        
+
 //        arg.translatesAutoresizingMaskIntoConstraints = true
 //        arg.sizeToFit()
 //        arg.isScrollEnabled = false
@@ -377,14 +391,11 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
 
     
-
-    
     /*******************************************
      *
      * -------- ACTIONS ------------
      *
      *******************************************/
-    
     
     @IBAction func closeBtnAction(_ sender: Any) {
         
@@ -406,7 +417,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     
     
-    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -415,5 +425,5 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         // Pass the selected object to the new view controller.
     }
     
-
+    
 }

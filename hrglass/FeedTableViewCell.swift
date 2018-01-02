@@ -98,7 +98,6 @@ class FeedTableViewCell: UITableViewCell {
         if let profileBtnAction = self.userProfile{
             
             profileBtnAction()
-            
         }
     }
     
@@ -109,9 +108,7 @@ class FeedTableViewCell: UITableViewCell {
         if let contentBtnAction = self.contentSelected{
             
             contentBtnAction()
-            
         }
-
     }
     
     
@@ -140,7 +137,6 @@ class FeedTableViewCell: UITableViewCell {
                 //decrement like count
                 let likeCount: Int = Int(self.likeCountLbl.text!)!
                 self.likeCountLbl.text = String(likeCount - 1)
-                
                 let postLikesRef = Database.database().reference().child("Posts").child(self.postUserId).child("likes")
 
                 //remove current user from likes list
@@ -173,7 +169,6 @@ class FeedTableViewCell: UITableViewCell {
                                 tmp.removeObject(forKey: (Auth.auth().currentUser?.uid)!)
                                 
                                 self.postData.usersWhoLiked = tmp;
-                                
                                 self.postData.likes = tempNum
                                 
                                 //Fire the action in FEEDVIEWCONTROLLER cellForRowAt:
@@ -182,7 +177,6 @@ class FeedTableViewCell: UITableViewCell {
                                     likeAction()
                                 }
                             }
-
                         })
                     }
                 })
@@ -199,9 +193,6 @@ class FeedTableViewCell: UITableViewCell {
                 //set thumb to be red tint
                 let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
-            
-//                let likeCount: Int = Int(self.likeCountLbl.text!)!
-                
             
                 let postLikesRef = Database.database().reference().child("Posts").child(self.postUserId).child("likes")
                 
@@ -255,13 +246,10 @@ class FeedTableViewCell: UITableViewCell {
                             {
                                 likeAction()
                             }
-                            
                         }
                     })
                 })
             }
-
-            
         }
     }
 
@@ -270,7 +258,6 @@ class FeedTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
     }
-
 }
 
 

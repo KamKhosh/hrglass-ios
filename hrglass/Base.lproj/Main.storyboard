@@ -1635,7 +1635,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wpP-3b-4vj">
-                                                    <rect key="frame" x="5" y="0.0" width="229.5" height="91"/>
+                                                    <rect key="frame" x="5" y="0.0" width="10" height="91"/>
                                                     <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
@@ -1644,7 +1644,7 @@
                                             </subviews>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="wpP-3b-4vj" firstAttribute="width" secondItem="VqQ-Po-XpP" secondAttribute="width" multiplier="0.75" id="NEC-8v-LHk"/>
+                                            <constraint firstItem="wpP-3b-4vj" firstAttribute="width" relation="lessThanOrEqual" secondItem="VqQ-Po-XpP" secondAttribute="width" multiplier="0.75" id="EAN-P9-Kq5"/>
                                             <constraint firstItem="wpP-3b-4vj" firstAttribute="height" secondItem="VqQ-Po-XpP" secondAttribute="height" id="XDE-Si-kyA"/>
                                             <constraint firstItem="wpP-3b-4vj" firstAttribute="centerY" secondItem="VqQ-Po-XpP" secondAttribute="centerY" id="aYL-Ji-9I9"/>
                                             <constraint firstItem="wpP-3b-4vj" firstAttribute="leading" secondItem="VqQ-Po-XpP" secondAttribute="leadingMargin" id="siD-hl-70Z"/>
@@ -1663,7 +1663,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mZc-SA-7pu">
-                                                    <rect key="frame" x="68.5" y="0.0" width="229.5" height="91"/>
+                                                    <rect key="frame" x="288" y="0.0" width="10" height="91"/>
                                                     <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
@@ -1673,8 +1673,8 @@
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="trailingMargin" secondItem="mZc-SA-7pu" secondAttribute="trailing" id="DPp-8g-8Ud"/>
+                                            <constraint firstItem="mZc-SA-7pu" firstAttribute="width" relation="lessThanOrEqual" secondItem="FEE-Nq-xrK" secondAttribute="width" multiplier="0.75" id="cvg-s7-FE0"/>
                                             <constraint firstItem="mZc-SA-7pu" firstAttribute="height" secondItem="FEE-Nq-xrK" secondAttribute="height" id="eiM-sG-wG8"/>
-                                            <constraint firstItem="mZc-SA-7pu" firstAttribute="width" secondItem="FEE-Nq-xrK" secondAttribute="width" multiplier="0.75" id="oJZ-tZ-jlR"/>
                                             <constraint firstItem="mZc-SA-7pu" firstAttribute="centerY" secondItem="FEE-Nq-xrK" secondAttribute="centerY" id="wvS-yt-ELn"/>
                                         </constraints>
                                         <edgeInsets key="layoutMargins" top="8" left="5" bottom="8" right="8"/>
@@ -1698,7 +1698,7 @@
                                 </connections>
                             </button>
                             <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="GI2-c2-hOc">
-                                <rect key="frame" x="0.0" y="627" width="300" height="40"/>
+                                <rect key="frame" x="6" y="627" width="294" height="40"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -1715,7 +1715,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="fpn-vY-nes" secondAttribute="trailing" constant="-16" id="6K4-rA-AHh"/>
                             <constraint firstItem="B15-M7-75u" firstAttribute="centerX" secondItem="Odu-YJ-rBw" secondAttribute="centerX" id="9OH-22-fE8"/>
                             <constraint firstItem="Utn-8z-d9m" firstAttribute="width" secondItem="oEU-Cg-rdY" secondAttribute="width" multiplier="0.5" id="GVM-Q7-dbj"/>
-                            <constraint firstItem="GI2-c2-hOc" firstAttribute="leading" secondItem="Odu-YJ-rBw" secondAttribute="leadingMargin" constant="-16" id="HkI-1M-9ZF"/>
+                            <constraint firstItem="GI2-c2-hOc" firstAttribute="leading" secondItem="Odu-YJ-rBw" secondAttribute="leadingMargin" constant="-10" id="HkI-1M-9ZF"/>
                             <constraint firstItem="oEU-Cg-rdY" firstAttribute="centerX" secondItem="Odu-YJ-rBw" secondAttribute="centerX" id="Hqf-Ji-MRn"/>
                             <constraint firstItem="fpn-vY-nes" firstAttribute="width" secondItem="Odu-YJ-rBw" secondAttribute="width" multiplier="0.2" id="I5U-vs-GXm"/>
                             <constraint firstItem="GI2-c2-hOc" firstAttribute="top" secondItem="B15-M7-75u" secondAttribute="bottom" constant="5" id="Km6-Hb-rnU"/>
@@ -1744,7 +1744,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jG2-VG-Rvq" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="zxd-GN-sRi" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="761" y="1679"/>
+            <point key="canvasLocation" x="761" y="1674"/>
         </scene>
         <!--Inbox View Controller-->
         <scene sceneID="2Pd-e8-ahp">
@@ -1868,7 +1868,7 @@
                     <connections>
                         <outlet property="navigationBar" destination="vNu-Uz-F3o" id="FKt-1U-Q84"/>
                         <outlet property="tableView" destination="r88-Db-Kpw" id="ggO-HQ-X2h"/>
-                        <segue destination="xfO-6J-fTv" kind="show" identifier="toMessagesView" action="showDetailViewController:sender:" id="bnX-7J-wai"/>
+                        <segue destination="xfO-6J-fTv" kind="show" identifier="toMessagesView" id="WIc-Pd-MeN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S25-UC-d4c" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2026,7 +2026,7 @@
                                         <rect key="frame" x="0.0" y="383.5" width="375" height="50"/>
                                         <subviews>
                                             <tabBar contentMode="scaleToFill" barStyle="black" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xcS-ed-nCs">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                                <rect key="frame" x="0.0" y="-0.5" width="375" height="50"/>
                                                 <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <items>
                                                     <tabBarItem tag="1" title="" image="gallery" id="IU0-qY-3qw"/>
@@ -2662,10 +2662,10 @@
                         <segue destination="qNH-tw-Uvg" kind="presentation" identifier="toDiscoverSegue" id="qHS-ry-Xip"/>
                         <segue destination="dGv-iI-Onb" kind="presentation" identifier="toUserProfileSegue" id="Edw-b2-iiL"/>
                         <segue destination="jaA-7n-Pvl" kind="presentation" identifier="toPostView" id="Lq0-D8-jlv"/>
-                        <segue destination="xfO-6J-fTv" kind="presentation" identifier="toMessagesView" id="DPy-7D-OlM"/>
                         <segue destination="YxX-R3-hm9" kind="presentation" identifier="toInboxSegue" id="3ao-0o-yWM"/>
                         <segue destination="INN-cs-JNV" kind="presentation" identifier="toCreatePostSegue" id="6eG-x6-B2W"/>
                         <segue destination="INN-cs-JNV" kind="presentation" identifier="useSavedPost" id="dIA-KB-ijf"/>
+                        <segue destination="xfO-6J-fTv" kind="presentation" identifier="toMessagesView" id="uQG-zV-Nmu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -3905,7 +3905,7 @@
         <segue reference="Mnx-q4-8ia"/>
         <segue reference="0q8-Ka-CvW"/>
         <segue reference="dIA-KB-ijf"/>
-        <segue reference="DPy-7D-OlM"/>
+        <segue reference="uQG-zV-Nmu"/>
         <segue reference="JGD-Oh-55j"/>
     </inferredMetricsTieBreakers>
 </document>
