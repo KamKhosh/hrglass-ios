@@ -1018,7 +1018,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         addChildViewController(postVC)
         
         postVC.view.frame = view.bounds
-        postVC.alphaView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         
         UIView.transition(with: self.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
             self.view.addSubview(postVC.view)

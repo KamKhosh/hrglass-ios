@@ -58,12 +58,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         self.tableView.estimatedRowHeight = 140
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        
-        super.viewDidAppear(animated)
-        self.alphaView.frame.size = CGSize(width: self.view.frame.size.width * 3.0 , height: self.view.frame.size.height * 3.0)
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

@@ -127,15 +127,14 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     func getMessages(){
         
         let messagesRef: DatabaseReference = Database.database().reference().child("Messages").child(messagesId)
-
         messagesRef.observe(.childAdded, with: { (snapshot) in
             
             if let message: NSDictionary = snapshot.value as? NSDictionary{
                 
                 self.messages.add(message)
                 self.collectionView.reloadData()
-        
             }
+            
             let lastIndex: IndexPath = IndexPath(item: self.messages.count - 1, section: 0)
             self.collectionView.scrollToItem(at:lastIndex , at: UICollectionViewScrollPosition.bottom, animated: true)
         })
@@ -176,10 +175,10 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
             }else{
                 
                 postMessage(messageData: messageData)
-                
             }
         }
     }
+    
     
     
     func postMessage(messageData: NSDictionary){
@@ -205,12 +204,10 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         var cell: MessageCollectionViewCell = MessageCollectionViewCell()
-        
         let messageData: NSDictionary = self.messages[indexPath.row] as! NSDictionary
         let myUid = Auth.auth().currentUser?.uid
         let text = messageData.value(forKey: "body") as! String
         let radius: CGFloat = 15.0
-        
         
         if (messageData.value(forKey: "sender") as? String == myUid){
             
@@ -248,7 +245,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         //adjust height of cell based on text
         
         return size
-        
     }
     
     
@@ -261,7 +257,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         return self.messages.count
         
     }
-    
     
 
     func calculateHeight(inString:String, withWidth: CGFloat) -> CGFloat {

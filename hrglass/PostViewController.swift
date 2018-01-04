@@ -63,8 +63,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     @IBOutlet weak var linkLbl: UILabel!
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var popupView: UIView!
-    @IBOutlet weak var alphaView: UIView!
-    @IBOutlet weak var shadowView: UIView!
+    @IBOutlet weak var topGradientView: UIView!
+    @IBOutlet weak var bottomGradientView: UIView!
     
     var likedByUser: Bool = false
     var currentUserId: String = ""
@@ -147,21 +147,27 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         } catch _ {
         }
         
+//        let gradient: CAGradientLayer  = CAGradientLayer()
+//        gradient.frame = self.topGradientView.bounds;
+//        gradient.colors = NSArray.init(array: [UIColor.black, UIColor.clear]) as? [Any]
+//        self.topGradientView.layer.insertSublayer(gradient, at: 0)
+//        
+//        let gradient2: CAGradientLayer  = CAGradientLayer()
+//        gradient2.frame = self.bottomGradientView.bounds;
+//        gradient2.colors = NSArray.init(array: [UIColor.clear, UIColor.black]) as? [Any]
+//        self.bottomGradientView.layer.insertSublayer(gradient, at: 0)
     }
+    
     
     
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        self.alphaView.frame.size = CGSize(width: self.contentView.frame.size.width * 3.0 , height: self.contentView.frame.size.height * 3.0)
         
-        //add Blur Effect to alpha view -- not quite the right blur effect
-        
-//        let blur:UIBlurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
-//        let effect = UIVisualEffectView(frame: CGRect(x:0,y:0,width:alphaView.layer.frame.width, height:alphaView.layer.frame.height))
-//        effect.effect = blur
-//        alphaView.addSubview(effect)
+
+
+        self.musicViewMinCenter = self.songView.center
 
         //Auto play if content is of the following categories
         if self.postData.category == .Music{
@@ -176,6 +182,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             self.playContentBtn(self)
         }
     }
+    
     
     
     func viewSetup(){
@@ -206,14 +213,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.popupView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.popupView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
-        //shadow view setup
-        self.shadowView.layer.cornerRadius = 8.0
-        self.shadowView.layer.masksToBounds = false
-        self.shadowView.layer.shadowColor = UIColor.black.cgColor
-        self.shadowView.layer.shadowOpacity = 0.3
-        self.shadowView.layer.shadowRadius = 5
-        self.shadowView.layer.shadowOffset = CGSize(width: 0, height: 0)
-        self.shadowView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
         //initialize hub
         hub = RKNotificationHub(view: self.commentBtn)
@@ -290,11 +289,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             //if there is a song with this post, extraData won't be empty/nil
             if (self.postData.songString != "" && self.postData.songString != nil){
                 
+                
                 //configure the music view with the song data
                 self.songLengthSlider.minimumValue = 0
                 self.songLengthSlider.isContinuous = false
                 self.songView.isHidden = false
-                self.musicViewMinCenter = self.songView.center
+                self.musicViewMinCenter = CGPoint(x:self.songView.frame.midX, y:self.songView.frame.midY)
                 self.blurredMusicImageView.contentMode = .scaleAspectFill
                 self.songInfo = self.dataManager.extrapolate(songData: self.postData.songString)
                 self.artistLbl.text = self.songInfo.artist
@@ -305,6 +305,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 
                 self.songLengthSlider.value = 0.0
                 self.songTimeSpentLbl.text = "0:00"
+                
+                
                 
                 if (source == "apple"){
                     //song is from apple music
@@ -334,6 +336,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                                 if (SKCloudServiceController.authorizationStatus() == .authorized){
                                     //play song
                                     self.appleMusicPlayTrackId(ids: [String(trackId)])
+                                    
                                     
                                 }else{
                                     //play preview -- 30 seconds in millis
@@ -411,6 +414,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 
             }else{
                 moveBtnsDown()
+                
             }
             
             
@@ -583,7 +587,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.blurredMusicImageView.alpha = 0.0
 //        let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.minimizeBtn.frame.maxY + 20 + self.songView.frame.height/2)
-         let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.postContainerPlaceholder.frame.midY + 20)
+         let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.postContainerPlaceholder.frame.midY + 10)
         
         self.musicViewMinimized = false
         self.blurredMusicImageView.isHidden = false
@@ -598,13 +602,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             self.songView.center = SongViewCenter
             self.songNameLbl.textAlignment = .center
             self.artistLbl.textAlignment = .center
-            self.songView.backgroundColor = UIColor.white
+            self.songView.backgroundColor = UIColor.clear
             
-            self.songImageView.frame.size = CGSize(width: self.songView.frame.width/2, height:self.songView.frame.width/2)
-            self.songImageView.layer.cornerRadius = self.songView.frame.width/4
-            self.songImageView.center = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.songView.bounds.midY - 40)
-            self.playMusicBtn.center = CGPoint(x: self.postContainerPlaceholder.frame.midX,y: self.songView.bounds.maxY - 75)
-            
+            self.songImageView.frame.size = CGSize(width: self.postContainerPlaceholder.frame.width/2, height:self.postContainerPlaceholder.frame.width/2)
+            self.songImageView.layer.cornerRadius = self.view.frame.width/4
+            self.songImageView.center = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY - 150)
+            self.playMusicBtn.center = CGPoint(x: self.view.bounds.midX,y: self.view.bounds.midY)
             self.blurredMusicImageView.alpha = 1.0
         }
     }
@@ -615,6 +618,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.songTapGesture.isEnabled = true
         self.musicViewMinimized = true
         self.moveBtnsUp()
+        
         UIView.animate(withDuration: 0.5, animations: {
             
             self.songNameLbl.textAlignment = .left
@@ -626,6 +630,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             self.songImageView.layer.cornerRadius = 25
             self.blurredMusicImageView.alpha = 0.0
             self.songView.center = self.musicViewMinCenter
+            
             self.songImageView.center = CGPoint(x: self.songView.bounds.minX + 35,y:self.songView.bounds.minY + 30)
             self.playMusicBtn.center = CGPoint(x: self.songView.bounds.maxX - 35,y:self.songView.bounds.minY + 30)
             
@@ -639,13 +644,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //moves the likes, comments, more button down when music view is maximized
     func moveBtnsDown(){
         
-        UIView.animate(withDuration: 0.5){
+        UIView.animate(withDuration: 0.3){
             
             //calculate distance between bottom of song view and bottom of view
-            
-            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.likeBtn.center.y + 50)
-            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.commentBtn.center.y + 50)
-            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.moreBtn.center.y + 50)
+            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.postContainerPlaceholder.frame.maxY - 20)
+            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.postContainerPlaceholder.frame.maxY - 20)
+            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.postContainerPlaceholder.frame.maxY - 20)
         }
     }
     
@@ -653,11 +657,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //moves the likes, comments and moreButton up when the music view is minimized
     func moveBtnsUp(){
     
-        UIView.animate(withDuration: 0.5){
+        UIView.animate(withDuration: 0.3){
     
-            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.likeBtn.center.y - 50)
-            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.commentBtn.center.y - 50)
-            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.moreBtn.center.y - 50)
+            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y: self.bottomGradientView.frame.minY + 10)
+            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.bottomGradientView.frame.minY + 10)
+            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.bottomGradientView.frame.minY + 10)
         }
     }
     
@@ -790,10 +794,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         if musicViewMinimized || self.postData.category == .Music{
             
             UIView.animate(withDuration: 0.3, animations: {
-                
-                self.shadowView.transform = CGAffineTransform(translationX: 0, y: 1000)
-                self.popupView.transform = CGAffineTransform(translationX: 0, y: 1000)
-                self.alphaView.alpha = 0.0
+            self.popupView.transform = CGAffineTransform(translationX: 0, y: 1000)
                 
             }){ (success) in
                 if success{
@@ -836,8 +837,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         if(likedByUser){
             
             if (postId != ""){
-                
-                
                 
                 self.likedByUser = false
                 self.flashThumb(liked: likedByUser)
@@ -920,11 +919,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 
         addChildViewController(commentsVC)
         
-        commentsVC.view.frame = self.popupView.bounds
-        commentsVC.view.center = self.popupView.center
-        commentsVC.alphaView.backgroundColor = UIColor.clear
+        commentsVC.view.frame = self.view.frame
+        commentsVC.view.center = self.view.center
         
-
         UIView.transition(with: self.view, duration: 0.5, options: .transitionCurlDown, animations: {
             self.view.addSubview(commentsVC.view)
         }) { (success) in
@@ -1010,7 +1007,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             self.songIsPlaying = false
             self.playMusicBtn.setImage(UIImage(named: "play"), for: .normal)
             
-            
             if avMusicPlayer != nil{
                 avMusicPlayer.pause()
             }else{
@@ -1079,7 +1075,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             // add something you want to happen when the Label Panning has started
             
             self.popupView.center = self.contentView.center
-            self.shadowView.center = self.contentView.center
         }
         
         if panGesture.state == UIGestureRecognizerState.ended {
@@ -1090,7 +1085,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 UIView.animate(withDuration: 0.1, animations: {
                     
                     self.popupView.transform = CGAffineTransform(translationX: xVel/2, y: yVel/2)
-                    self.shadowView.transform = CGAffineTransform(translationX: xVel/2, y: yVel/2)
                     
                 }){ (success) in
                     if success{
