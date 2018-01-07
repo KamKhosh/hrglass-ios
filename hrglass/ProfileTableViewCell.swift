@@ -55,6 +55,8 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
     @IBOutlet weak var playImageView: UIImageView!
     
+    @IBOutlet weak var messageBtn: UIButton!
+    
     var currentlikedIndex: IndexPath = IndexPath(row: 0, section: 0)
     
     var selectedCellRow: Int = -1
@@ -68,7 +70,9 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
 
     var latestContentSelected: (() -> Void)? = nil
     var collectionContentSelected: (() -> Void)? = nil
+    var messageBtnSelected: (() -> Void)? = nil
 
+    
     
     /****************************************
      *
@@ -82,7 +86,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
         self.likedCollectionView.delegate = self
         self.likedCollectionView.dataSource = self
-        
     }
     
     
@@ -123,6 +126,18 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             dataManager.removeFromFollowerList(userId: self.user.userID as String)
         }
     }
+    
+    
+    
+    @IBAction func messageAction(_ sender: Any) {
+        
+        if let messageAction = self.messageBtnSelected{
+            
+            messageAction()
+        }
+    }
+    
+    
     
     
     
@@ -319,8 +334,8 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         self.likedNextBtn.isHidden = false
         self.likeViewAllBtn.isHidden = false
         self.postsUserLikedLbl.isHidden = false
-        
     }
+    
     
     //hides liked contents buttons when there is no liked content
     func hideLikedContentBtns(){
@@ -332,7 +347,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
 
     
     
-  
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

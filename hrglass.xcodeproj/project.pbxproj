@@ -64,6 +64,7 @@
 		5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */; };
 		5E7197AE1F1D502900411A08 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7197AD1F1D502900411A08 /* AWSManager.swift */; };
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
+		5E88ED53200291F000CC04DE /* SupportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E88ED52200291F000CC04DE /* SupportViewController.swift */; };
 		5E8CDA701FE5AFE40008AC25 /* MoodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */; };
 		5EB1A7701FD1C4CD008F625E /* BreathingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */; };
 		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
@@ -146,6 +147,7 @@
 		5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockedUserCell.swift; sourceTree = "<group>"; };
 		5E7197AD1F1D502900411A08 /* AWSManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
+		5E88ED52200291F000CC04DE /* SupportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViewController.swift; sourceTree = "<group>"; };
 		5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodViewController.swift; sourceTree = "<group>"; };
 		5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreathingAnimation.swift; sourceTree = "<group>"; };
 		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 				5E638FCA1EC2452B008F8441 /* BlockedUserCell.swift */,
 				5E32A8591ED4F19800AEF9DA /* ChangePasswordViewController.swift */,
 				5EF85DF81F9278B5008887F9 /* SettingsTableViewCell.swift */,
+				5E88ED52200291F000CC04DE /* SupportViewController.swift */,
 			);
 			name = SettingsView;
 			sourceTree = "<group>";
@@ -601,6 +604,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E3BAC451F00282E0007197A /* SubmitPostViewController.swift in Sources */,
+				5E88ED53200291F000CC04DE /* SupportViewController.swift in Sources */,
 				5E28F4C61EECAAE400E74B01 /* MenuView.swift in Sources */,
 				5E29FD851EDFA0D100555CCB /* ImageCache.swift in Sources */,
 				5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */,

@@ -125,16 +125,9 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             
         case .help:
 
-            let alert = UIAlertController(title: "Hello", message: "Help/Support Under Construction", preferredStyle: .alert)
+            let supportView = self.storyboard?.instantiateViewController(withIdentifier: "supportVC") as! SupportViewController
             
-            let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-            
-            
-            alert.addAction(defaultAction)
-
-            
-            self.present(alert, animated: true, completion: nil)
-            
+            self.navigationController?.pushViewController(supportView, animated: true)
             
         case .logout:
             
@@ -163,7 +156,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             
             //do nothing
             print("do nothing")
-
         }
     }
     
@@ -186,7 +178,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
 
         do {
             
-            
             //Logout from firebase, then Facebook if necessary
             try Auth.auth().signOut()
             
@@ -194,8 +185,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 
                 let loginManager = LoginManager()
                 loginManager.logOut()
-                
-                
             }
             
             //Delete Local domain data
@@ -209,7 +198,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         } catch let signOutError as NSError {
             
             print ("Error signing out: %@", signOutError)
-            
             
             let alert = UIAlertController(title: "Error", message: "Logout Failed", preferredStyle: .alert)
             

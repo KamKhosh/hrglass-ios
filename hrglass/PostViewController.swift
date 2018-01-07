@@ -121,7 +121,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         panGesture.minimumNumberOfTouches = 1
         panGesture.delegate = self
         
-        
         self.contentView.backgroundColor = UIColor.clear
         self.contentView.clipsToBounds = false
         
@@ -212,6 +211,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.popupView.layer.shadowRadius = 5
         self.popupView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.popupView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
+        
+        
         
         
         //initialize hub
@@ -594,6 +595,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.songTapGesture.isEnabled = false
         
         self.moveBtnsDown()
+        
         UIView.animate(withDuration: 0.5) {
             
             self.songNameLbl.textColor = UIColor.white
@@ -919,7 +921,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 
         addChildViewController(commentsVC)
         
-        commentsVC.view.frame = self.view.frame
+        commentsVC.view.frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY, width: self.view.frame.width,height:self.view.frame.height)
         commentsVC.view.center = self.view.center
         
         UIView.transition(with: self.view, duration: 0.5, options: .transitionCurlDown, animations: {
@@ -1003,6 +1005,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         
         if self.songIsPlaying{
+            
             //if song was playing, set icon to play and pause the music player
             self.songIsPlaying = false
             self.playMusicBtn.setImage(UIImage(named: "play"), for: .normal)
@@ -1073,7 +1076,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         if panGesture.state == UIGestureRecognizerState.began {
             // add something you want to happen when the Label Panning has started
-            
             self.popupView.center = self.contentView.center
         }
         

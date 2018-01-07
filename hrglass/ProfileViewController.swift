@@ -541,7 +541,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.bioTextView.delegate = self
         
         //remove liked post if it isn't an active post
-    
+        cell.messageBtn.layer.cornerRadius = 3.0
+        cell.messageBtn.layer.borderWidth = 1.0
+        cell.messageBtn.layer.borderColor = self.colors.getMenuColor().cgColor
         
         cell.likedDataArray = self.likedDataArray
         
@@ -566,6 +568,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             if(currentlyViewingUser.userID as String == Auth.auth().currentUser?.uid){
                 cell.followBtn.isHidden = true
                 cell.bioTextView.isUserInteractionEnabled = true
+                cell.messageBtn.isHidden = true
             }else{
                 
                 cell.bioTextView.isUserInteractionEnabled = false
@@ -802,6 +805,14 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             postVC.didMove(toParentViewController: self)
         }
         
+        //action when the message button is selected
+        cell.messageBtnSelected = {
+            
+            self.performSegue(withIdentifier: "toMessagesView", sender: self)
+            
+            
+        }
+        
         return cell
     }
     
@@ -1008,6 +1019,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             
             vc.imageCache = self.imageCache
+            
+        }else if (segue.identifier == "toMessagesView"){
+            
+            let vc = segue.destination as? MessagesViewController
+            vc?.parentView = "profile"
+            vc?.selectedUserId = self.currentlyViewingUser.userID
             
         }
     }

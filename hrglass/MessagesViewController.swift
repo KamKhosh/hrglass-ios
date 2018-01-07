@@ -260,6 +260,7 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
     
 
     func calculateHeight(inString:String, withWidth: CGFloat) -> CGFloat {
+        
         let messageString = inString
         let attributes : [NSAttributedStringKey : Any] = [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20.0)]
         
@@ -406,6 +407,8 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         }else if (self.parentView == "inbox"){
             
             self.performSegue(withIdentifier: "unwindToInbox", sender: nil)
+        }else if (self.parentView == "profile"){
+            self.performSegue(withIdentifier: "unwindToProfile", sender: nil)
         }
     }
     
