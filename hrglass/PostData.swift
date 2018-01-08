@@ -43,6 +43,8 @@ enum Mood: String {
     case Bravo = "👏"
     case Silly = "😋"
     case Angry = "😡"
+    case Ok = "👌"
+    case Blessed = "🙏"
     case None = "🚫"
 
 }

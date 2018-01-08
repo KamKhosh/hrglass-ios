@@ -799,7 +799,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.addChildViewController(postVC)
             
             postVC.view.frame = self.view.bounds
-//            postVC.topGradientView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
             
             self.view.addSubview(postVC.view)
             postVC.didMove(toParentViewController: self)
@@ -809,7 +808,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.messageBtnSelected = {
             
             self.performSegue(withIdentifier: "toMessagesView", sender: self)
-            
             
         }
         

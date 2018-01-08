@@ -97,6 +97,8 @@ class MoodViewController: UIViewController {
         let bravoBtn: UIButton = UIButton(frame: CGRect.zero)
         let fireBtn: UIButton = UIButton(frame: CGRect.zero)
         let coolBtn: UIButton = UIButton(frame: CGRect.zero)
+        let okBtn: UIButton = UIButton(frame: CGRect.zero)
+        let blessedBtn: UIButton = UIButton(frame: CGRect.zero)
         let noneBtn: UIButton = UIButton(frame: CGRect.zero)
         
         afraidBtn.setTitle(Mood.Afraid.rawValue, for: .normal)
@@ -109,6 +111,8 @@ class MoodViewController: UIViewController {
         bravoBtn.setTitle(Mood.Bravo.rawValue, for: .normal)
         fireBtn.setTitle(Mood.Fire.rawValue, for: .normal)
         coolBtn.setTitle(Mood.Cool.rawValue, for: .normal)
+        okBtn.setTitle(Mood.Ok.rawValue, for: .normal)
+        blessedBtn.setTitle(Mood.Blessed.rawValue, for: .normal)
         noneBtn.setTitle(Mood.None.rawValue, for: .normal)
         
         funnyBtn.center = center
@@ -122,6 +126,8 @@ class MoodViewController: UIViewController {
         fireBtn.center = center
         coolBtn.center = center
         noneBtn.center = center
+        okBtn.center = center
+        blessedBtn.center = center
         
         noneBtn.tag = 0
         funnyBtn.tag = 1
@@ -134,6 +140,8 @@ class MoodViewController: UIViewController {
         bravoBtn.tag = 8
         fireBtn.tag = 9
         coolBtn.tag = 10
+        okBtn.tag = 11
+        blessedBtn.tag = 12
         
         
         afraidBtn.addTarget(self, action: #selector(self.afraidAction), for: .touchUpInside)
@@ -146,9 +154,11 @@ class MoodViewController: UIViewController {
         bravoBtn.addTarget(self, action: #selector(self.bravoAction), for: .touchUpInside)
         fireBtn.addTarget(self, action: #selector(self.fireAction), for: .touchUpInside)
         coolBtn.addTarget(self, action: #selector(self.coolAction), for: .touchUpInside)
+        okBtn.addTarget(self, action: #selector(self.okAction), for: .touchUpInside)
+        blessedBtn.addTarget(self, action: #selector(self.blessedAction), for: .touchUpInside)
         noneBtn.addTarget(self, action: #selector(self.noneAction), for: .touchUpInside)
         
-        moodArray = [noneBtn,afraidBtn,funnyBtn,sadBtn,angryBtn,shockedBtn,afraidBtn,sillyBtn,loveBtn,bravoBtn,fireBtn,coolBtn]
+        moodArray = [noneBtn,afraidBtn,funnyBtn,sadBtn,angryBtn,shockedBtn,afraidBtn,sillyBtn,loveBtn,bravoBtn,fireBtn,coolBtn,okBtn,blessedBtn]
         
         for button in moodArray{
             button.frame.size = CGSize(width: self.view.frame.width/CGFloat(moodArray.count/2),height:self.view.frame.width/CGFloat(moodArray.count/2))
@@ -156,9 +166,6 @@ class MoodViewController: UIViewController {
             button.titleLabel?.font = UIFont.systemFont(ofSize: 30.0)
             self.view.addSubview(button)
         }
-        
-        
-
     }
     
     
@@ -225,6 +232,17 @@ class MoodViewController: UIViewController {
         
         self.onMoodChosenWith(mood: .Love)
     }
+    
+    @objc func okAction(){
+        
+        self.onMoodChosenWith(mood: .Ok)
+    }
+    
+    @objc func blessedAction(){
+        
+        self.onMoodChosenWith(mood: .Blessed)
+    }
+    
     
     
     @objc func noneAction(){
@@ -299,7 +317,7 @@ class MoodViewController: UIViewController {
         let tag = CGFloat(button.tag)
         let distance = self.moodBtn.frame.width * 2/3
         let origin = self.moodBtn.center
-        let slice = (CGFloat.pi * 2.0) / CGFloat(self.moodArray.count)
+        let slice = (CGFloat.pi * 2.0) / CGFloat(self.moodArray.count - 1)
         let radians = tag * slice
         
         return pointFromPoint(origin: origin, distance: distance, rad: radians)
