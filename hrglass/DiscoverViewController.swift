@@ -34,7 +34,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     var count: Int = 0
     var hub: RKNotificationHub!
     var selectedUser: User!
-
+    var loggedInUser: User!
     
     @IBOutlet weak var requestsBtn: UIButton!
 
@@ -479,7 +479,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             let profileVC: ProfileViewController = destinationNavigationController.topViewController as! ProfileViewController
             profileVC.imageCache = self.imageCache
             profileVC.parentView = "discover"
-            
+            profileVC.loggedInUser = self.loggedInUser
             profileVC.currentlyViewingUID = self.selectedUser.userID
             profileVC.follwBtnIsUnfollow = false
         }

@@ -749,38 +749,19 @@ class DataManager {
     /*****************************************
      *
      *    MARK: UdpateViewsList
-     *  -- IncrementViewsCount, adds 1 to post view count
-     *  -- addToDidViewList, add postID to my view list
+     *  -- Adds user to viewed list in post, Firebase Functions will observe this change and update the count
      
-     *  IncrementViewsCount()
-     *  --Will update and maintain view list
-     *  -- Won't increment if user has already viewed
      *************************************************/
     
-    func updateViewsList(post:PostData, completion:@escaping(Int) -> ()){
+    func updateViewsList(post:PostData){
         
         let uid = post.user.value(forKey: "uid") as! String
         let currentUid: String = (Auth.auth().currentUser?.uid)!
         
         let viewsRef: DatabaseReference = Database.database().reference().child("Posts").child(uid)
         
-        self.getViewedPostList(uid:uid, completion: { dict in
-            
-            if let _ = dict.value(forKey: currentUid){
-                
-                //do nothing -- completion with same number of views
-                completion(post.views)
-                
-            }else{
-                
-                viewsRef.child("users_who_viewed").child((Auth.auth().currentUser?.uid)!).setValue(true)
-                
-                let views = post.views
-                let tempNum = views + 1
-                viewsRef.child("views").setValue(tempNum)
-                completion(tempNum)
-            }
-        })
+        viewsRef.child("users_who_viewed").child(currentUid).setValue(true)
+        
     }
     
     

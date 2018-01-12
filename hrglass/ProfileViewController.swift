@@ -16,12 +16,12 @@ import iOSPhotoEditor
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CropViewControllerDelegate{
     
-    
 
     let dataManager = DataManager()
     let colors = Colors()
     var progressView: ProgressView!
     var timer: Timer!
+    
     
     //DataSource
     var latestPostData:PostData!
@@ -34,10 +34,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //IMPORTANT: Must set currentlyViewingUser and currentlyViewingUID in prepare segue in this VC's parent
     var currentlyViewingUser: User!
     var currentlyViewingUID: String = ""
-    
+    var loggedInUser: User!
     var follwBtnIsUnfollow: Bool = false
     var isChoosingProfile: Bool = false
     let imagePicker = UIImagePickerController()
+    var moreMenuPostData: PostData!
     
     //table view with one cell
     @IBOutlet weak var profileTableView: UITableView!
@@ -66,6 +67,26 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         self.profileTableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
         
+        
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.getProfileData()
+    }
+    
+    
+    
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    
+    //Retrieve User Data
+    func getProfileData(){
         //If the current user was set before in prepare for segue
         if currentlyViewingUser != nil{
             
@@ -139,16 +160,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         
+        
     }
-    
-    
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     
     
     
@@ -470,9 +483,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     
-    
-    
-    
     /******************************************************************************
      *
      *      Latest Post DATA RETRIEVAL
@@ -485,6 +495,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             let uid = self.currentlyViewingUID
             latestPostRef = ref.child("Posts").child(uid)
+            
             latestPostRef.observeSingleEvent(of: .value, with: { snapshot in
                 
                 if let postData: NSDictionary = snapshot.value as? NSDictionary {
@@ -502,6 +513,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                         
                         
                     }else{
+                        
                         postData.setValue([:], forKey: "liked_by_list")
                         self.latestPostData = self.dataManager.getPostDataFromDictionary(postDict: postData, uid: uid)
                         if (Double(self.latestPostData.expireTime)! < Date().millisecondsSince1970) {
@@ -537,7 +549,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: ProfileTableViewCell = profileTableView.dequeueReusableCell(withIdentifier: "profileCell") as! ProfileTableViewCell
-        
         cell.bioTextView.delegate = self
         
         //remove liked post if it isn't an active post
@@ -600,7 +611,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.bioTextView.textColor = UIColor.white
         cell.user = self.currentlyViewingUser
         cell.likedCollectionView.reloadData()
-        
         
         
         if self.latestPostData != nil{
@@ -707,7 +717,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             if (currentlyViewingUser.bio == ""){
                 
                 cell.bioTextView.frame.size = CGSize(width: cell.bioTextView.frame.width, height:0)
-                
             }
             
             
@@ -775,6 +784,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             postVC.postData = collCellData
             postVC.source = "Profile"
             
+            //just pass a selected IndexPath so it isn't empty
+            postVC.selectedIndexPath = IndexPath(row: 0, section: 0)
+            
             self.addChildViewController(postVC)
             
             postVC.view.frame = self.view.bounds
@@ -789,11 +801,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.latestContentSelected = {
             
             let postVC: PostViewController = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
-            
+            postVC.selectedIndexPath = IndexPath(row: 0, section: 0)
             postVC.delegate = self
             postVC.imageCache = self.imageCache
             postVC.postData = self.latestPostData
-            
             postVC.source = "Profile"
             
             self.addChildViewController(postVC)
@@ -819,7 +830,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return 1
-        
     }
     
     
@@ -831,6 +841,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
      ****************************/
     
     func getLikedPostData(){
+        
         let currentUserId = self.currentlyViewingUID
         
         let likedRef = Database.database().reference().child("Users").child(currentUserId).child("liked_posts")
@@ -861,15 +872,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                     let postUserId = key as! String
                     
-                    
                     postRef.child(postUserId).observeSingleEvent(of: .value, with: { postSnapshot in
                         
                         if let post: NSDictionary = postSnapshot.value as? NSDictionary{
                             
-                            
                             let postData: PostData = self.dataManager.getPostDataFromDictionary(postDict: post, uid: key as! String)
-                            
-                            
                             
                             if (Double(postData.expireTime)! > Date().millisecondsSince1970) {
                                 
@@ -891,20 +898,77 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     //Post View Delegates
+    //the user has just touched the liked button. If liked is true, the user has liked the photo. If false, unliked
     func likedButtonPressed(liked: Bool, indexPath: IndexPath) {
-        //don't do anything
+        
+        
+        //update UI
+        // nothing
         
     }
     
+    
+    
     func moreButtonPressed(data: PostData, indexPath: IndexPath) {
         
-        //don't do anything
+        let fullname: String = data.user.value(forKey: "name") as! String
+        
+        let alert: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let block: UIAlertAction = UIAlertAction(title: String(format:"Block %@", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            
+            self.moreMenuPostData = data
+            self.blockUserAction()
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let message: UIAlertAction = UIAlertAction(title: String(format:"Send %@ a Message", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            
+            self.moreMenuPostData = data
+            let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+            
+            cell.messageAction(self)
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let delete: UIAlertAction = UIAlertAction(title: String(format:"Expire Post", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            //set the expire time to the post creation time
+            let ref: DatabaseReference = Database.database().reference().child("Posts").child((Auth.auth().currentUser?.uid)!).child("expire_time")
+            ref.setValue(data.creationDate)
+            
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        
+        
+        let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        
+        if (data.user.value(forKey: "uid") as? String  == Auth.auth().currentUser?.uid){
+            
+            alert.addAction(delete)
+        }else{
+            alert.addAction(message)
+            alert.addAction(block)
+            
+        }
+        
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        
     }
     
     func blockUserAction(){
         
-        
         //don't do anything
+        print(String(format:"Block User (%@) Action", self.moreMenuPostData))
+        self.dataManager.blockUser(postData: self.moreMenuPostData)
+        self.performSegue(withIdentifier: "unwindToFeedSegue", sender: self)
+        
         
     }
     
@@ -936,7 +1000,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        
         
         //change background and text
         textView.backgroundColor = UIColor.white
@@ -1023,7 +1086,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             let vc = segue.destination as? MessagesViewController
             vc?.parentView = "profile"
             vc?.selectedUserId = self.currentlyViewingUser.userID
-            
+            vc?.loggedInUser = self.loggedInUser
         }
     }
     

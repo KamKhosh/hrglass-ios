@@ -617,6 +617,11 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <webView hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ecl-Xd-vOo">
+                                        <rect key="frame" x="-2" y="40" width="375" height="667"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </webView>
                                     <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="Iet-8r-Fhv" customClass="GradientView" customModule="hrglass" customModuleProvider="target">
                                         <rect key="frame" x="-0.5" y="637" width="375" height="150"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -887,6 +892,7 @@
                         <outlet property="firstPostView" destination="wC5-1X-NQl" id="AAU-XT-MBN"/>
                         <outlet property="likeBtn" destination="t8y-xO-JVv" id="8Yi-66-Dug"/>
                         <outlet property="linkLbl" destination="ezH-DD-aYF" id="znV-Va-w4r"/>
+                        <outlet property="linkWebView" destination="ecl-Xd-vOo" id="raQ-Ob-scp"/>
                         <outlet property="minimizeBtn" destination="Psx-gC-B3l" id="wJ6-Md-5hj"/>
                         <outlet property="moreBtn" destination="ECN-R2-NcI" id="pcV-b7-J5h"/>
                         <outlet property="nameLbl" destination="mMI-ID-hcD" id="3je-Re-f5L"/>

@@ -12,6 +12,7 @@ import AVKit
 import Firebase
 import MediaPlayer
 import StoreKit
+//import WebKit
 
 
 //Protocol for POST VIEW CONTROLLER
@@ -40,8 +41,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     var avPlayerViewController: AVPlayerViewController!
     var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer
     var avMusicPlayer: AVAudioPlayer!
+
     
     //Storyboard Outlets
+
+    @IBOutlet weak var linkWebView: UIWebView!
     @IBOutlet weak var profilePhotoImageView: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var timeRemainingLbl: UILabel!
@@ -124,9 +128,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.contentView.backgroundColor = UIColor.clear
         self.contentView.clipsToBounds = false
         
-        //set speaker to the large speaker
-        
-        
         //current user data
         self.currentUserId = Auth.auth().currentUser!.uid
         
@@ -141,6 +142,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
         
+        //set speaker to the large speaker
         do {
             try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
         } catch _ {
@@ -218,12 +220,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         //initialize hub
         hub = RKNotificationHub(view: self.commentBtn)
         
-        if (self.source == "Profile"){
-            
-            //hide like, more buttons
-            self.likeBtn.isHidden = true
-            self.moreBtn.isHidden = true
-        }
     }
     
     
@@ -247,13 +243,14 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //            }
 
             let name: String = user.value(forKey: "name") as! String
-            
             self.nameLbl.text = name
             self.timeRemainingLbl.text = dataManager.getTimeString(expireTime: postData.expireTime)
             
+            //set profile image
             imageCache.getImage(urlString: user.value(forKey: "profilePhoto") as! String, completion: { (image) in
                 self.profilePhotoImageView.image = image
             })
+            
             
             //get ALL comments and set the count
             dataManager.getCommentDataFromFirebase(uid: user.value(forKey: "uid") as! String, completion: { (comments) in
@@ -270,7 +267,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             })
         
             
-            //SETUP LIKES
+            //SETUP LIKES and Liked Dictionary
             if let likedDict: NSDictionary = self.postData.usersWhoLiked {
                 
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
@@ -306,8 +303,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 
                 self.songLengthSlider.value = 0.0
                 self.songTimeSpentLbl.text = "0:00"
-                
-                
                 
                 if (source == "apple"){
                     //song is from apple music
@@ -473,6 +468,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     self.linkLbl.textColor = UIColor.white
                     self.linkLbl.isHidden = false
                 })
+                
+                self.linkWebView.isHidden = false
+                let url = URL (string: self.postData.data)
+                let requestObj = URLRequest(url: url!)
+                
+                self.linkWebView.loadRequest(requestObj)
                 
             default:
                 print("")
@@ -831,7 +832,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    //Like Button toggle -- Like button only shows when this is called from FeedVC
+    //Like Button toggle
     @IBAction func likeAction(_ sender: Any) {
         
         let postId:String = self.postData.postId
@@ -865,10 +866,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         }
     }
     
+    
     //will add a thumb and fade out based on whether the user has liked the post or unliked it
     func flashThumb(liked: Bool){
         
-        let frame: CGRect = CGRect(x: self.postContainerPlaceholder.frame.origin.x, y: self.postContainerPlaceholder.frame.origin.y, width: self.postContainerPlaceholder.frame.width/2, height: self.postContainerPlaceholder.frame.height/2)
+        let frame: CGRect = CGRect(x: self.postContainerPlaceholder.frame.midX, y: self.postContainerPlaceholder.frame.midX, width: self.postContainerPlaceholder.frame.width/2, height: self.postContainerPlaceholder.frame.width/2)
         
         let thumb: UIImageView = UIImageView(frame: frame)
         thumb.center = self.postContainerPlaceholder.center
@@ -1188,6 +1190,64 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //POSTVIEWCONTROLLER DELEGTE METHODS
     
     func likedButtonPressed(liked: Bool, indexPath: IndexPath){
+        
+        
+        //handle backend updates, then call the delegate method to update the UI
+        
+        if(!liked){
+            
+            //the post was previously liked by the user, set likedByUser to false
+            if (postData.postId != ""){
+                
+                //set image to normal color
+                let newImage: UIImage = UIImage.init(named: "thumbs up")!
+                self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
+                
+                //decrement like count
+//                let likeCount: Int = self.postData.likes
+//                self.likeCountLbl.text = String(likeCount - 1)
+                
+                
+                //remove current user from likes list
+                let postLikesDictRef = Database.database().reference().child("Posts").child(self.postData.user.value(forKey: "uid") as! String).child("users_who_liked").child(currentUserId)
+                postLikesDictRef.removeValue()
+                
+                //remove post from user's liked posts
+                let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts").child(self.postData.user.value(forKey: "uid") as! String)
+                likedDictRef.removeValue()
+                
+            }
+            
+            
+        }else{
+            //post wasn't liked by user, set likedByUser to true
+            
+            if (self.postData.postId != ""){
+                
+                self.likedByUser = true
+                
+                //set thumb to be red tint
+                let newImage: UIImage = UIImage.init(named: "thumbs up")!
+                self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
+                
+                //Add the current user to the likes list
+                let postLikesDictRef = Database.database().reference().child("Posts").child(self.postData.user.value(forKey: "uid") as! String).child("users_who_liked")
+                postLikesDictRef.child(currentUserId).setValue(true)
+                
+                
+               // update views list
+                self.dataManager.updateViewsList(post: self.postData)
+                
+                
+                let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts")
+                likedDictRef.child(self.postData.postId).setValue(self.postData.expireTime)
+
+            }
+        }
+        
+        
+        
+        
         if self.delegate != nil{
             self.delegate.likedButtonPressed(liked: liked, indexPath: indexPath)
         }

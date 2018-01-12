@@ -134,52 +134,57 @@ class FeedTableViewCell: UITableViewCell {
                 let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
                 
-                //decrement like count
-                let likeCount: Int = Int(self.likeCountLbl.text!)!
-                self.likeCountLbl.text = String(likeCount - 1)
-                let postLikesRef = Database.database().reference().child("Posts").child(self.postUserId).child("likes")
-
+                //decrement local like count
+                let likes = self.postData.likes
+                if likes > 0{
+                    self.likeCountLbl.text = String(likes - 1)
+                    self.postData.likes = likes - 1
+                }
+                
+                
                 //remove current user from likes list
                 let postLikesDictRef = Database.database().reference().child("Posts").child(self.postUserId).child("users_who_liked").child(currentUserId)
                 postLikesDictRef.removeValue()
-                
+
                 //remove post from user's liked posts
                 let likedDictRef = Database.database().reference().child("Users").child(currentUserId).child("liked_posts").child(self.postUserId)
                 likedDictRef.removeValue()
                 
-                postLikesRef.observeSingleEvent(of: .value, with: { snapshot in
-                    
-                    let likes = snapshot.value as? Int
-                    
-                    if likes != nil{
-
-                        let tempNum = likes! - 1
-                        postLikesRef.setValue(tempNum)
-
-                        self.dataManager.getLikedPostsList(userId: self.currentUserId, completion: { snapshot in
-                            
-                            if let data: NSMutableDictionary = snapshot.mutableCopy() as? NSMutableDictionary{
-                                
-                                //Liked Dictionary Cleanup
-                                let newdata: NSMutableDictionary = self.dataManager.postsCleanup(dictionary: data).mutableCopy() as! NSMutableDictionary
-                                newdata.removeObject(forKey: self.postUserId)
-                                
-                                let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
-                                
-                                tmp.removeObject(forKey: (Auth.auth().currentUser?.uid)!)
-                                
-                                self.postData.usersWhoLiked = tmp;
-                                self.postData.likes = tempNum
-                                
-                                //Fire the action in FEEDVIEWCONTROLLER cellForRowAt:
-                                if let likeAction = self.newUsersDict
-                                {
-                                    likeAction()
-                                }
-                            }
-                        })
-                    }
-                })
+                
+//                let postLikesRef = Database.database().reference().child("Posts").child(self.postUserId).child("likes")
+//                postLikesRef.observeSingleEvent(of: .value, with: { snapshot in
+//
+//                    let likes = snapshot.value as? Int
+//
+//                    if likes != nil{
+//
+//                        let tempNum = likes! - 1
+//                        postLikesRef.setValue(tempNum)
+//
+//                        self.dataManager.getLikedPostsList(userId: self.currentUserId, completion: { snapshot in
+//
+//                            if let data: NSMutableDictionary = snapshot.mutableCopy() as? NSMutableDictionary{
+//
+//                                //Liked Dictionary Cleanup
+//                                let newdata: NSMutableDictionary = self.dataManager.postsCleanup(dictionary: data).mutableCopy() as! NSMutableDictionary
+//                                newdata.removeObject(forKey: self.postUserId)
+//
+//                                let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
+//
+//                                tmp.removeObject(forKey: (Auth.auth().currentUser?.uid)!)
+//
+//                                self.postData.usersWhoLiked = tmp;
+//                                self.postData.likes = tempNum
+//
+//                                //Fire the action in FEEDVIEWCONTROLLER cellForRowAt:
+//                                if let likeAction = self.newUsersDict
+//                                {
+//                                    likeAction()
+//                                }
+//                            }
+//                        })
+//                    }
+//                })
             }
             
             
@@ -194,61 +199,71 @@ class FeedTableViewCell: UITableViewCell {
                 let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
             
-                let postLikesRef = Database.database().reference().child("Posts").child(self.postUserId).child("likes")
-                
-                
-                //Add the current user to the likes list
+//                let postLikesRef = Database.database().reference().child("Posts").child(self.postUserId).child("likes")
+//
+//
+//                //Add the current user to the likes list
                 let postLikesDictRef = Database.database().reference().child("Posts").child(self.postUserId).child("users_who_liked")
                 postLikesDictRef.child(currentUserId).setValue(true)
+//
+                
+                //increment views and update list in Firebase
+                self.dataManager.updateViewsList(post: self.postData)
+                
+                //update local counts for views if I haven't viewed yet
+                let myUid = Auth.auth().currentUser?.uid
+                if(self.postData.usersWhoViewed.value(forKey:myUid!) == nil){
+                    let views = self.postData.views + 1
+                    self.viewCountLbl.text = String(views)
+                    self.postData.views = views
+                    self.postData.usersWhoViewed.setValue(true, forKey: myUid!)
+                }
+                
+                let likes = self.postData.likes + 1
+                self.likeCountLbl.text = String(likes)
+                self.postData.likes = likes
+                self.postData.usersWhoLiked.setValue(true, forKey: myUid!)
                 
                 
-                //increment views and update list
-                self.dataManager.updateViewsList(post: self.postData, completion: { views in
-                    
-                    DispatchQueue.main.async {
-                        self.viewCountLbl.text = String(views)
-                    }
-                })
                 
-                
-                let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts")
-                
-                //increment likes and update list
-                postLikesRef.observeSingleEvent(of: .value, with: { snapshot in
-                
-                    var likes = snapshot.value as? Int
-                    
-                    if likes == nil{
-                        likes = 0;
-                    }
-                    
-                    let tempNum = likes! + 1
-                    postLikesRef.setValue(tempNum)
-                    self.likeCountLbl.text = String(tempNum)
-                        
-                    self.dataManager.getLikedPostsList(userId: self.currentUserId, completion: { snapshot in
-                        
-                        if let data: NSMutableDictionary = snapshot.mutableCopy() as? NSMutableDictionary{
-                            
-                            //make the value the time created (In Milliseconds since 1970) so we can remove from dictionary when appropriate
-                            data.setValue(self.postData.expireTime, forKey:self.postUserId)
-                            likedDictRef.setValue(data)
-                            
-                            let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
-                            
-                            tmp.setValue(true, forKey: (Auth.auth().currentUser?.uid)!)
-                            self.postData.usersWhoLiked = tmp;
-                            
-                            //set liked users dict and call action on tableView
-                            self.postData.likes = tempNum
-                            
-                            if let likeAction = self.newUsersDict
-                            {
-                                likeAction()
-                            }
-                        }
-                    })
-                })
+//                let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts")
+//
+//                //increment likes and update list
+//                postLikesRef.observeSingleEvent(of: .value, with: { snapshot in
+//
+//                    var likes = snapshot.value as? Int
+//
+//                    if likes == nil{
+//                        likes = 0;
+//                    }
+//
+//                    let tempNum = likes! + 1
+//                    postLikesRef.setValue(tempNum)
+//                    self.likeCountLbl.text = String(tempNum)
+//
+//                    self.dataManager.getLikedPostsList(userId: self.currentUserId, completion: { snapshot in
+//
+//                        if let data: NSMutableDictionary = snapshot.mutableCopy() as? NSMutableDictionary{
+//
+//                            //make the value the time created (In Milliseconds since 1970) so we can remove from dictionary when appropriate
+//                            data.setValue(self.postData.expireTime, forKey:self.postUserId)
+//                            likedDictRef.setValue(data)
+//
+//                            let tmp: NSMutableDictionary = self.postData.usersWhoLiked.mutableCopy() as! NSMutableDictionary
+//
+//                            tmp.setValue(true, forKey: (Auth.auth().currentUser?.uid)!)
+//                            self.postData.usersWhoLiked = tmp;
+//
+//                            //set liked users dict and call action on tableView
+//                            self.postData.likes = tempNum
+//
+//                            if let likeAction = self.newUsersDict
+//                            {
+//                                likeAction()
+//                            }
+//                        }
+//                    })
+//                })
             }
         }
     }

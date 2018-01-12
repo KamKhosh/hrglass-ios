@@ -737,10 +737,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 self.showPostPopUp(postData: cell.postData, postCenter: cell.contentImageBtn.center, indexPath:indexPath)
             })
             
-            self.dataManager.updateViewsList(post: cell.postData, completion: { views in
-                cell.viewCountLbl.text = String(views)
-                cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
-            })
+            self.dataManager.updateViewsList(post: cell.postData)
+            let myUid = (Auth.auth().currentUser?.uid)!
+            
+            //DB values have already been updated. if not already viewed, update local values
+            if(cell.postData.usersWhoViewed.value(forKey:myUid) == nil){
+                cell.viewCountLbl.text = String(cell.postData.views + 1)
+                cell.postData.usersWhoViewed.setValue(true, forKey: myUid)
+            }
+            
+            cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
+
         }
         
         cell.moreBtnSelected = {
@@ -1007,7 +1014,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         
         // add child view controller view to container
-
         let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
         postVC.delegate = self
         postVC.imageCache = self.imageCache
@@ -1221,6 +1227,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             profileVC.currentlyViewingUser = loggedInUser
             profileVC.follwBtnIsUnfollow = false
             
+            
             if navigationMenu != nil{
                 self.navigationMenu.close()
             }
@@ -1244,6 +1251,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             profileVC.imageCache = self.imageCache
             self.imageCache = ImageCache()
             
+            profileVC.loggedInUser = self.loggedInUser
             profileVC.currentlyViewingUID = self.selectedUserUID
             
             //if the user is selecting from the noPostsCollectionView, noPostsLbl will not be hidden and we want the follow button to say follow
@@ -1262,6 +1270,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             let discoverVC = segue.destination as! DiscoverViewController
             discoverVC.imageCache = self.imageCache
+            discoverVC.loggedInUser = self.loggedInUser
             self.imageCache = ImageCache()
             
         }
