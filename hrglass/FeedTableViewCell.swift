@@ -150,9 +150,9 @@ class FeedTableViewCell: UITableViewCell {
                 let likedDictRef = Database.database().reference().child("Users").child(currentUserId).child("liked_posts").child(self.postUserId)
                 likedDictRef.removeValue()
                 
-//                if let likeAction = self.newUsersDict{
-//                        likeAction()
-//                }
+                if let likeAction = self.newUsersDict{
+                        likeAction()
+                }
             }
             
             
@@ -169,8 +169,9 @@ class FeedTableViewCell: UITableViewCell {
             
 
 //                //Add the current user to the likes list
-                let postLikesDictRef = Database.database().reference().child("Posts").child(self.postUserId).child("users_who_liked")
-                postLikesDictRef.child(currentUserId).setValue(true)
+                print("Updating Likes Lists")
+                let postLikesDictRef = Database.database().reference().child("Posts").child(self.postUserId).child("users_who_liked").child(currentUserId)
+                postLikesDictRef.setValue(true)
                 
                 let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts").child(self.postUserId)
                 likedDictRef.setValue(self.postData.expireTime)
@@ -185,14 +186,31 @@ class FeedTableViewCell: UITableViewCell {
                     let views = self.postData.views + 1
                     self.viewCountLbl.text = String(views)
                     self.postData.views = views
-                    self.postData.usersWhoViewed.setValue(true, forKey: myUid!)
+                    
+                    //check for empty dictionary
+                    if self.postData.usersWhoViewed.count == 0{
+                        self.postData.usersWhoViewed = NSDictionary.init(dictionary: [myUid ?? "":true])
+                     }else{
+                        self.postData.usersWhoViewed.setValue(true, forKey: myUid!)
+                    }
+                    
                 }
                 
                 let likes = self.postData.likes + 1
                 self.likeCountLbl.text = String(likes)
                 self.postData.likes = likes
-                self.postData.usersWhoLiked.setValue(true, forKey: myUid!)
                 
+                //check for empty dictionary
+                if self.postData.usersWhoLiked.count == 0{
+                    self.postData.usersWhoLiked = NSDictionary.init(dictionary: [myUid ?? "":true])
+                }else{
+                    self.postData.usersWhoLiked.setValue(true, forKey: myUid!)
+                }
+                
+                
+                if let likeAction = self.newUsersDict{
+                    likeAction()
+                }
             }
         }
     }

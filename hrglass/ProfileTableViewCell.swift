@@ -12,12 +12,11 @@ import Firebase
 
 class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource{
     
-
     var likedDataArray = [PostData]()
-    
     let dataManager = DataManager()
     let imageCache: ImageCache = ImageCache()
     var awsManager: AWSManager = AWSManager()
+    var selectedPostData: PostData!
     
     let colors: Colors = Colors()
     
@@ -139,8 +138,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
     
     
-    
-    
     @IBAction func likedBackAction(_ sender: Any) {
         
         //scroll left on liked collectionView by subtracting 2 to currentIndex (if not at beginning) then scroll to current index and get more data if necessary
@@ -164,9 +161,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     @IBAction func likedViewAllAction(_ sender: Any) {
         
         //goto Viewall liked content view -> storyboard segue
-        
     }
-    
 
     
     
@@ -200,7 +195,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
         var cell: ProfileCollectionViewCell = ProfileCollectionViewCell()
         
-        
         if (collectionView == likedCollectionView){
             
             cell = likedCollectionView.dequeueReusableCell(withReuseIdentifier: "postCell", for: indexPath) as! ProfileCollectionViewCell
@@ -227,8 +221,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             }
             
             
-            
-            
             switch likedDataArray[indexPath.row].category {
                 
             case .Video:
@@ -236,14 +228,12 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 //just set the photo for now until we get video stuff setup
                 cell.borderView.layer.borderColor = colors.getPurpleColor().cgColor
                 
-                
                 let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), uid)
                 self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
                     
                     cell.imageButton.setImage(image, for: .normal)
                     cell.loadingIndicator.stopAnimating()
                     cell.playImageView.isHidden = false
-                    
                 })
                 
             case .Photo:
@@ -296,15 +286,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                     
                     cell.imageButton.setImage(image, for:.normal)
                     cell.loadingIndicator.stopAnimating()
-                    
-//                    cell.linkLbl.adjustsFontSizeToFitWidth = true
-//                    cell.linkLbl.numberOfLines = 3
-//                    cell.linkLbl.backgroundColor = UIColor.darkGray
-//                    cell.linkLbl.alpha = 0.7
-//                    cell.linkLbl.text = label
-//                    cell.linkLbl.textAlignment = .center
-//                    cell.linkLbl.textColor = UIColor.white
-//                    cell.linkLbl.isHidden = false
+                
                 })
                 
             case .None:
@@ -362,7 +344,6 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
 
     
     
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

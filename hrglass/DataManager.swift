@@ -758,9 +758,10 @@ class DataManager {
         let uid = post.user.value(forKey: "uid") as! String
         let currentUid: String = (Auth.auth().currentUser?.uid)!
         
-        let viewsRef: DatabaseReference = Database.database().reference().child("Posts").child(uid)
+        let viewsRef: DatabaseReference = Database.database().reference().child("Posts").child(uid).child("users_who_viewed").child(currentUid)
         
-        viewsRef.child("users_who_viewed").child(currentUid).setValue(true)
+        print("Updating Views Lists")
+        viewsRef.setValue(true)
         
     }
     
