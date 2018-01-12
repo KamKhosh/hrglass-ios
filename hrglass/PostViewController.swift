@@ -456,18 +456,18 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 self.linkLbl.isHidden = false
                 self.playContentBtn.setImage(self.dataManager.clearImage, for: .normal)
                 
-                self.dataManager.setURLView(urlString: self.postData.data as String, completion: { (image, label) in
-                    
-                    self.contentImageView.image = image
-                    self.linkLbl.adjustsFontSizeToFitWidth = true
-                    self.linkLbl.numberOfLines = 3
-                    self.linkLbl.backgroundColor = UIColor.darkGray
-                    self.linkLbl.alpha = 0.7
-                    self.linkLbl.text = label
-                    self.linkLbl.textAlignment = .center
-                    self.linkLbl.textColor = UIColor.white
-                    self.linkLbl.isHidden = false
-                })
+//                self.dataManager.setURLView(urlString: self.postData.data as String, completion: { (image, label) in
+//
+//                    self.contentImageView.image = image
+//                    self.linkLbl.adjustsFontSizeToFitWidth = true
+//                    self.linkLbl.numberOfLines = 3
+//                    self.linkLbl.backgroundColor = UIColor.darkGray
+//                    self.linkLbl.alpha = 0.7
+//                    self.linkLbl.text = label
+//                    self.linkLbl.textAlignment = .center
+//                    self.linkLbl.textColor = UIColor.white
+//                    self.linkLbl.isHidden = false
+//                })
                 
                 self.linkWebView.isHidden = false
                 let url = URL (string: self.postData.data)
@@ -502,8 +502,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             let millis = TimeInterval(self.applicationMusicPlayer.currentPlaybackTime * 1000)
             print(millis/self.songLength)
-            self.songTimeSpentLbl.text = self.applicationMusicPlayer.currentPlaybackTime.minuteSecond
             
+            self.songTimeSpentLbl.text = self.applicationMusicPlayer.currentPlaybackTime.minuteSecond
             self.songLengthSlider.setValue(Float(millis/self.songLength * 100), animated: true)
             
             //if the song reaches the end. Stop the player
@@ -1146,7 +1146,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.avPlayerViewController.view.frame = self.firstPostView.bounds
         self.avPlayerViewController.delegate = self
         player.volume = 2
-        
         
         
         if primary{

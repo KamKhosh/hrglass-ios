@@ -291,6 +291,21 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 
             case .Link:
                 print("Link")
+                cell.borderView.layer.borderColor = UIColor.black.cgColor
+                dataManager.setURLView(urlString: likedDataArray[indexPath.row].data as String, completion: { (image, label) in
+                    
+                    cell.imageButton.setImage(image, for:.normal)
+                    cell.loadingIndicator.stopAnimating()
+                    
+//                    cell.linkLbl.adjustsFontSizeToFitWidth = true
+//                    cell.linkLbl.numberOfLines = 3
+//                    cell.linkLbl.backgroundColor = UIColor.darkGray
+//                    cell.linkLbl.alpha = 0.7
+//                    cell.linkLbl.text = label
+//                    cell.linkLbl.textAlignment = .center
+//                    cell.linkLbl.textColor = UIColor.white
+//                    cell.linkLbl.isHidden = false
+                })
                 
             case .None:
                 print("None")
