@@ -35,7 +35,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         super.viewDidLoad()
        
         
-        
         //Delegate Setup
         self.textFieldDelegateSetup()
         self.scrollView.delegate = self
@@ -130,6 +129,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
 
     
     
+    
     /**************************
      * FACEBOOK LOGIN DELEGATE
      *************************/
@@ -213,11 +213,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                 self.showActionSheetWithTitle(title: "Facebook Token nil", message: "odd")
             }
         }
-            
-        
-        
-        
     }
+    
     
     
     //GET FB USER DATA -- WRITE TO FIREBASE
@@ -247,8 +244,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             }
         }
         connection.start()
-        
     }
+    
     
     
     func showActionSheetWithTitle(title:String, message: String){
@@ -260,8 +257,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
         self.present(alert, animated: true, completion: nil)
         
-        
     }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -348,12 +345,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         if(passwordField.isFirstResponder){
             
             self.scrollView.scrollRectToVisible(passwordField.frame, animated: true)
-            
         }
+            
         else if(usernameField.isFirstResponder){
             
             self.scrollView.scrollRectToVisible(usernameField.frame, animated: true)
-            
         }
     }
     

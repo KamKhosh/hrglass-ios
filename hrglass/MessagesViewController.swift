@@ -217,6 +217,13 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
             cell.textView.clipsToBounds = true
             cell.textView.layer.cornerRadius = radius
             cell.textView.text = text
+//            if (cell.textView.contentSize.width < 200.0){
+//                cell.textView.frame.size = CGSize(width:200.0, height: cell.textView.frame.height)
+//                
+//            }else{
+//                
+//                cell.textView.frame.size = CGSize(width:cell.textView.contentSize.width, height: cell.textView.frame.height)
+//            }
             cell.textView.frame.size = CGSize(width:cell.textView.contentSize.width, height: cell.textView.frame.height)
 
         }else{
@@ -227,6 +234,14 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
             cell.textView.clipsToBounds = true
             cell.textView.layer.cornerRadius = radius
             cell.textView.text = text
+            
+//            if (cell.textView.contentSize.width < 200.0){
+//                cell.textView.frame.size = CGSize(width:200.0, height: cell.textView.frame.height)
+//
+//            }else{
+//
+//                cell.textView.frame.size = CGSize(width:cell.textView.contentSize.width, height: cell.textView.frame.height)
+//            }
             cell.textView.frame.size = CGSize(width:cell.textView.contentSize.width, height: cell.textView.frame.height)
         }
         
@@ -287,12 +302,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
             self.collectionView.scrollToItem(at:lastIndex , at: UICollectionViewScrollPosition.bottom, animated: true)
         }
         
-//        let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
-//        if numLines > 1{
-//            self.adjustUITextViewHeight(arg: textView)
-//           self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - keyboardHeightLayoutConstraint.constant - self.messageTextView.frame.height/2)
-//        }
-//        self.adjustUITextViewHeight(arg: textView)
         
         if(textView.text == self.placeholderText){
             textView.text = ""
@@ -310,7 +319,6 @@ class MessagesViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         
         self.messageTextView.frame.size = CGSize (width: self.view.frame.width - sendBtn.frame.width, height: 40)
-//        self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - self.messageTextView.frame.height/2)
         if #available(iOS 11.0, *) {
             self.messageTextView.center = CGPoint(x: self.view.center.x - sendBtn.frame.width/2,y: self.view.frame.height - self.view.safeAreaInsets.bottom - self.messageTextView.frame.height/2)
         } else {

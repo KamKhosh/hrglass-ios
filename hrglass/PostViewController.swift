@@ -1189,8 +1189,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //POSTVIEWCONTROLLER DELEGTE METHODS
     
     func likedButtonPressed(liked: Bool, indexPath: IndexPath){
-        
-        
         //handle backend updates, then call the delegate method to update the UI
         
         if(!liked){

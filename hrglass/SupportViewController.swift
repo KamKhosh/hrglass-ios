@@ -55,11 +55,19 @@ class SupportViewController: UIViewController, UITextViewDelegate {
             let queryDict: NSDictionary = NSDictionary.init(dictionary: ["query":self.feedbackTextView.text, "email":self.email, "uid":uid ?? ""])
             
             supportRef.setValue(queryDict)
+            
+            let alert: UIAlertController = UIAlertController(title: "Success", message: "Feedback submitted", preferredStyle: .alert)
+            let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+                self.performSegue(withIdentifier: "unwindToSettings", sender: self)
+                
+            })
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
     
-
     /*
     // MARK: - Navigation
 
