@@ -12,7 +12,7 @@ import AVKit
 import Firebase
 import MediaPlayer
 import StoreKit
-//import WebKit
+import Clarifai
 
 
 //Protocol for POST VIEW CONTROLLER
@@ -214,8 +214,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.popupView.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.popupView.layer.shadowPath = UIBezierPath(rect: self.popupView.bounds).cgPath
         
-        
-        
+
         
         //initialize hub
         hub = RKNotificationHub(view: self.commentBtn)
@@ -1200,11 +1199,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
                 
-                //decrement like count
-//                let likeCount: Int = self.postData.likes
-//                self.likeCountLbl.text = String(likeCount - 1)
-                
-                
                 //remove current user from likes list
                 let postLikesDictRef = Database.database().reference().child("Posts").child(self.postData.user.value(forKey: "uid") as! String).child("users_who_liked").child(currentUserId)
                 postLikesDictRef.removeValue()
@@ -1212,13 +1206,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 //remove post from user's liked posts
                 let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts").child(self.postData.user.value(forKey: "uid") as! String)
                 likedDictRef.removeValue()
-                
             }
             
-            
         }else{
-            //post wasn't liked by user, set likedByUser to true
             
+            //post wasn't liked by user, set likedByUser to true
             if (self.postData.postId != ""){
                 
                 self.likedByUser = true
@@ -1235,15 +1227,11 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                // update views list
                 self.dataManager.updateViewsList(post: self.postData)
                 
-                
                 let likedDictRef = Database.database().reference().child("Users").child(self.currentUserId).child("liked_posts")
-                likedDictRef.child(self.postData.postId).setValue(self.postData.expireTime)
+                likedDictRef.child(self.postData.user.value(forKey: "uid") as! String).setValue(self.postData.expireTime)
 
             }
         }
-        
-        
-        
         
         if self.delegate != nil{
             self.delegate.likedButtonPressed(liked: liked, indexPath: indexPath)
@@ -1256,7 +1244,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             self.delegate.moreButtonPressed(data: data, indexPath: indexPath)
         }
     }
-    
+
     
     
     
@@ -1281,13 +1269,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     }
     
     
-    
-    
-    
-    @IBAction func unwindToPostView(unwindSegue: UIStoryboardSegue) {
-    }
-    
-        
+
+    @IBAction func unwindToPostView(unwindSegue: UIStoryboardSegue) {}
     
     
     

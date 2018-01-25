@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Clarifai
+import Firebase
 
 class AllPostsViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, PostViewDelegate {
     
@@ -19,8 +21,12 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     var imageCache: ImageCache!
     var awsManager: AWSManager = AWSManager()
     var dataManager: DataManager = DataManager()
+    var moreMenuPostData: PostData!
+    var loggedInUser: User!
     
     @IBOutlet weak var playImageView: UIImageView!
+    
+    
     /****************************************
      *
      * ----------- LIFECYCLE ------------
@@ -72,6 +78,11 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         let uid: String = user.value(forKey: "uid") as! String
         
         cell.borderView.layer.borderColor = self.dataManager.getUIColorForCategory(category: postsArray[indexPath.row].category).cgColor
+        
+        cell.moreBtnSelected = {
+            
+            self.moreButtonPressed(data:self.postsArray[indexPath.row], indexPath: indexPath)
+        }
         
         switch postsArray[indexPath.row].category {
             
@@ -197,8 +208,140 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func moreButtonPressed(data: PostData, indexPath: IndexPath) {
         
-        //don't do anything
+        let fullname: String = data.user.value(forKey: "name") as! String
+        
+        let alert: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let block: UIAlertAction = UIAlertAction(title: String(format:"Block %@", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            
+            self.blockUserAction(data: data)
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let flag: UIAlertAction = UIAlertAction(title:"Flag Post" , style: .default) {(_) -> Void in
+            
+            alert.dismiss(animated: true, completion: nil)
+            let flagContent: NSMutableDictionary = data.postDataAsDictionary().mutableCopy() as! NSMutableDictionary
+            let ref: DatabaseReference = Database.database().reference().child("Flags").child(data.user.value(forKey: "uid") as! String).child(Auth.auth().currentUser!.uid)
+            
+            let flagAlert: UIAlertController = UIAlertController(title: "Flag Reason", message: nil, preferredStyle: .actionSheet)
+            
+            let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+                
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let inappropriate: UIAlertAction = UIAlertAction(title: "Inappropriate" , style: .default) {(_) -> Void in
+                flagContent.setValue("Inappropriate", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for being Inappropriate")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let mature: UIAlertAction = UIAlertAction(title: "Mature Content" , style: .default) {(_) -> Void in
+                flagContent.setValue("Mature", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Mature Content")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let insensitive: UIAlertAction = UIAlertAction(title: "Insensitive" , style: .default) {(_) -> Void in
+                flagContent.setValue("Insensitive", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Insensitivity")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let gore: UIAlertAction = UIAlertAction(title: "Violence/Gore" , style: .default) {(_) -> Void in
+                flagContent.setValue("Gore", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Violence/Gore")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            flagAlert.addAction(cancel)
+            flagAlert.addAction(gore)
+            flagAlert.addAction(insensitive)
+            flagAlert.addAction(mature)
+            flagAlert.addAction(inappropriate)
+            
+            
+            self.present(flagAlert, animated: true, completion: nil)
+        }
+        
+        let message: UIAlertAction = UIAlertAction(title: String(format:"Send %@ a Message", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            
+            self.moreMenuPostData = data
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let delete: UIAlertAction = UIAlertAction(title: String(format:"Expire Post", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
+            //set the expire time to the post creation time
+            let ref: DatabaseReference = Database.database().reference().child("Posts").child((Auth.auth().currentUser?.uid)!).child("expire_time")
+            ref.setValue(data.creationDate)
+            
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        
+        
+        let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        
+        if (data.user.value(forKey: "uid") as? String  == Auth.auth().currentUser?.uid){
+            
+            alert.addAction(delete)
+        }else{
+            
+            alert.addAction(message)
+            alert.addAction(block)
+            alert.addAction(flag)
+            
+        }
+        
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
     }
+    
+    
+    
+    func blockUserAction(data: PostData){
+        
+        //don't do anything
+        print(String(format:"Block User (%@) Action", data))
+        self.dataManager.blockUser(postData: data)
+        self.performSegue(withIdentifier: "unwindToFeedSegue", sender: self)
+    
+    }
+    
+    
+    
+    func showToast(message : String) {
+        
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 150, y: self.view.frame.size.height-100, width: 300, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textColor = UIColor.white
+        toastLabel.textAlignment = .center;
+        toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10;
+        toastLabel.clipsToBounds  =  true
+        
+        self.view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
+    
+    
+    
     
     
     
@@ -215,6 +358,12 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
             self.postsArray.removeAll()
             self.collectionView.reloadData()
             
+        }else if (segue.identifier == "toMessagesView"){
+            
+            let messageVC: MessagesViewController = segue.destination as! MessagesViewController
+            messageVC.selectedUserId = self.moreMenuPostData.user.value(forKey: "uid") as! String
+            messageVC.nameString = (self.moreMenuPostData.user.value(forKey: "name") as! String)
+            messageVC.loggedInUser = self.loggedInUser
         }
         
     }

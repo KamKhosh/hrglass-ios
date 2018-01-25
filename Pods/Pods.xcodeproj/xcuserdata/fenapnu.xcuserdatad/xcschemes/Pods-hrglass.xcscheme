@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "813CCBD66953B7DA726F36FED8FD2EE6"
+               BlueprintIdentifier = "D817BABA1F8BE477B1FCD1ACFEA7C785"
                BuildableName = "Pods_hrglass.framework"
                BlueprintName = "Pods-hrglass"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -47,7 +47,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "813CCBD66953B7DA726F36FED8FD2EE6"
+            BlueprintIdentifier = "D817BABA1F8BE477B1FCD1ACFEA7C785"
             BuildableName = "Pods_hrglass.framework"
             BlueprintName = "Pods-hrglass"
             ReferencedContainer = "container:Pods.xcodeproj">

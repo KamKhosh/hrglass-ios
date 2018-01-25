@@ -12,6 +12,7 @@ import URLEmbeddedView
 import AVKit
 import AVFoundation
 import iOSPhotoEditor
+import Clarifai
 
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PostViewDelegate, CropViewControllerDelegate{
@@ -39,6 +40,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     var isChoosingProfile: Bool = false
     let imagePicker = UIImagePickerController()
     var moreMenuPostData: PostData!
+    var clarifaiApp: ClarifaiApp!
     
     //table view with one cell
     @IBOutlet weak var profileTableView: UITableView!
@@ -61,6 +63,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.profileTableView.delegate = self
         self.profileTableView.dataSource = self
         self.imagePicker.delegate = self
+        
+        self.clarifaiApp = ClarifaiApp.init(apiKey: "f20abe6d4a7042f8967bb30cbc96586b")
+        
         //In case phone is in silent mode
         
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
@@ -285,35 +290,52 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         //image to upload
         let uploadImage: UIImage = self.coverPhoto.image!
         
-        //image as data representation
-        let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-        
-        //Save photo to local documents dir
-        dataManager.saveImageForPath(imageData: data, name: "coverPhoto")
-        let path = dataManager.documentsPathForFileName(name: "coverPhoto.jpg")
         
         
-        //upload to AWS S3
-        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "coverPhoto", type:"jpg", completion:{ success in
+        self.checkForNSFWContent(image: uploadImage) { (isNsfw) in
             
-            if success{
+            if (isNsfw == "0"){
+                //not nsfw
+                //image as data representation
+                let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
                 
-                print("Success, upload complete")
+                //Save photo to local documents dir
+                self.dataManager.saveImageForPath(imageData: data, name: "coverPhoto")
+                let path = self.dataManager.documentsPathForFileName(name: "coverPhoto.jpg")
                 
-                //set download url on upload
-                let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
-                self.currentlyViewingUser.coverPhoto = downloadURL as String
-                coverRef.child("coverPhoto").setValue(downloadURL)
-                completion(downloadURL)
+                
+                //upload to AWS S3
+                self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "coverPhoto", type:"jpg", completion:{ success in
+                    
+                    if success{
+                        
+                        print("Success, upload complete")
+                        
+                        //set download url on upload
+                        let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
+                        self.currentlyViewingUser.coverPhoto = downloadURL as String
+                        coverRef.child("coverPhoto").setValue(downloadURL)
+                        completion(downloadURL)
+                        
+                    }else{
+                        
+                        print("Failure, try again?")
+                        self.postFailedAlert(title: "Post Failed", message: "try again")
+                        
+                        return
+                    }
+                })
+                
+                
                 
             }else{
                 
-                print("Failure, try again?")
-                self.postFailedAlert(title: "Post Failed", message: "try again")
+                self.nsfwImageAlert()
                 
-                return
             }
-        })
+            
+        }
+
     }
     
     
@@ -331,39 +353,58 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let path = dataManager.documentsPathForFileName(name: "profilePhoto.jpg")
         
         
-        //upload
-        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "profilePhoto", type:"jpg", completion:{ success in
+        let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+        let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+        
+        cell.profilePhoto.contentMode = .scaleAspectFill
+        let image:UIImage = cell.profilePhoto.image!
+        
+        self.checkForNSFWContent(image: image) { (isNsfw) in
             
-            if success{
+            if (isNsfw == "0"){
                 
-                print("Success, profile photo upload complete")
-                
-                //store downloadURL
-                let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
-                
-                
-                //if the current user has an active post, set the profile photo
-                let postRef = self.ref.child("Posts").child(self.currentlyViewingUser.userID as String)
-                postRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                    if(snapshot.exists()){
-                        postRef.child("user").child("profilePhoto").setValue(downloadURL)
+                //upload
+                self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "profilePhoto", type:"jpg", completion:{ success in
+                    
+                    if success{
+                        
+                        print("Success, profile photo upload complete")
+                        
+                        //store downloadURL
+                        let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
+                        
+                        
+                        //if the current user has an active post, set the profile photo
+                        let postRef = self.ref.child("Posts").child(self.currentlyViewingUser.userID as String)
+                        postRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                            if(snapshot.exists()){
+                                postRef.child("user").child("profilePhoto").setValue(downloadURL)
+                            }
+                        })
+                        
+                        
+                        self.currentlyViewingUser.profilePhoto = downloadURL as String
+                        profileRef.child("profilePhoto").setValue(downloadURL)
+                        completion(downloadURL)
+                        
+                    }else{
+                        
+                        print("Failure, try again?")
+                        self.postFailedAlert(title: "Post Failed", message: "try again")
+                        
+                        return
                     }
                 })
                 
                 
-                self.currentlyViewingUser.profilePhoto = downloadURL as String
-                profileRef.child("profilePhoto").setValue(downloadURL)
-                completion(downloadURL)
-                
             }else{
                 
-                print("Failure, try again?")
-                self.postFailedAlert(title: "Post Failed", message: "try again")
+                self.nsfwImageAlert()
                 
-                return
             }
-        })
-        
+            
+        }
+
     }
     
     
@@ -453,13 +494,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
             dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
             
-//            self.profileTableView.reloadData()
-
             self.uploadProfilePhoto(completion: { (url) in
                 print(url)
-                
                 self.imageCache.replacePhotoForKey(url: url, image: image)
-
             })
             
         }else{
@@ -908,6 +945,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     
+    func sendMessageAction(){
+
+        self.performSegue(withIdentifier: "toMessagesView", sender: self)
+    }
+    
     
     func moreButtonPressed(data: PostData, indexPath: IndexPath) {
         
@@ -920,6 +962,58 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.moreMenuPostData = data
             self.blockUserAction()
             alert.dismiss(animated: true, completion: nil)
+        }
+        
+        let flag: UIAlertAction = UIAlertAction(title:"Flag Post" , style: .default) {(_) -> Void in
+            
+            
+            alert.dismiss(animated: true, completion: nil)
+            let flagContent: NSMutableDictionary = data.postDataAsDictionary().mutableCopy() as! NSMutableDictionary
+            let ref: DatabaseReference = Database.database().reference().child("Flags").child(data.user.value(forKey: "uid") as! String).child(Auth.auth().currentUser!.uid)
+            
+            let flagAlert: UIAlertController = UIAlertController(title: "Flag Reason", message: nil, preferredStyle: .actionSheet)
+            
+            let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+                
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let inappropriate: UIAlertAction = UIAlertAction(title: "Inappropriate" , style: .default) {(_) -> Void in
+                flagContent.setValue("Inappropriate", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for being Inappropriate")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let mature: UIAlertAction = UIAlertAction(title: "Mature Content" , style: .default) {(_) -> Void in
+                flagContent.setValue("Mature", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Mature Content")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let insensitive: UIAlertAction = UIAlertAction(title: "Insensitive" , style: .default) {(_) -> Void in
+                flagContent.setValue("Insensitive", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Insensitivity")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let gore: UIAlertAction = UIAlertAction(title: "Violence/Gore" , style: .default) {(_) -> Void in
+                flagContent.setValue("Gore", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Violence/Gore")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            flagAlert.addAction(cancel)
+            flagAlert.addAction(gore)
+            flagAlert.addAction(insensitive)
+            flagAlert.addAction(mature)
+            flagAlert.addAction(inappropriate)
+            
+            
+            self.present(flagAlert, animated: true, completion: nil)
         }
         
         let message: UIAlertAction = UIAlertAction(title: String(format:"Send %@ a Message", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
@@ -950,8 +1044,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             alert.addAction(delete)
         }else{
+            
             alert.addAction(message)
             alert.addAction(block)
+            alert.addAction(flag)
             
         }
         
@@ -985,6 +1081,36 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //        }
     //    }
     //
+    
+    
+    
+    
+    
+    
+    func showToast(message : String) {
+        
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 150, y: self.view.frame.size.height-100, width: 200, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textColor = UIColor.white
+        toastLabel.textAlignment = .center;
+        toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10;
+        toastLabel.clipsToBounds  =  true
+        
+        self.view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
+    
+    
+    
+    
     
     
     /******************************
@@ -1048,6 +1174,83 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     
+    
+    //Uses Clarifai to determine image content is not nsfw
+    func checkForNSFWContent(image: UIImage, completion:@escaping (String) -> ()){
+        //Uses Clarifai API to return a confidence value of NSFW content
+        let cImage: ClarifaiImage = ClarifaiImage(image: image)
+        
+        
+        self.clarifaiApp.getModelByName("nsfw-v1.0", completion: { (model, error) in
+            
+            if ((error == nil)){
+                model?.predict(on: [cImage], completion: { (outputArray, error) in
+                    if error == nil{
+                        let output: ClarifaiOutput = outputArray![0]
+
+                        if let response = output.responseDict as NSDictionary? as! [String:Any]? {
+                            
+                            //parse response data
+                            let data: NSDictionary = response["data"] as! NSDictionary
+                            let concepts: NSArray = data.value(forKey: "concepts") as! NSArray
+                            var sfw: Double = 0
+                            
+                            //get the sfw rating
+                            for glob in concepts{
+                                let item: NSDictionary = glob as! NSDictionary
+                                if (item.value(forKey: "name") as! String == "sfw"){
+                                    sfw = item.value(forKey: "value") as! Double
+                                }
+                            }
+                            if (sfw > 0.6){
+                                //not nsfw
+                                DispatchQueue.main.async(execute: {() -> Void in
+                                    
+                                })
+                                completion("0")
+                                
+                            }else{
+                                //nsfw
+                                DispatchQueue.main.async(execute: {() -> Void in
+                                    
+                                })
+                                //denotes the preview photo is nsfw, in time we will add nsfw for videos and we will want to be able to check the preview photo as well as the video
+                                completion("1")
+                            }
+                        }else{
+                            completion("")
+                        }
+                    }else{
+                        completion("")
+                    }
+                });
+            }else{
+                completion("")
+            }
+            
+        });
+    }
+    
+    
+    
+    func nsfwImageAlert(){
+        
+        
+        let alert: UIAlertController = UIAlertController(title: "Explicit Image", message: "Choose Another Image", preferredStyle: .actionSheet)
+        
+        let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (s) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+        
+        
+        
+        
+    }
+    
+    
     /**********************
      *
      *  -- NAVIGATION --
@@ -1067,7 +1270,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         if(segue.identifier == "toAllLikedSegue"){
             
             let vc = segue.destination as! AllPostsViewController
-            
+            vc.loggedInUser = self.loggedInUser
             vc.postsArray = self.likedDataArray
             vc.imageCache = self.imageCache
             
@@ -1091,9 +1294,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     
-    @IBAction func unwindToProfile(unwindSegue: UIStoryboardSegue) {
-        
-        
-    }
+    @IBAction func unwindToProfile(unwindSegue: UIStoryboardSegue) {}
     
 }

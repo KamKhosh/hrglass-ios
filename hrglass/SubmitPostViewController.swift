@@ -14,6 +14,7 @@ import AWSS3
 import Photos
 import AVKit
 import MediaPlayer
+import Clarifai
 
 class SubmitPostViewController: UIViewController {
     
@@ -75,6 +76,7 @@ class SubmitPostViewController: UIViewController {
     var recordingBtn: UIButton!
     var musicBtn: UIButton!
     var linkBtn: UIButton!
+    var clarifaiApp: ClarifaiApp!
     
     
     //Secondary Content View
@@ -85,6 +87,8 @@ class SubmitPostViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        self.clarifaiApp = ClarifaiApp.init(apiKey: "f20abe6d4a7042f8967bb30cbc96586b")
         
         self.activityIndicator.hidesWhenStopped = true
         self.activityIndicator.stopAnimating()
@@ -458,6 +462,7 @@ class SubmitPostViewController: UIViewController {
                 self.progressView = ProgressView(frame: self.postBtn.bounds)
                 self.progressView.backgroundColor = UIColor.clear
                 self.postBtn.addSubview(self.progressView)
+                self.postLabel.text = "Uploading content..."
                 
                 switch self.selectedCategory {
                     
@@ -484,7 +489,7 @@ class SubmitPostViewController: UIViewController {
                             
                             let songString: String = ""
                             let downloadURL: String = String(format:"%@/%@/images/post.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Photo", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Photo", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                             
                             if (self.selectedMusicItem != nil){
                                 //music added, set songString in dataDictionary and submit
@@ -494,14 +499,14 @@ class SubmitPostViewController: UIViewController {
                                     
                                     dataDictionary.setValue(string, forKey: "songString")
                                     self.submitPost(dataDictionary: dataDictionary)
-                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                                 })
 
                             }else{
                                 //else no music, submit the post and unwind
                             
                                 self.submitPost(dataDictionary: dataDictionary)
-                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
 
                             }
                             
@@ -544,7 +549,7 @@ class SubmitPostViewController: UIViewController {
                     })
                     
                     
-                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Video", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":""]
+                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Video", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"]
                     
                     
                     //selectedVideoPath is only avaiable from a saved post that has a video
@@ -588,7 +593,7 @@ class SubmitPostViewController: UIViewController {
                         
                         
                         let songString: String = ""
-                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": linkString, "category":"Link", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": linkString, "category":"Link", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                         
                         if (self.selectedMusicItem != nil){
                             
@@ -597,11 +602,11 @@ class SubmitPostViewController: UIViewController {
                                 
                                 dataDictionary.setValue(string, forKey: "songString")
                                 self.submitPost(dataDictionary: dataDictionary)
-                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                             })
                         }else{
                             self.submitPost(dataDictionary: dataDictionary)
-                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                         }
 
                     }else{
@@ -664,14 +669,14 @@ class SubmitPostViewController: UIViewController {
                                             songString = songString + ":local"
                                             let downloadURL: String = String(format:"%@/%@/audio/music.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
                                             
-                                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                                             
                                             //                            if self.hasSecondaryPost{
                                             //                                self.postSecondaryData(primaryData: dataDictionary)
                                             //                            }else{
                                             self.submitPost(dataDictionary: dataDictionary)
                                             //                            }
-                                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                                             
                                         }else{
                                             
@@ -686,7 +691,7 @@ class SubmitPostViewController: UIViewController {
                                     //if URL is nil, the song is not exportable and we just need to write the itunes search criteria
                                     
                                     songString = songString + ":apple"
-                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                                     
                                     //                            if self.hasSecondaryPost{
                                     //                                self.postSecondaryData(primaryData: dataDictionary)
@@ -695,7 +700,7 @@ class SubmitPostViewController: UIViewController {
                                     
                                     self.progressUpdateTimer(category: .Recording)
                                     //                            }
-                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                                     
                                     
                                 }
@@ -711,7 +716,7 @@ class SubmitPostViewController: UIViewController {
                     }else{
                         //assetRUL doesn't exists, set source as apple by default so we can get a preview later
                         songString = songString + ":apple"
-                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                         
                         //                            if self.hasSecondaryPost{
                         //                                self.postSecondaryData(primaryData: dataDictionary)
@@ -720,7 +725,7 @@ class SubmitPostViewController: UIViewController {
                         //                            }
                         
                         self.progressUpdateTimer(category: .Recording)
-                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                         
                     }
                     
@@ -742,14 +747,14 @@ class SubmitPostViewController: UIViewController {
                             
                             let downloadURL: String = String(format:"%@/%@/audio/post.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
                             
-                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Recording", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":""]
+                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Recording", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"]
                             
 //                            if self.hasSecondaryPost{
 //                                self.postSecondaryData(primaryData: dataDictionary)
 //                            }else{
                                 self.submitPost(dataDictionary: dataDictionary)
 //                            }
-                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                             
                         }else{
                             
@@ -790,7 +795,7 @@ class SubmitPostViewController: UIViewController {
                             //check for song to add
                             let songString: String = ""
 
-                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Text", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString]
+                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Text", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                             
                             if (self.selectedMusicItem != nil){
                                 
@@ -799,13 +804,13 @@ class SubmitPostViewController: UIViewController {
                                     
                                     dataDictionary.setValue(string, forKey: "songString")
                                     self.submitPost(dataDictionary: dataDictionary)
-                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                                 })
                                 
                             }else{
                                 
                                 self.submitPost(dataDictionary: dataDictionary)
-                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+//                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                             }
 
                             
@@ -863,7 +868,7 @@ class SubmitPostViewController: UIViewController {
                     
                     alert.dismiss(animated: true, completion: nil)
                     
-                    let dataDictionary: NSMutableDictionary = NSMutableDictionary(dictionary: ["postID":postID,"likes":0, "user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": self.selectedObject, "category":self.selectedCategory.rawValue, "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":""])
+                    let dataDictionary: NSMutableDictionary = NSMutableDictionary(dictionary: ["postID":postID,"likes":0, "user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": self.selectedObject, "category":self.selectedCategory.rawValue, "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"])
                         
                     
                     //if music, save thumbnail and set songString in dataDictionary
@@ -1318,38 +1323,131 @@ class SubmitPostViewController: UIViewController {
     }
     
     
+    
+    
+    
+    //Uses Clarifai to determine image content is not nsfw
+    func checkForNSFWContent(postData: NSDictionary, completion:@escaping (String) -> ()){
+        //Uses Clarifai API to return a confidence value of NSFW content
+        var image: ClarifaiImage = ClarifaiImage()
+        let category = self.selectedCategory
+        
+        if (category == .Photo || category == .Text){
+            image = ClarifaiImage.init(url: postData.value(forKey: "data") as! String)
+            
+        }else if (category == .Video || category == .Music){
+            //video api for objective c not yet documented or available
+            image = ClarifaiImage(image: self.postImagePreview.image)
+            
+        }else{
+            completion("0")
+            return
+        }
+        
+        
+        self.clarifaiApp.getModelByName("nsfw-v1.0", completion: { (model, error) in
+            
+            if ((error == nil)){
+                model?.predict(on: [image], completion: { (outputArray, error) in
+                    if error == nil{
+                        let output: ClarifaiOutput = outputArray![0]
+                        //                            let response: [String:Any] = output.responseDict! as! [String : Any]
+                        if let response = output.responseDict as NSDictionary? as! [String:Any]? {
+                            
+                            //parse response data
+                            let data: NSDictionary = response["data"] as! NSDictionary
+                            let concepts: NSArray = data.value(forKey: "concepts") as! NSArray
+                            var sfw: Double = 0
+                            
+                            //get the sfw rating
+                            for glob in concepts{
+                                let item: NSDictionary = glob as! NSDictionary
+                                if (item.value(forKey: "name") as! String == "sfw"){
+                                    sfw = item.value(forKey: "value") as! Double
+                                }
+                            }
+                            if (sfw > 0.6){
+                                //not nsfw
+                                DispatchQueue.main.async(execute: {() -> Void in
+                                    self.postLabel.text = ""
+                                })
+                                completion("0")
+                                
+                            }else{
+                                //nsfw
+                                DispatchQueue.main.async(execute: {() -> Void in
+                                    self.postLabel.text = "Post marked NSFW"
+                                })
+                                //denotes the preview photo is nsfw, in time we will add nsfw for videos and we will want to be able to check the preview photo as well as the video
+                                completion("previewphoto")
+                            }
+                        }else{
+                            completion("")
+                        }
+                    }else{
+                        completion("")
+                    }
+                });
+            }else{
+                completion("")
+            }
+            
+        });
+    }
+    
+    
+
+    
     func submitPost(dataDictionary: NSMutableDictionary){
 //        if hasSecondaryPost && selectedCategory == .Video{
 //            dataDictionary.setValue(self.primaryVideoURL, forKey: "data")
 //        }
         
-        self.postRef.setValue(dataDictionary)
         
-        //reset comments
-        let commentRef: DatabaseReference = Database.database().reference().child("Comments").child(Auth.auth().currentUser!.uid)
-        commentRef.removeValue()
-        
-        self.activityIndicator.stopAnimating()
-        
-        let alert: UIAlertController = UIAlertController(title: "Success", message: "", preferredStyle: .alert)
-        
-        let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default) {(_) -> Void in
+        //check for objectionable content with clarifai and mark as nsfw if it meets the bar
+        self.postLabel.text = "Checking for NSFW content..."
+        self.checkForNSFWContent(postData: dataDictionary, completion: { isNsfw in
             
-            self.progressView.removeFromSuperview()
-            alert.dismiss(animated: true, completion: nil)
-            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-        }
-        
-        alert.addAction(ok)
-        self.present(alert, animated: true, completion: nil)
-        
-        //If post was a saved post, delete it on submission
-        if self.postWasSaved{
-            
-            UserDefaults.standard.set([:], forKey:"savedPost")
-            UserDefaults.standard.synchronize()
-            
-        }
+            if (isNsfw != ""){
+                //if is NSFW, change data dictionary nsfw key to value 1
+                dataDictionary.setValue(isNsfw, forKey: "nsfw")
+                
+                self.postRef.setValue(dataDictionary)
+                
+                //reset comments
+                let commentRef: DatabaseReference = Database.database().reference().child("Comments").child(Auth.auth().currentUser!.uid)
+                commentRef.removeValue()
+                
+                DispatchQueue.main.async(execute: {() -> Void in
+                    
+                    self.activityIndicator.stopAnimating()
+                })
+                
+                self.progressView.percentageComplete = 1.0;
+                let alert: UIAlertController = UIAlertController(title: "Success", message: "", preferredStyle: .alert)
+                
+                let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default) {(_) -> Void in
+                    
+                    self.progressView.removeFromSuperview()
+                    alert.dismiss(animated: true, completion: nil)
+                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                }
+                
+                alert.addAction(ok)
+                self.present(alert, animated: true, completion: nil)
+                
+                //If post was a saved post, delete it on submission
+                if self.postWasSaved{
+                    
+                    UserDefaults.standard.set([:], forKey:"savedPost")
+                    UserDefaults.standard.synchronize()
+                    
+                }
+            }else{
+                print("error getting clarafai model")
+            }
+
+        });
     }
 
 

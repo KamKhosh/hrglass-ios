@@ -44,6 +44,8 @@ class FeedTableViewCell: UITableViewCell {
     
     @IBOutlet weak var linkLbl: UILabel!
     
+    @IBOutlet weak var nsfwLbl: UILabel!
+    
     var likedByUser: Bool = false
     
     var postId: String = ""
@@ -58,7 +60,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet weak var postPreviewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var postPreviewHeightConstraint: NSLayoutConstraint!
     
-
+    
     var newUsersDict : (() -> Void)? = nil
     var userProfile: (() -> Void)? = nil
     var contentSelected: (() -> Void)? = nil
@@ -90,7 +92,6 @@ class FeedTableViewCell: UITableViewCell {
             moreBtnAction()
             
         }
-        
     }
 
     @IBAction func profileBtnAction(_ sender: Any) {
@@ -111,6 +112,8 @@ class FeedTableViewCell: UITableViewCell {
         }
     }
     
+
+
     
     
     

@@ -259,12 +259,9 @@ class DataManager {
                     followedByDict.removeObject(forKey: currentUserId)
                     userDict.setValue(followedByDict, forKey: "followed_by_list")
                     followedByRef.setValue(userDict)
-                    
+
                 }
-                
-                
             }
-            
         })
         
         
@@ -531,7 +528,7 @@ class DataManager {
         //
         //        }else{
         
-        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "songString") as! String, usersWhoViewed: usersWhoViewed)
+        let postData: PostData = PostData.init(withDataString: postDict.value(forKey: "data") as! String, postId: postDict.value(forKey: "postID") as! String , likes:  postDict.value(forKey: "likes") as! Int, views:  postDict.value(forKey: "views") as! Int, category: category , mood: mood.rawValue, user: postDict.value(forKey: "user") as! NSDictionary, usersWhoLiked: usersWhoLiked, creationDate: creationDate, expireTime: expireTime, commentThread: postDict.value(forKey: "postID") as! String, songString: postDict.value(forKey: "songString") as! String, usersWhoViewed: usersWhoViewed, nsfw:postDict.value(forKey: "nsfw") as! String)
         
         //        }
         
@@ -1858,8 +1855,6 @@ class DataManager {
         
         return songInfo
     }
-    
-    
 }
 
 

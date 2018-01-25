@@ -153,6 +153,7 @@ class SupportViewController: UIViewController, UITextViewDelegate {
             let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIViewAnimationOptions.curveEaseInOut.rawValue
             let animationCurve:UIViewAnimationOptions = UIViewAnimationOptions(rawValue: animationCurveRaw)
             
+            
             if (endFrame?.origin.y)! >= UIScreen.main.bounds.size.height {
                 self.keyboardHeightLayoutConstraint?.constant = 0.0
             } else {

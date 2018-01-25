@@ -18,4 +18,18 @@ class AllPostsCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var playImageView: UIImageView!
+    
+    var moreBtnSelected: (() -> Void)? = nil
+    
+    
+    
+    @IBAction func moreBtnAction(_ sender: Any) {
+        
+        if let moreBtnAction = self.moreBtnSelected{
+            
+            moreBtnAction()
+            
+        }
+    }
+    
 }

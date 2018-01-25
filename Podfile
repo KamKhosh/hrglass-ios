@@ -20,5 +20,5 @@ target 'hrglass' do
     pod 'iOSPhotoEditor'
     pod 'Fabric', '~> 1.7.2'
     pod 'Crashlytics', '~> 3.9.3'
-
+    pod 'Clarifai'
 end

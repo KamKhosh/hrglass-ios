@@ -14,6 +14,7 @@ import AVFoundation
 import MediaPlayer
 import Crashlytics
 
+
 class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate, PostViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate{
     
     
@@ -690,16 +691,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         cell.postData = feedData[indexPath.row]
         cell.playImageView.image = UIImage(named: "playTriagle")?.transform(withNewColor: UIColor.darkGray)
+        
         //USER DATA DICTIONARY
         let user: NSDictionary = feedData[indexPath.row].user
-        
         
         //setting profileImageBtn image
         let photoString: String = user.value(forKey: "profilePhoto") as! String
         if (photoString != ""){
             self.imageCache.getImage(urlString: photoString, completion: { image in
                 cell.profileImageBtn.setImage(image, for: .normal)
-                cell.loadingIndication.stopAnimating()
             })
         }else{
             cell.profileImageBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
@@ -742,6 +742,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             //DB values have already been updated. if not already viewed, update local values
             if(cell.postData.usersWhoViewed.value(forKey:myUid) == nil){
+                
                 cell.viewCountLbl.text = String(cell.postData.views + 1)
                 cell.postData.usersWhoViewed.setValue(true, forKey: myUid)
             }
@@ -749,6 +750,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
 
         }
+        
         
         cell.moreBtnSelected = {
             
@@ -792,7 +794,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
                 
-                cell.contentImageBtn.setImage(image, for: .normal)
+                if self.feedData[indexPath.row].nsfw == "previewphoto"{
+                    
+                    self.applyBlurEffect(image: image, completionHandler: { (blurredImage) in
+                        cell.contentImageBtn.setImage(blurredImage, for: .normal)
+                    })
+                    cell.nsfwLbl.isHidden = false
+                }else{
+                    cell.contentImageBtn.setImage(image, for:.normal)
+                }
                 cell.loadingIndication.stopAnimating()
             })
             
@@ -828,7 +838,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
                 
-                cell.contentImageBtn.setImage(image, for: .normal)
+                if self.feedData[indexPath.row].nsfw == "previewphoto"{
+                    
+                    self.applyBlurEffect(image: image, completionHandler: { (blurredImage) in
+                        cell.contentImageBtn.setImage(blurredImage, for: .normal)
+                    })
+                    cell.nsfwLbl.isHidden = false
+                }else{
+                    cell.contentImageBtn.setImage(image, for:.normal)
+                }
                 cell.loadingIndication.stopAnimating()
                 
             })
@@ -840,7 +858,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //default is photo for now
             self.imageCache.getImage(urlString: feedData[indexPath.row].data, completion: { image in
                 
-                cell.contentImageBtn.setImage(image, for:.normal)
+                if self.feedData[indexPath.row].nsfw == "previewphoto"{
+                    
+                    self.applyBlurEffect(image: image, completionHandler: { (blurredImage) in
+                        cell.contentImageBtn.setImage(blurredImage, for: .normal)
+                    })
+                    cell.nsfwLbl.isHidden = false
+                }else{
+                    cell.contentImageBtn.setImage(image, for:.normal)
+                }
                 cell.loadingIndication.stopAnimating()
                 
             })
@@ -863,7 +889,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //default is photo for now
             self.imageCache.getImage(urlString: feedData[indexPath.row].data, completion: { image in
                 
-                cell.contentImageBtn.setImage(image, for:.normal)
+                if self.feedData[indexPath.row].nsfw == "previewphoto"{
+                    self.applyBlurEffect(image: image, completionHandler: { (blurredImage) in
+                        cell.contentImageBtn.setImage(blurredImage, for: .normal)
+                    })
+                    cell.nsfwLbl.isHidden = false
+                }else{
+                    cell.contentImageBtn.setImage(image, for:.normal)
+                }
+                
                 cell.loadingIndication.stopAnimating()
             })
             
@@ -933,8 +967,34 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-    
+    func applyBlurEffect(image: UIImage, completionHandler: @escaping (UIImage) -> ())  {
+        
+        //runs on a background thread so that it doesn't freeze the main feed UI
+        DispatchQueue.global(qos: .background).async {
 
+            let context = CIContext(options: nil)
+            let currentFilter = CIFilter(name: "CIGaussianBlur")
+            let beginImage = CIImage(image: image)
+            currentFilter!.setValue(beginImage, forKey: kCIInputImageKey)
+            currentFilter!.setValue(250, forKey: kCIInputRadiusKey)
+            
+            //add crop filter, otherwise returned blurred image is sized improperly
+            let cropFilter = CIFilter(name: "CICrop")
+            cropFilter!.setValue(currentFilter!.outputImage, forKey: kCIInputImageKey)
+            cropFilter!.setValue(CIVector(cgRect: beginImage!.extent), forKey: "inputRectangle")
+            
+            let output = cropFilter!.outputImage
+            let cgimg = context.createCGImage(output!, from: output!.extent)
+            let processedImage = UIImage(cgImage: cgimg!)
+            
+            DispatchQueue.main.async {
+                print("This is run on the main queue, after the previous code in outer block")
+                completionHandler(processedImage)
+            }
+        }
+    }
+    
+    
     
     /*****************************************************
      *
@@ -1099,6 +1159,55 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         let alert: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
+        let flag: UIAlertAction = UIAlertAction(title:"Report/Flag Post", style: .default) {(_) -> Void in
+            
+            alert.dismiss(animated: true, completion: nil)
+            let flagContent: NSMutableDictionary = data.postDataAsDictionary().mutableCopy() as! NSMutableDictionary
+            let ref: DatabaseReference = Database.database().reference().child("Flags").child(data.user.value(forKey: "uid") as! String).child(Auth.auth().currentUser!.uid)
+            
+            let flagAlert: UIAlertController = UIAlertController(title: "Flag Reason", message: nil, preferredStyle: .actionSheet)
+            
+            let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+                
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let inappropriate: UIAlertAction = UIAlertAction(title: "Inappropriate" , style: .default) {(_) -> Void in
+                flagContent.setValue("Inappropriate", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for being Inappropriate")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let mature: UIAlertAction = UIAlertAction(title: "Mature Content" , style: .default) {(_) -> Void in
+                flagContent.setValue("Mature", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Mature Content")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let insensitive: UIAlertAction = UIAlertAction(title: "Insensitive" , style: .default) {(_) -> Void in
+                flagContent.setValue("Insensitive", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Insensitivity")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            let gore: UIAlertAction = UIAlertAction(title: "Violence/Gore" , style: .default) {(_) -> Void in
+                flagContent.setValue("Gore", forKey: "reason")
+                ref.setValue(flagContent)
+                self.showToast(message: "Post Flagged for Violence/Gore")
+                flagAlert.dismiss(animated: true, completion: nil)
+            }
+            flagAlert.addAction(cancel)
+            flagAlert.addAction(gore)
+            flagAlert.addAction(insensitive)
+            flagAlert.addAction(mature)
+            flagAlert.addAction(inappropriate)
+            
+            self.present(flagAlert, animated: true, completion: nil)
+        }
+        
         let block: UIAlertAction = UIAlertAction(title: String(format:"Block %@", self.dataManager.getFirstName(name: fullname)) , style: .default) {(_) -> Void in
             
             self.moreMenuPostData = data
@@ -1124,7 +1233,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         
-        
         let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
             alert.dismiss(animated: true, completion: nil)
         }
@@ -1136,6 +1244,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }else{
             alert.addAction(message)
             alert.addAction(block)
+            alert.addAction(flag)
             
         }
         
@@ -1144,6 +1253,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.present(alert, animated: true, completion: nil)
         
     }
+    
     
     
     func getMPMediaItemWith(persistentId: MPMediaEntityPersistentID) -> MPMediaItem{
@@ -1603,6 +1713,27 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
     }
     
+    
+    func showToast(message : String) {
+        
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 150, y: self.view.frame.size.height-100, width: 300, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textColor = UIColor.white
+        toastLabel.textAlignment = .center;
+        toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10;
+        toastLabel.clipsToBounds  =  true
+        
+        self.view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
 }
 
 

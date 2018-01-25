@@ -70,10 +70,11 @@ class PostData: NSObject{
     var usersWhoViewed: NSDictionary!
     var commentThread: String!
     var songString: String!
+    var nsfw: String!
     
     
 
-    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, commentThread: String!, songString: String!, usersWhoViewed: NSDictionary!){
+    init(withDataString:String, postId:String, likes:Int, views:Int, category:Category, mood: String, user: NSDictionary, usersWhoLiked:NSDictionary, creationDate: String!, expireTime: String!, commentThread: String!, songString: String!, usersWhoViewed: NSDictionary!, nsfw:String!){
         
         self.postId = postId
         self.likes = likes
@@ -89,8 +90,20 @@ class PostData: NSObject{
         self.usersWhoViewed = usersWhoViewed
         self.commentThread = commentThread
         self.songString = songString
+        self.nsfw = nsfw
         
     }
+    
+    
+    
+    
+    func postDataAsDictionary() -> NSDictionary{
+        let postDictionary: NSDictionary = ["postID":self.postId,"likes":self.likes,"views":self.views,"category":self.category.rawValue,"data":self.data,"user":self.user,"mood":self.mood,"users_who_liked":self.usersWhoLiked,"users_who_viewed":self.usersWhoViewed,"creation_date":self.creationDate,"expire_time":self.expireTime,"songString":self.songString,"nsfw":self.nsfw]
+        
+        
+        return postDictionary
+    }
+    
     
 //    
 //    
