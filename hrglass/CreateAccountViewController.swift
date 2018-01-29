@@ -43,7 +43,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     let dataManager: DataManager = DataManager()
     var usernameFlag: Bool = false;
     var currentUser: User!
-    var usernames: NSDictionary!
+//    var usernames: NSDictionary!
     var validUsername: Bool = false;
     
     @IBOutlet weak var loginIndicatorView: UIActivityIndicatorView!
@@ -84,11 +84,11 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             NSAttributedString(string: "Username", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         //get usernames dictionary which we will eventually be checking against
-        self.dataManager.getUsernamesDictionary { (usernameDict) in
-            if(usernameDict.count > 0){
-                self.usernames = usernameDict
-            }
-        }
+//        self.dataManager.getUsernamesDictionary { (usernameDict) in
+//            if(usernameDict.count > 0){
+//                self.usernames = usernameDict
+//            }
+//        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -126,46 +126,53 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         //if any of the fields are black the underline will be changed to red
         if(fullnameField.text == ""){
+            
+            self.fullnameImageView.isHighlighted = true
             print("Fullname Empty")
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
                 if view.tag == 1{
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }else if(usernameField.text == ""){
+            
+            self.usernameImageView.isHighlighted = true
             print("username Empty")
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
                 if view.tag == 2{
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }else if(emailField.text == ""){
         
-            
+            self.emailImageView.isHighlighted = true
             print("email Empty")
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
                 if view.tag == 3{
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }else if !self.isValidEmail(testStr: emailField.text!){
             
+            self.emailField.becomeFirstResponder()
             //email address validation
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
                 if view.tag == 3{
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }else if(passwordField.text == ""){
+            
+            self.passwordImageView.isHighlighted = true
             print("password Empty")
             let views: [UIView] = self.scrollContentView.subviews
             for view in views {
                 if view.tag == 4{
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }
@@ -247,15 +254,35 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     //username in use alert
     func chooseDifferentUsernameAlert(){
         
-        let alert: UIAlertController = UIAlertController(title: "Username already taken", message: "choose another", preferredStyle: .actionSheet)
+        let alert: UIAlertController = UIAlertController(title: "Username already taken", message: "choose another", preferredStyle: .alert)
         
         let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
-            self.dismiss(animated: true, completion: nil)
+            self.usernameField.text = ""
+            self.usernameField.becomeFirstResponder()
+            alert.dismiss(animated: true, completion: nil)
         }
         
         alert.addAction(ok)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    func invalidCharactersAlert(){
+        
+        let alert: UIAlertController = UIAlertController(title: "Invalid Characters", message: "Acceptable ones are 0-9 A-z _ -", preferredStyle: .alert)
+        
+        let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
+            self.usernameField.text = ""
+            self.usernameField.becomeFirstResponder()
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+        
+        
     }
 
     
@@ -268,7 +295,12 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     }
     
     
-    
+    func isValidUsername(testStr:String) -> Bool {
+        let usernameRegEx = "[A-Z0-9a-z_-]{2,64}"
+        
+        let usernameTest = NSPredicate(format:"SELF MATCHES %@", usernameRegEx)
+        return usernameTest.evaluate(with: testStr)
+    }
     
     
 
@@ -486,11 +518,20 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         //check username entered on finished editing username field
-        if textField == self.usernameField{
+        if textField == self.usernameField && self.usernameField.text! != ""{
             
-            self.validUsername = self.dataManager.existingUsernameCheck(desiredUsername: textField.text!, usernames: self.usernames, loggedInUid: "")
+            self.validUsername = self.isValidUsername(testStr: textField.text!)
+            
             if (!validUsername){
-                self.chooseDifferentUsernameAlert()
+                self.invalidCharactersAlert()
+            }else{
+                self.dataManager.existingUsernameCheck(desiredUsername: textField.text!, completion: { (valid) in
+                    
+                    if !valid{
+                        self.chooseDifferentUsernameAlert()
+                    }
+
+                })
             }
         }
     }
@@ -520,10 +561,20 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
-        self.scrollView.scrollRectToVisible(self.fullnameField.frame, animated: true)
+        
         self.removeIconHighlighing()
         
-        textField.resignFirstResponder()
+        if (self.fullnameField.text! != "" && self.fullnameField.isFirstResponder){
+            self.usernameField.becomeFirstResponder()
+        }else if(self.usernameField.text! != "" && self.usernameField.isFirstResponder){
+            self.emailField.becomeFirstResponder()
+        }else if(self.emailField.text! != "" && self.emailField.isFirstResponder){
+            self.passwordField.becomeFirstResponder()
+        }else{
+            self.scrollView.scrollRectToVisible(self.fullnameField.frame, animated: true)
+            textField.resignFirstResponder()
+        }
+        
         return true
     }
     

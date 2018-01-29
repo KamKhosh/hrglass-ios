@@ -1230,7 +1230,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <segue destination="yIY-a6-Ptl" kind="showDetail" identifier="toCreateAccountSegue" id="fNS-Oh-7QN"/>
+                                    <segue destination="yIY-a6-Ptl" kind="show" identifier="toCreateAccountSegue" action="showDetailViewController:sender:" id="fNS-Oh-7QN"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b3g-mT-2bF">
@@ -1317,7 +1317,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="gr3-fS-QlS" kind="showDetail" identifier="toLoginSegue" id="cYk-q4-PhA"/>
+                                            <segue destination="gr3-fS-QlS" kind="show" identifier="toLoginSegue" action="showDetailViewController:sender:" id="cYk-q4-PhA"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -1375,7 +1375,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gu5-p0-E2p" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1210.4000000000001" y="89.505247376311857"/>
+            <point key="canvasLocation" x="-871.20000000000005" y="89.505247376311857"/>
         </scene>
         <!--Create Account View Controller-->
         <scene sceneID="5C4-RN-oRl">
@@ -1674,14 +1674,14 @@
                         <outlet property="usernameImageView" destination="WUu-Bk-n1r" id="ijn-6X-qpZ"/>
                         <outlet property="usernameView" destination="JjF-U3-flO" id="bwb-A3-sfO"/>
                         <segue destination="S3C-0Z-DfM" kind="show" identifier="toFeedSegue" id="nbE-hn-J9v"/>
-                        <segue destination="gr3-fS-QlS" kind="showDetail" identifier="toLoginSegue" id="FE9-Jx-vea"/>
+                        <segue destination="gr3-fS-QlS" kind="show" identifier="toLoginSegue" action="showDetailViewController:sender:" id="FE9-Jx-vea"/>
                         <segue destination="joy-gf-woS" kind="unwind" identifier="unwindToLogin" unwindAction="unwindToLoginWithUnwindSegue:" id="9QZ-4q-kya"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sxM-JD-gII" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="joy-gf-woS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-247.19999999999999" y="-470.91454272863569"/>
+            <point key="canvasLocation" x="92" y="-470.91454272863569"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="67y-xd-OWH">
@@ -1900,14 +1900,14 @@
                         <outlet property="scrollView" destination="S0N-LG-GfM" id="Llq-Bj-P9n"/>
                         <outlet property="usernameField" destination="wam-K5-dpE" id="9ML-Q3-Tow"/>
                         <segue destination="S3C-0Z-DfM" kind="show" identifier="toFeedSegue" id="0q8-Ka-CvW"/>
-                        <segue destination="yIY-a6-Ptl" kind="showDetail" identifier="toCreateAccountSegue" id="gJw-nt-rRz"/>
+                        <segue destination="yIY-a6-Ptl" kind="show" identifier="toCreateAccountSegue" action="showDetailViewController:sender:" id="gJw-nt-rRz"/>
                         <segue destination="5fk-L8-COG" kind="unwind" identifier="unwindToCreateAccount" unwindAction="unwindToCreateAccountWithUnwindSegue:" id="m2S-zu-Qrt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UdD-JK-JCI" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="5fk-L8-COG" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-247.19999999999999" y="537.48125937031489"/>
+            <point key="canvasLocation" x="92" y="537.48125937031489"/>
         </scene>
         <!--Messages View Controller-->
         <scene sceneID="ch3-gs-7lb">
@@ -2483,7 +2483,7 @@
                                         <rect key="frame" x="0.0" y="383.5" width="375" height="50"/>
                                         <subviews>
                                             <tabBar contentMode="scaleToFill" barStyle="black" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xcS-ed-nCs">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                                <rect key="frame" x="0.0" y="-0.5" width="375" height="50"/>
                                                 <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <items>
                                                     <tabBarItem tag="1" title="" image="gallery" id="IU0-qY-3qw"/>
@@ -3244,7 +3244,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1780" y="89.505247376311857"/>
+            <point key="canvasLocation" x="2119.1999999999998" y="89.505247376311857"/>
         </scene>
         <!--Settings-->
         <scene sceneID="0Km-Qk-Mtt">
@@ -3357,7 +3357,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K7X-Ck-0gd" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="FC1-cH-fBr" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3777" y="90"/>
+            <point key="canvasLocation" x="4116" y="89.505247376311857"/>
         </scene>
         <!--Discover View Controller-->
         <scene sceneID="yK3-Xd-UdM">
@@ -3997,7 +3997,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BXB-tF-ueI" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="D1F-0c-wWG" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="4636" y="90"/>
+            <point key="canvasLocation" x="4975.1999999999998" y="89.505247376311857"/>
         </scene>
         <!--Blocked Accounts View Controller-->
         <scene sceneID="OYN-59-2g6">
@@ -4135,7 +4135,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kmq-G4-ZNd" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="VVg-ic-ffq" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="5553" y="90"/>
+            <point key="canvasLocation" x="5892" y="89.505247376311857"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="zgl-4F-dFh">
@@ -4152,7 +4152,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OWR-AY-o5m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2804" y="90"/>
+            <point key="canvasLocation" x="3143.1999999999998" y="89.505247376311857"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="MQl-09-Goa">
@@ -4169,7 +4169,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tuJ-5g-9zN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="793" y="90"/>
+            <point key="canvasLocation" x="1132" y="89.505247376311857"/>
         </scene>
         <!--Select Thumbnail View Controller-->
         <scene sceneID="da8-ua-wEe">
@@ -4486,11 +4486,11 @@
     <inferredMetricsTieBreakers>
         <segue reference="4yc-7R-ePj"/>
         <segue reference="Mnx-q4-8ia"/>
-        <segue reference="nbE-hn-J9v"/>
+        <segue reference="Xr8-Nk-0I2"/>
         <segue reference="dIA-KB-ijf"/>
         <segue reference="Jat-Zd-CUD"/>
-        <segue reference="FE9-Jx-vea"/>
-        <segue reference="gJw-nt-rRz"/>
+        <segue reference="cYk-q4-PhA"/>
+        <segue reference="fNS-Oh-7QN"/>
         <segue reference="JGD-Oh-55j"/>
     </inferredMetricsTieBreakers>
 </document>

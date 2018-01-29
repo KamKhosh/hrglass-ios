@@ -97,7 +97,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             let views: [UIView] = self.view.subviews
             for view in views {
                 if view.tag == 1{
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }else if(passwordField.text == ""){
@@ -107,7 +107,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                 
                 if view.tag == 2{
                     
-                    view.layer.borderColor = UIColor.red.cgColor
+                    view.layer.borderColor = colors.getMenuColor().cgColor
                 }
             }
         }
@@ -381,7 +381,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
         
         self.removeIconHighlighting()
-        self.loginAction(self)
+        
+        if (self.usernameField.text! != "" && self.passwordField.text! != ""){
+            self.loginAction(self)
+        }else if(self.usernameField.isFirstResponder && self.passwordField.text == ""){
+            self.passwordField.becomeFirstResponder()
+        }
+        else{
+            textField.resignFirstResponder()
+        }
+        
+        
         return true
     }
     

@@ -338,52 +338,69 @@ class DataManager {
      ***************************************************************************************/
     
     //Uses a Boolean Completion to determine if the current username exists
-    func getUsernamesDictionary(completion:@escaping (NSDictionary) -> ()){
-        
-        let usernameRef = Database.database().reference().child("Usernames")
-        
-        usernameRef.observeSingleEvent(of: .value, with: { snapshot in
-            
-            if let usernamesDict: NSDictionary = snapshot.value as? NSDictionary{
-                
-                completion(usernamesDict)
-                
-            }else{
-                completion([:])
-            }
-        })
-    }
+//    func getUsernamesDictionary(completion:@escaping (NSDictionary) -> ()){
+//
+//        let usernameRef = Database.database().reference().child("Usernames")
+//
+//        usernameRef.observeSingleEvent(of: .value, with: { snapshot in
+//
+//            if let usernamesDict: NSDictionary = snapshot.value as? NSDictionary{
+//
+//                completion(usernamesDict)
+//
+//            }else{
+//                completion([:])
+//            }
+//        })
+//    }
     
     
     //check existing usernames dictionary, returns true if the desired username is a valid username to choose
-    func existingUsernameCheck(desiredUsername: String, usernames: NSDictionary, loggedInUid: String) -> Bool{
+    func existingUsernameCheck(desiredUsername: String, completion:@escaping (Bool) -> ()){
         
         //if no logged in user, loggedInUid will be an empty string
         
-        var username: String = ""
-        var uid: String = ""
-        var existing: Bool = false
+        let usernameRef = Database.database().reference().child("Usernames").child(desiredUsername)
         
-        //iterate dictioanry and break if an identical username exists
-        for (key, object) in usernames{
+        usernameRef.observeSingleEvent(of: .value, with: { snapshot in
             
-            username = object as! String
-            uid = key as! String
-            
-            if desiredUsername == username {
+            if let _: NSInteger = snapshot.value as? NSInteger{
                 
-                existing = true
-                break;
+                completion(false)
+                
+            }else{
+                completion(true)
             }
-        }
+        })
         
-        //if existing and the logged in user isn't the username found, users should be able to change their username back to what it was
-        if (loggedInUid != uid && existing){
-            return false
-            
-        }else{
-            return true
-        }
+        
+        
+        
+        
+//        var username: String = ""
+//        var uid: String = ""
+//        var existing: Bool = false
+//
+//        //iterate dictioanry and break if an identical username exists
+//        for (key, object) in usernames{
+//
+//            username = object as! String
+//            uid = key as! String
+//
+//            if desiredUsername == username {
+//
+//                existing = true
+//                break;
+//            }
+//        }
+//
+//        //if existing and the logged in user isn't the username found, users should be able to change their username back to what it was
+//        if (loggedInUid != uid && existing){
+//            return false
+//
+//        }else{
+//            return true
+//        }
     }
     
     

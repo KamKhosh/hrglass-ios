@@ -17,7 +17,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     let ref = Database.database().reference()
     var parentView: String = "feedView"
     var dataManager: DataManager = DataManager()
-    var usernames: NSDictionary!
+//    var usernames: NSDictionary!
     var validUsername: Bool = false
     
     @IBOutlet weak var submitBtn: UIButton!
@@ -31,11 +31,11 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         super.viewDidLoad()
         self.usernameField.delegate = self
         
-        self.dataManager.getUsernamesDictionary { (usernameDict) in
-            if(usernameDict.count > 0){
-                self.usernames = usernameDict
-            }
-        }
+//        self.dataManager.getUsernamesDictionary { (usernameDict) in
+//            if(usernameDict.count > 0){
+//                self.usernames = usernameDict
+//            }
+//        }
         //if parent view is from account, show back button and change button title
         if parentView == "accountView"{
             
@@ -83,43 +83,60 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         self.usernameField.resignFirstResponder()
         
     }
+    
+    
+
+    
+    
+    
+    
 
     @IBAction func submitAction(_ sender: Any) {
         
         //TODO: ADD Username Check so user's can't use an existing username
+        
         if(self.usernameField.text != ""){
             
-            let validUsername =  self.dataManager.existingUsernameCheck(desiredUsername: self.usernameField.text!, usernames: self.usernames, loggedInUid: self.currentUserId!)
             
             
-            if (!validUsername){
-                
-                //username already exists
-                self.usernameExistsAlert()
-                
+            let validUsername = self.isValidUsername(testStr: self.usernameField.text!)
+            
+            if validUsername{
                 
             }else{
-                //set new usename
-                let username = self.usernameField.text!
                 
-                let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
-                
-                let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
-                tempDict.setValue(username, forKey: "username")
-                
-                UserDefaults.standard.set(tempDict, forKey: "userdata")
-                UserDefaults.standard.synchronize()
-                
-                let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
-                let usernames = self.ref.child("Usernames").child(self.currentUserId!)
-                usernames.setValue(self.usernameField.text!)
-                usernameRef.setValue(self.usernameField.text!)
-                
-                if self.parentView == "feedView"{
-                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                }else if self.parentView == "accountView" {
-                    self.performSegue(withIdentifier: "unwindToAccount", sender: nil)
-                }
+                self.dataManager.existingUsernameCheck(desiredUsername: self.usernameField.text!, completion: { (valid) in
+                    
+                    
+                    if (!valid){
+                        
+                        self.usernameExistsAlert()
+                        
+                    }else{
+                        //set new usename
+                        let username = self.usernameField.text!
+                        
+                        let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
+                        
+                        let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
+                        tempDict.setValue(username, forKey: "username")
+                        
+                        UserDefaults.standard.set(tempDict, forKey: "userdata")
+                        UserDefaults.standard.synchronize()
+                        
+                        let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
+                        let usernames = self.ref.child("Usernames").child(self.currentUserId!)
+                        usernames.setValue(self.usernameField.text!)
+                        usernameRef.setValue(self.usernameField.text!)
+                        
+                        if self.parentView == "feedView"{
+                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                        }else if self.parentView == "accountView" {
+                            self.performSegue(withIdentifier: "unwindToAccount", sender: nil)
+                        }
+                        
+                    }
+                })
             }
             
         }else{
@@ -146,6 +163,35 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     }
 
     
+    
+    
+    func isValidUsername(testStr:String) -> Bool {
+        let usernameRegEx = "[A-Z0-9a-z_-]{2,64}"
+        
+        let usernameTest = NSPredicate(format:"SELF MATCHES %@", usernameRegEx)
+        return usernameTest.evaluate(with: testStr)
+    }
+    
+    
+    
+    
+    func invalidCharactersAlert(){
+        
+        let alert: UIAlertController = UIAlertController(title: "Invalid Characters", message: "Acceptable ones are 0-9 A-z _ -", preferredStyle: .alert)
+        
+        let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
+            self.usernameField.text = ""
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    
     //username exitst alert
     func usernameExistsAlert(){
         
@@ -153,6 +199,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
         let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
+            self.usernameField.text = ""
             self.dismiss(animated: true, completion: nil)
         }
         
