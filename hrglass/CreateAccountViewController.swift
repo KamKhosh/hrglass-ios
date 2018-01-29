@@ -511,16 +511,13 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         self.passwordImageView.isHighlighted = false
         
         if (textField == self.fullnameField){
-            
             self.fullnameImageView.isHighlighted = true
-            
         }else if (textField == self.usernameField){
-            
-            self.fullnameImageView.isHighlighted = true
+            self.usernameImageView.isHighlighted = true
         }else if (textField == self.emailField){
-            self.fullnameImageView.isHighlighted = true
+            self.emailImageView.isHighlighted = true
         }else if (textField == self.passwordField){
-            self.fullnameImageView.isHighlighted = true
+            self.passwordImageView.isHighlighted = true
         }
         
         

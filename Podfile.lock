@@ -99,21 +99,21 @@ PODS:
     - Kanna (~> 2.1.1)
 
 DEPENDENCIES:
-  - AWSCognito
-  - AWSCore
-  - AWSS3
-  - Clarifai
+  - AWSCognito (~> 2.6.2)
+  - AWSCore (~> 2.6.2)
+  - AWSS3 (~> 2.6.2)
+  - Clarifai (~> 2.3.2)
   - Crashlytics (~> 3.9.3)
   - Fabric (~> 1.7.2)
-  - FacebookCore
-  - FacebookLogin
-  - Firebase/Auth
-  - Firebase/Core
-  - Firebase/Database
-  - Firebase/Storage
-  - iOSPhotoEditor
-  - RKNotificationHub
-  - URLEmbeddedView
+  - FacebookCore (~> 0.2.0)
+  - FacebookLogin (~> 0.2.0)
+  - Firebase/Auth (~> 4.2.0)
+  - Firebase/Core (~> 4.2.0)
+  - Firebase/Database (~> 4.2.0)
+  - Firebase/Storage (~> 4.2.0)
+  - iOSPhotoEditor (~> 0.5)
+  - RKNotificationHub (~> 2.0.4)
+  - URLEmbeddedView (~> 0.10.0)
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -144,6 +144,6 @@ SPEC CHECKSUMS:
   RKNotificationHub: 3765424499139c3d3885b681bb0837f072d12ae6
   URLEmbeddedView: 0424a1f068a75574b8d5431b0add4478af5c83cb
 
-PODFILE CHECKSUM: 9bef736ad9d6869068b5c6ffb6f669beaa2c384a
+PODFILE CHECKSUM: 084a6ef511993c792fff976b9d02dd646c1cc23f
 
 COCOAPODS: 1.3.1

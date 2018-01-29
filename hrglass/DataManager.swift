@@ -892,6 +892,7 @@ class DataManager {
         OGDataProvider.shared.updateInterval = 10
         
         OGDataProvider.shared.fetchOGData(urlString: urlString, completion: { data, error in
+            
             let urlData: OGData = data
             //if OGData returns data
             if error == nil{
