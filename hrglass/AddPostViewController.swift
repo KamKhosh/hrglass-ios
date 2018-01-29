@@ -2602,14 +2602,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             self.tabBar(self.tabBar, didSelect: (self.tabBar.items?[0])!)
             
-        }
-//        else if (segue.identifier == "toCropView"){
-//            
-//            let cropVC: CropViewController = segue.destination as! CropViewController
-//            cropVC.originalImage = self.selectedObject
-//
-//        }
-        else if (segue.identifier == "toThumbnailView"){
+        }else if (segue.identifier == "toThumbnailView"){
             
             let thumbVC: SelectThumbnailViewController = segue.destination as! SelectThumbnailViewController
             

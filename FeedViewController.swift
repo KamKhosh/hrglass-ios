@@ -101,6 +101,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var addPostButton: UIButton!
     @IBOutlet weak var logoImageView: UIImageView!
     
+    @IBOutlet weak var profileView: UIView!
     
     var cornerRadius:CGFloat = 0.0
     
@@ -545,7 +546,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 self.profileBtn.setImage(self.dataManager.getImageForPath(path: "profilePhoto"), for: .normal)
             }else{
-                dataManager.syncProfilePhotosToDevice(user: self.loggedInUser, path: "profilePhoto", completion: { image in
+                
+                dataManager.syncProfilePhotosToDevice(urlString: self.loggedInUser.profilePhoto, path: "profilePhoto", completion: { image in
         
                     self.profileBtn.setImage(image, for: .normal)
                 })
@@ -726,6 +728,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
         }
         
+        
+
         
         cell.contentSelected = {
             
@@ -919,13 +923,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             //if not in dict, set thumb to red
             if (likedDict.value(forKey: self.loggedInUser.userID) != nil){
+           
                 
                 cell.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
                 cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
+                cell.profileView.isHidden = false
                 cell.likedByUser = true
                 
             }else{
-                
+                cell.profileView.isHidden = true
                 cell.likedByUser = false
             }
         }

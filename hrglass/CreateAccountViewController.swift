@@ -19,16 +19,32 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var confirmPasswordField: UITextField!
+//    @IBOutlet weak var confirmPasswordField: UITextField!
     @IBOutlet weak var createAccountBtn: UIButton!
     @IBOutlet weak var scrollContentView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var termsCheckbox: CheckBox!
     
+    
+    @IBOutlet weak var passwordView: UIView!
+    @IBOutlet weak var emailView: UIView!
+    @IBOutlet weak var usernameView: UIView!
+    @IBOutlet weak var fullnameView: UIView!
+    
+    @IBOutlet weak var passwordImageView: UIImageView!
+    @IBOutlet weak var emailImageView: UIImageView!
+    @IBOutlet weak var usernameImageView: UIImageView!
+    @IBOutlet weak var fullnameImageView: UIImageView!
+    
+    let colors: Colors = Colors()
     var ref: DatabaseReference!
+    var parentVC: String = "welcome"
     
     let dataManager: DataManager = DataManager()
     var usernameFlag: Bool = false;
     var currentUser: User!
+    var usernames: NSDictionary!
+    var validUsername: Bool = false;
     
     @IBOutlet weak var loginIndicatorView: UIActivityIndicatorView!
     
@@ -42,8 +58,10 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         //Delegate Setup
         self.textFieldDelegateSetup()
         self.scrollView.delegate = self
+        self.createAccountBtn.layer.cornerRadius = 3.0
+        self.createAccountBtn.layer.borderWidth = 1.0
+        self.createAccountBtn.layer.borderColor = colors.getDarkerPink().cgColor
         
-
         //Keyboard Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         
@@ -54,10 +72,10 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             NSAttributedString(string: "Fullname", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         passwordField.attributedPlaceholder =
-            NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
+            NSAttributedString(string: "Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
-        confirmPasswordField.attributedPlaceholder =
-            NSAttributedString(string: "Confirm Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
+//        confirmPasswordField.attributedPlaceholder =
+//            NSAttributedString(string: "Confirm Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         emailField.attributedPlaceholder =
             NSAttributedString(string: "Email", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
@@ -65,7 +83,12 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         usernameField.attributedPlaceholder =
             NSAttributedString(string: "Username", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
-        
+        //get usernames dictionary which we will eventually be checking against
+        self.dataManager.getUsernamesDictionary { (usernameDict) in
+            if(usernameDict.count > 0){
+                self.usernames = usernameDict
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -75,8 +98,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         //init fb login button
         let fbLoginBtn = LoginButton.init(readPermissions: [.publicProfile, .email])
         fbLoginBtn.delegate = self
-        
-        fbLoginBtn.center = CGPoint(x: self.createAccountBtn.frame.midX, y: self.createAccountBtn.frame.maxY + 30)
+        fbLoginBtn.frame.size = self.createAccountBtn.frame.size
+        fbLoginBtn.center = CGPoint(x: self.createAccountBtn.frame.midX, y: self.createAccountBtn.frame.maxY + 40)
         
         self.scrollContentView.addSubview(fbLoginBtn)
         
@@ -102,8 +125,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         //CREATE ACCOUNT W/ Email and Password
         
         //if any of the fields are black the underline will be changed to red
-        
-        
         if(fullnameField.text == ""){
             print("Fullname Empty")
             let views: [UIView] = self.scrollContentView.subviews
@@ -147,23 +168,29 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                     view.layer.borderColor = UIColor.red.cgColor
                 }
             }
-        }else if(confirmPasswordField.text == ""){
-            print("confirm password Empty")
-            let views: [UIView] = self.scrollContentView.subviews
-            for view in views {
-                if view.tag == 5{
-                    view.layer.borderColor = UIColor.red.cgColor
-                }
-            }
-        }else{
+        }
+        
+//        else if(confirmPasswordField.text == ""){
+//            print("confirm password Empty")
+//            let views: [UIView] = self.scrollContentView.subviews
+//            for view in views {
+//                if view.tag == 5{
+//                    view.layer.borderColor = UIColor.red.cgColor
+//                }
+//            }
+//        }
+//
+        else{
             //all fields are filled out
             
-            if (confirmPasswordField.text == passwordField.text){
+//            if (confirmPasswordField.text == passwordField.text){
+            if termsCheckbox.isChecked && validUsername{
                 
+            
                 //TODO: ADD Username Check so user's can't use an existing username, same with e-mail
                 //after account created and user logged in
                 let email:String = emailField.text!
-                let password: String = confirmPasswordField.text!
+                let password: String = passwordField.text!
                 let fullname: String = fullnameField.text!
                 let username: String = usernameField.text!
 
@@ -210,12 +237,9 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 }
                 
             }else{
-                let views: [UIView] = self.scrollContentView.subviews
-                for view in views {
-                    if view.tag == 5{
-                        view.layer.borderColor = UIColor.red.cgColor
-                    }
-                }
+                
+                self.showToast(message: "Accept the Terms and Conditions to continue")
+                
             }
         }
     }
@@ -223,7 +247,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     //username in use alert
     func chooseDifferentUsernameAlert(){
         
-        let alert: UIAlertController = UIAlertController(title: "Username already take", message: "choose another", preferredStyle: .actionSheet)
+        let alert: UIAlertController = UIAlertController(title: "Username already taken", message: "choose another", preferredStyle: .actionSheet)
         
         let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
@@ -235,12 +259,17 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     }
 
     
+    //check for a valid email address
     func isValidEmail(testStr:String) -> Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         return emailTest.evaluate(with: testStr)
     }
+    
+    
+    
+    
     
 
     //setup textField delegates
@@ -250,7 +279,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         self.usernameField.delegate = self
         self.emailField.delegate = self
         self.passwordField.delegate = self
-        self.confirmPasswordField.delegate = self
+//        self.confirmPasswordField.delegate = self
 
     }
     
@@ -258,17 +287,17 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     //add bottom lines to textFields
     func setupView(){
         
-        self.addBottomLine(forView: fullnameField, tag: 1)
-        self.addBottomLine(forView: usernameField, tag: 2)
-        self.addBottomLine(forView: emailField, tag: 3)
-        self.addBottomLine(forView: passwordField, tag: 4)
-        self.addBottomLine(forView: confirmPasswordField, tag:5)
+        self.addBottomLine(forView: self.fullnameView, tag: 1)
+        self.addBottomLine(forView: self.usernameView, tag: 2)
+        self.addBottomLine(forView: self.emailView, tag: 3)
+        self.addBottomLine(forView: self.passwordView, tag: 4)
+//        self.addBottomLine(forView: confirmPasswordField, tag:5)
         
     }
 
     
     //add bottom line method
-    func addBottomLine(forView: UITextField, tag: Int){
+    func addBottomLine(forView: UIView, tag: Int){
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
         view.layer.borderColor = UIColor.white.cgColor
@@ -276,7 +305,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         view.alpha = 0.2
         view.tag = tag
         self.scrollContentView.addSubview(view)
-        
     }
     
     
@@ -295,7 +323,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     func loginButtonWillLogin(_ loginButton: LoginButton) -> Bool {
         
         return true
-        
     }
     
 
@@ -311,9 +338,10 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             print("User cancelled login.")
             self.showActionSheetWithTitle(title: "Facebook Login Cancelled", message: "")
             
-        case .success(grantedPermissions: let granted, declinedPermissions: let declined, token: let token):
+        case .success(grantedPermissions: _, declinedPermissions: _, token: _):
             print("Logged in!")
-            //Do further code...
+            
+
             let credential = FacebookAuthProvider.credential(withAccessToken: (AccessToken.current?.authenticationToken)!)
             
             //use facebook credential to login to firebase
@@ -369,9 +397,28 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 }
             }
         }
+    }
+    
+    
+    func showToast(message : String) {
         
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textColor = UIColor.white
+        toastLabel.textAlignment = .center;
+        toastLabel.font = UIFont(name: "Montserrat-Light", size: 10.0)
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10;
+        toastLabel.clipsToBounds  =  true
         
+        self.view.addSubview(toastLabel)
         
+        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
     }
     
     
@@ -435,6 +482,20 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
      * TEXT FIELD DELEGATE
      ***********************/
     
+    ////check for username
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        //check username entered on finished editing username field
+        if textField == self.usernameField{
+            
+            self.validUsername = self.dataManager.existingUsernameCheck(desiredUsername: textField.text!, usernames: self.usernames, loggedInUid: "")
+            if (!validUsername){
+                self.chooseDifferentUsernameAlert()
+            }
+        }
+    }
+    
+    
     //sets border colors to black
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let views: [UIView] = self.view.subviews
@@ -443,6 +504,28 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 view.layer.borderColor = UIColor.white.cgColor
             }
         }
+        
+        self.fullnameImageView.isHighlighted = false
+        self.usernameImageView.isHighlighted = false
+        self.emailImageView.isHighlighted = false
+        self.passwordImageView.isHighlighted = false
+        
+        if (textField == self.fullnameField){
+            
+            self.fullnameImageView.isHighlighted = true
+            
+        }else if (textField == self.usernameField){
+            
+            self.fullnameImageView.isHighlighted = true
+        }else if (textField == self.emailField){
+            self.fullnameImageView.isHighlighted = true
+        }else if (textField == self.passwordField){
+            self.fullnameImageView.isHighlighted = true
+        }
+        
+        
+        
+        
     }
     
 //    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -468,10 +551,10 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             self.scrollView.scrollRectToVisible(passwordField.frame, animated: true)
         }
             
-        else if(confirmPasswordField.isFirstResponder){
-            
-            self.scrollView.scrollRectToVisible(confirmPasswordField.frame, animated: true)
-        }
+//        else if(confirmPasswordField.isFirstResponder){
+//
+//            self.scrollView.scrollRectToVisible(confirmPasswordField.frame, animated: true)
+//        }
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
@@ -509,8 +592,6 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             self.createAccountBtn.setTitle("Create Account", for: .normal)
             self.createAccountBtn.isUserInteractionEnabled = true
         }
-        
-        
     }
     
     
@@ -525,8 +606,37 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         if (scrollView.contentOffset.y == 0){
              view.endEditing(true)
         }
-
     }
+    
+    @IBAction func unwindToCreateAccount(unwindSegue: UIStoryboardSegue) {
+        
+        
+    }
+    
+    @IBAction func loginAction(_ sender: Any) {
+        
+        if self.parentVC == "welcome"{
+            self.performSegue(withIdentifier: "toLoginSegue", sender: self)
+        }else if self.parentVC == "login"{
+            self.performSegue(withIdentifier: "unwindToLogin", sender: self)
+        }
+        
+    }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "unwindToLogin"{
+            let vc: LoginViewController = segue.destination as! LoginViewController
+            vc.parentVC = "welcome"
+            
+        }else if segue.identifier == "toLoginSegue" {
+            let vc: LoginViewController = segue.destination as! LoginViewController
+            vc.parentVC = "create"
+            
+        }
+    }
+    
     
     
 }

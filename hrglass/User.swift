@@ -32,8 +32,8 @@ class User
         self.name = name
         self.isPrivate = isPrivate
         self.username = username
-        
     }
+    
     
     
     //initialize
@@ -41,4 +41,21 @@ class User
         
         self.init(withUserID: "", username: "", bio: "", profilePhoto: "", coverPhoto: "", name: "", isPrivate: false)
     }
+    
+    
+    
+    func dictionaryToUser(dictionary: NSDictionary){
+        
+        self.name = dictionary.value(forKey: "name") as! String
+        self.isPrivate = (dictionary.value(forKey: "isPrivate") != nil)
+        self.bio = dictionary.value(forKey: "email") as! String
+        self.username = dictionary.value(forKey: "username") as! String
+        self.profilePhoto = dictionary.value(forKey: "profilePhoto") as! String
+        self.coverPhoto = dictionary.value(forKey: "coverPhoto") as! String
+        
+    }
+    
+    
+    
+    
 }

@@ -46,6 +46,9 @@ class FeedTableViewCell: UITableViewCell {
     
     @IBOutlet weak var nsfwLbl: UILabel!
     
+    @IBOutlet weak var profileView: UIView!
+    
+    
     var likedByUser: Bool = false
     
     var postId: String = ""
@@ -65,7 +68,7 @@ class FeedTableViewCell: UITableViewCell {
     var userProfile: (() -> Void)? = nil
     var contentSelected: (() -> Void)? = nil
     var moreBtnSelected: (() -> Void)? = nil
-
+//    var likeBtnSelected: (() -> Void)? = nil
     let currentUserId: String = Auth.auth().currentUser!.uid
     
     
@@ -127,12 +130,19 @@ class FeedTableViewCell: UITableViewCell {
     
     @IBAction func likeAction(_ sender: Any) {
         
+        
+        
+//        if let likeAction = self.likeBtnSelected{
+//
+//            likeAction()
+//        }
+//
         if(likedByUser){
             
             //the post was previously liked by the user, set likedByUser to false
             if (postId != ""){
                 self.likedByUser = false
-                
+                self.profileView.isHidden = true
                 //set image to normal color
                 let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!
                 self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
@@ -165,6 +175,7 @@ class FeedTableViewCell: UITableViewCell {
             if (postId != ""){
                 
                 self.likedByUser = true
+                self.profileView.isHidden = false
                 
                 //set thumb to be red tint
                 let newImage: UIImage = UIImage.init(named: "thumbs_up_uncentered")!

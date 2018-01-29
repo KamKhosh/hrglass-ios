@@ -66,7 +66,9 @@
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
 		5E88ED53200291F000CC04DE /* SupportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E88ED52200291F000CC04DE /* SupportViewController.swift */; };
 		5E8CDA701FE5AFE40008AC25 /* MoodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */; };
+		5EB0ED50201E63CF000472A8 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB0ED4F201E63CF000472A8 /* ForgotPasswordViewController.swift */; };
 		5EB1A7701FD1C4CD008F625E /* BreathingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */; };
+		5ECA1E1A201AAD410077140B /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECA1E19201AAD410077140B /* CheckBox.swift */; };
 		5ECF6B921EC5F99D00D2A00B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECF6B911EC5F99D00D2A00B /* User.swift */; };
 		5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */; };
 		5EF85DF71F8D5CB5008887F9 /* AddPostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */; };
@@ -149,7 +151,9 @@
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
 		5E88ED52200291F000CC04DE /* SupportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViewController.swift; sourceTree = "<group>"; };
 		5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodViewController.swift; sourceTree = "<group>"; };
+		5EB0ED4F201E63CF000472A8 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreathingAnimation.swift; sourceTree = "<group>"; };
+		5ECA1E19201AAD410077140B /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
 		5ECF6B911EC5F99D00D2A00B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5EF85DF41F8D5CB5008887F9 /* AddPostTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostTableViewCell.swift; sourceTree = "<group>"; };
 		5EF85DF51F8D5CB5008887F9 /* AddPostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddPostTableViewCell.xib; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 				5E24BD811EB275800047ED50 /* Main.storyboard */,
 				5E24BD861EB275800047ED50 /* LaunchScreen.storyboard */,
 				5E24BD891EB275800047ED50 /* Info.plist */,
+				5ECA1E19201AAD410077140B /* CheckBox.swift */,
 			);
 			path = hrglass;
 			sourceTree = "<group>";
@@ -283,6 +288,7 @@
 				5E254C571ECCC30900CFBFCE /* LoginViewController.swift */,
 				5E254C591ECCC35D00CFBFCE /* WelcomeViewController.swift */,
 				5E254C5B1ECCC36B00CFBFCE /* CreateAccountViewController.swift */,
+				5EB0ED4F201E63CF000472A8 /* ForgotPasswordViewController.swift */,
 			);
 			name = LoginViews;
 			sourceTree = "<group>";
@@ -645,6 +651,7 @@
 				5E28BF3B1ED79219006E653B /* AddPostViewController.swift in Sources */,
 				5EF85DF61F8D5CB5008887F9 /* AddPostTableViewCell.swift in Sources */,
 				5EF85DFB1F953AE6008887F9 /* AppleMusicManager.swift in Sources */,
+				5ECA1E1A201AAD410077140B /* CheckBox.swift in Sources */,
 				5E32DCB51F5365F4004E6AA1 /* SongQuery.swift in Sources */,
 				5E1403601F2FCE730024EBFF /* MessagesViewController.swift in Sources */,
 				5E32A85A1ED4F19800AEF9DA /* ChangePasswordViewController.swift in Sources */,
@@ -652,6 +659,7 @@
 				5E32DCBF1F560C78004E6AA1 /* SelectThumbnailViewController.swift in Sources */,
 				5E35D7581EC508AF00A41633 /* ProfileViewController.swift in Sources */,
 				5E378C7E1ECA533800B8A873 /* ProfileCollectionViewCell.swift in Sources */,
+				5EB0ED50201E63CF000472A8 /* ForgotPasswordViewController.swift in Sources */,
 				5E2B0B271EBFB21200F8DEF3 /* BlockedAccountsViewController.swift in Sources */,
 				5E270D561EF748980085D5D3 /* DataManager.swift in Sources */,
 				5E3214BD1EC3AB24004ACBB1 /* Colors.swift in Sources */,
@@ -803,7 +811,6 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = hrglass/hrglass.entitlements;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -833,7 +840,6 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = hrglass/hrglass.entitlements;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

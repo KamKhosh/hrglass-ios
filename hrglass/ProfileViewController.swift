@@ -67,17 +67,20 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.clarifaiApp = ClarifaiApp.init(apiKey: "f20abe6d4a7042f8967bb30cbc96586b")
         
         //In case phone is in silent mode
-        
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
         
         self.profileTableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
-        
         
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        //remove objects otherwise we will get a duplicate liked array
+        self.likedDataArray.removeAll()
+        
+        //get profile data
         self.getProfileData()
     }
     
@@ -103,6 +106,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.getLatestPostData()
             self.getLikedPostData()
             
+            
             //SET THE CURRENT USER COVER PHOTO AS BACKGROUND
             if (currentlyViewingUser.coverPhoto != ""){
                 
@@ -112,7 +116,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                 }else{
                     
-                    dataManager.syncProfilePhotosToDevice(user: self.currentlyViewingUser, path: "coverPhoto", completion: { image in
+                    dataManager.syncProfilePhotosToDevice(urlString: self.currentlyViewingUser.coverPhoto, path: "coverPhoto", completion: { image in
                         
                         self.coverPhoto.image = image
                     })
@@ -151,7 +155,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                             
                             self.coverPhoto.image = self.dataManager.clearImage
                             self.view.backgroundColor = UIColor.white
-                            
                         }
                         
                         self.profileTableView.reloadData()

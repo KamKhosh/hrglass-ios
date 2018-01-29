@@ -17,6 +17,8 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
     let ref = Database.database().reference()
     var parentView: String = "feedView"
     var dataManager: DataManager = DataManager()
+    var usernames: NSDictionary!
+    var validUsername: Bool = false
     
     @IBOutlet weak var submitBtn: UIButton!
     @IBOutlet weak var backBtn: UIButton!
@@ -29,7 +31,11 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         super.viewDidLoad()
         self.usernameField.delegate = self
         
-        
+        self.dataManager.getUsernamesDictionary { (usernameDict) in
+            if(usernameDict.count > 0){
+                self.usernames = usernameDict
+            }
+        }
         //if parent view is from account, show back button and change button title
         if parentView == "accountView"{
             
@@ -40,6 +46,10 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
         usernameField.attributedPlaceholder =
             NSAttributedString(string: "Username", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
+        
+        
+        
+        
         
         //swipe down gesture setup -- to dismiss keyboard
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismisskeyboard))
@@ -79,36 +89,39 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         //TODO: ADD Username Check so user's can't use an existing username
         if(self.usernameField.text != ""){
             
-            dataManager.checkIfUsernameExists(username: self.usernameField.text!, completion: { (exists) in
+            let validUsername =  self.dataManager.existingUsernameCheck(desiredUsername: self.usernameField.text!, usernames: self.usernames, loggedInUid: self.currentUserId!)
+            
+            
+            if (!validUsername){
                 
-                if (exists){
-                    //username already exists
-                    self.usernameExistsAlert()
-                    
-                }else{
-                    //set new usename
-                    let username = self.usernameField.text!
-                    
-                    let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
-                    
-                    let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
-                    tempDict.setValue(username, forKey: "username")
-                    
-                    UserDefaults.standard.set(tempDict, forKey: "userdata")
-                    UserDefaults.standard.synchronize()
-                    
-                    let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
-                    let usernames = self.ref.child("Usernames").child(self.currentUserId!)
-                    usernames.setValue(self.usernameField.text!)
-                    usernameRef.setValue(self.usernameField.text!)
-                    
-                    if self.parentView == "feedView"{
-                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                    }else if self.parentView == "accountView" {
-                        self.performSegue(withIdentifier: "unwindToAccount", sender: nil)
-                    }
+                //username already exists
+                self.usernameExistsAlert()
+                
+                
+            }else{
+                //set new usename
+                let username = self.usernameField.text!
+                
+                let data: NSDictionary = UserDefaults.standard.dictionary(forKey: "userData")! as NSDictionary
+                
+                let tempDict: NSMutableDictionary = data.mutableCopy() as! NSMutableDictionary
+                tempDict.setValue(username, forKey: "username")
+                
+                UserDefaults.standard.set(tempDict, forKey: "userdata")
+                UserDefaults.standard.synchronize()
+                
+                let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
+                let usernames = self.ref.child("Usernames").child(self.currentUserId!)
+                usernames.setValue(self.usernameField.text!)
+                usernameRef.setValue(self.usernameField.text!)
+                
+                if self.parentView == "feedView"{
+                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                }else if self.parentView == "accountView" {
+                    self.performSegue(withIdentifier: "unwindToAccount", sender: nil)
                 }
-            })
+            }
+            
         }else{
             let views: [UIView] = self.view.subviews
             for view in views {

@@ -26,9 +26,6 @@ class ChangePasswordViewController: UIViewController {
         
         super.viewDidLoad()
         
-        
-
-        
         confirmPasswordField.attributedPlaceholder =
             NSAttributedString(string: "Confirm Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
@@ -115,7 +112,9 @@ class ChangePasswordViewController: UIViewController {
                 // Prompt the user to re-provide their sign-in credentials
                 
                 Auth.auth().currentUser?.reauthenticate(with: credential) { error in
+                    
                     if error != nil {
+                        
                         // An error happened.
                         let alert = UIAlertController(title: "Authentication Failed", message: "Check old Password", preferredStyle: .alert)
                         
@@ -147,9 +146,6 @@ class ChangePasswordViewController: UIViewController {
                         
                     }
                 }
-                
-                
-                
                 
                 
             }else{

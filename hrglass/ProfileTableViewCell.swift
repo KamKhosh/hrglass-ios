@@ -73,12 +73,12 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
 
     
     
+    
     /****************************************
      *
      * ----------- LIFECYCLE -------------
      *
      ****************************************/
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()

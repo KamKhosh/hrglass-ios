@@ -331,36 +331,60 @@ class DataManager {
      
      Function - checkIfUsernameExists:
      
-     Parameters - String: username -- usually the current user
+     Parameters - NA
      
-     Returns(completion): Bool
-     
-     if the username exists already the completion will be true
+     Returns(completion): NSDictionary
      
      ***************************************************************************************/
     
     //Uses a Boolean Completion to determine if the current username exists
-    func checkIfUsernameExists(username: String, completion:@escaping (Bool) -> ()){
+    func getUsernamesDictionary(completion:@escaping (NSDictionary) -> ()){
         
-        let usernameRef = Database.database().reference().child("Usernames").child(username)
+        let usernameRef = Database.database().reference().child("Usernames")
         
         usernameRef.observeSingleEvent(of: .value, with: { snapshot in
             
-            if (snapshot.value as? NSString) != nil{
+            if let usernamesDict: NSDictionary = snapshot.value as? NSDictionary{
                 
-                completion(true)
+                completion(usernamesDict)
                 
             }else{
-                completion(false)
+                completion([:])
             }
         })
     }
     
     
-    
-    
-    
-    
+    //check existing usernames dictionary, returns true if the desired username is a valid username to choose
+    func existingUsernameCheck(desiredUsername: String, usernames: NSDictionary, loggedInUid: String) -> Bool{
+        
+        //if no logged in user, loggedInUid will be an empty string
+        
+        var username: String = ""
+        var uid: String = ""
+        var existing: Bool = false
+        
+        //iterate dictioanry and break if an identical username exists
+        for (key, object) in usernames{
+            
+            username = object as! String
+            uid = key as! String
+            
+            if desiredUsername == username {
+                
+                existing = true
+                break;
+            }
+        }
+        
+        //if existing and the logged in user isn't the username found, users should be able to change their username back to what it was
+        if (loggedInUid != uid && existing){
+            return false
+            
+        }else{
+            return true
+        }
+    }
     
     
     
@@ -763,7 +787,7 @@ class DataManager {
     }
     
     
-    
+
 
     
     
@@ -1246,23 +1270,31 @@ class DataManager {
     
     
     //On new install called when user has existing data in backend and profile pictures need to be saved locally
-    func syncProfilePhotosToDevice(user: User, path: String, completion:@escaping (UIImage) -> ()){
+    func syncProfilePhotosToDevice(urlString: String, path: String, completion:@escaping (UIImage) -> ()){
         
         let imageCache: ImageCache = ImageCache()
-        var imagePathString: String = ""
+        let imagePathString: String = urlString
         
-        if path == "coverPhoto"{
-            
-            imagePathString = user.coverPhoto
-            
-        }else if (path == "profilePhoto"){
-            
-            imagePathString = user.profilePhoto
-        }
+//        let defaults: UserDefaults = UserDefaults.standard
+//        let previousUid = defaults.value(forKey:"currentUid") as! String
         
-        if !(localPhotoExists(atPath: path)){
-            //do nothing
-            
+        
+//        if !(localPhotoExists(atPath: path)){
+//
+//            if (imagePathString != ""){
+//
+//                imageCache.getImage(urlString: imagePathString, completion: { image in
+//
+//                    let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
+//                    self.saveImageForPath(imageData: data, name: path)
+//
+//                    DispatchQueue.main.async(execute: { () -> Void in
+//                        completion(image)
+//                    })
+//                })
+//            }
+//        }else if !(uid == previousUid){
+        
             if (imagePathString != ""){
                 
                 imageCache.getImage(urlString: imagePathString, completion: { image in
@@ -1275,7 +1307,8 @@ class DataManager {
                     })
                 })
             }
-        }
+//        }
+        
     }
     
     

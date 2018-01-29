@@ -21,10 +21,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var loginIndicationView: UIActivityIndicatorView!
     
+    @IBOutlet weak var passwordImageView: UIImageView!
+    @IBOutlet weak var emailImageView: UIImageView!
+    @IBOutlet weak var passwordView: UIView!
+    @IBOutlet weak var emailView: UIView!
+    
     let ref: DatabaseReference = Database.database().reference()
-    
+    let dataManager: DataManager = DataManager()
+    let colors: Colors = Colors()
     var fbLoginBtn: LoginButton!
+    var parentVC: String = "welcome"
     
+
     /*******************************
      *
      *  LIFECYCLE
@@ -42,11 +50,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
         // Setup Facebook Login Button
         fbLoginBtn = LoginButton.init(readPermissions: [ .publicProfile, .email ])
-        fbLoginBtn.delegate = self 
-        fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.minY - 50)
+        fbLoginBtn.delegate = self
+        fbLoginBtn.frame.size = self.loginBtn.frame.size
+        fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.maxY + 40)
         
-        self.scrollContentView.addSubview(fbLoginBtn)
         
+        
+        
+        self.loginBtn.layer.cornerRadius = 3.0;
+        self.loginBtn.layer.borderWidth = 1.0
+        self.loginBtn.layer.borderColor = colors.getDarkerPink().cgColor
         
         //Keyboard Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -57,14 +70,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             NSAttributedString(string: "Email", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         
         passwordField.attributedPlaceholder =
-            NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
+            NSAttributedString(string: "Password", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
     
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.minY - 50)
+        fbLoginBtn.center = CGPoint(x: loginBtn.center.x, y: loginBtn.frame.maxY + 40)
+        self.scrollContentView.addSubview(fbLoginBtn)
         self.setupView()
     }
     
@@ -78,6 +92,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
         if(usernameField.text == ""){
             print("Fullname Empty")
+            
+            
             let views: [UIView] = self.view.subviews
             for view in views {
                 if view.tag == 1{
@@ -157,7 +173,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
             print("User cancelled login.")
             self.showActionSheetWithTitle(title: "Facebook login Cancelled", message: "")
             
-        case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+        case .success(_, _, _):
+            
             print("Logged in!")
             //login to firebase
             if ((AccessToken.current?.authenticationToken) != nil) {
@@ -186,11 +203,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                             if let _ = snapshot.value as? NSDictionary{
                                 
                                 self.stopLoginIndicator(success: true)
+                                
+                                self.resetLocalUserPhotos()
                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                                 
                             }else{
                                 
                                 self.getFBData(uid: (user?.uid)!, completion: { data in
+                                    
+                                    //
+                                    self.resetLocalUserPhotos()
                                     
                                     //setup initial following -- auto follow hr.glass
                                     let newFollowing: NSDictionary = ["sL7fW1Qa3LOnK3FCUqvr5cl3Mft1":0]
@@ -210,9 +232,22 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                 }
             }else{
                 
-                self.showActionSheetWithTitle(title: "Facebook Token nil", message: "odd")
+                self.showActionSheetWithTitle(title: "Facebook Token is Nil", message: "hmm, odd")
             }
         }
+    }
+    
+    
+    
+    func resetLocalUserPhotos(){
+        
+        //sync profile photos
+        self.dataManager.syncProfilePhotosToDevice(urlString: "", path: "coverPhoto", completion: { (image) in
+            print("local cover photo removed")
+        })
+        self.dataManager.syncProfilePhotosToDevice(urlString: "", path: "profilePhoto", completion: { (image) in
+            print("local profile photo removed")
+        })
     }
     
     
@@ -277,8 +312,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
 
     func setupView(){
         
-        self.addBottomLine(forView: usernameField, tag: 1)
-        self.addBottomLine(forView: passwordField, tag: 2)
+        self.addBottomLine(forView: self.emailView, tag: 1)
+        self.addBottomLine(forView: self.passwordView, tag: 2)
         
     }
     
@@ -307,7 +342,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     }
     
     
-    func addBottomLine(forView: UITextField, tag: Int){
+    func addBottomLine(forView: UIView, tag: Int){
         //adds a line beneath the view in the parameters
         
         let view = UIView(frame:CGRect(x:forView.frame.minX ,y:forView.frame.maxY ,width: forView.frame.width, height: 1.0))
@@ -321,6 +356,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+
+        self.emailImageView.isHighlighted = false
+        self.passwordImageView.isHighlighted = false
+        
+       if (textField == self.usernameField){
+            self.emailImageView.isHighlighted = true
+        }else if (textField == self.passwordField){
+            self.passwordImageView.isHighlighted = true
+        }
+        
+        
         let views: [UIView] = self.view.subviews
         for view in views {
             if (view.tag == 1 || view.tag == 2){
@@ -395,12 +442,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     
     
+    @IBAction func createAccountAction(_ sender: Any) {
+        
+        if self.parentVC == "welcome"{
+             self.performSegue(withIdentifier: "toCreateAccountSegue", sender: self)
+        }else if self.parentVC == "create"{
+            self.performSegue(withIdentifier: "unwindToCreateAccount", sender: self)
+        }
+        
+    }
+    
+    
+    @IBAction func unwindToLogin(unwindSegue: UIStoryboardSegue) {
+        
+        
+    }
+    
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
         if segue.identifier == "toFeedView" {
             
             //pre segue setup
+        }else if segue.identifier == "unwindToCreateAccount"{
+            let vc: CreateAccountViewController = segue.destination as! CreateAccountViewController
+            vc.parentVC = "welcome"
+            
+            
+        }else if segue.identifier == "toCreateAccountSegue" {
+            let vc: CreateAccountViewController = segue.destination as! CreateAccountViewController
+            vc.parentVC = "login"
+            
         }
     }
 }

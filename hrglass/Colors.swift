@@ -27,6 +27,7 @@ class Colors {
     let mainBlueColor: String = "#2295C6"
     let photoPostColor: String = ""
     let blackish: String = "#1C1C1C"
+    let darkerPink: String = "#F06562"
     
     func getGradientLayer() -> CAGradientLayer{
         
@@ -39,6 +40,10 @@ class Colors {
         gl.locations = [0.1, 0.9]
         
         return gl
+    }
+    
+    func getDarkerPink() -> UIColor{
+        return hexStringToUIColor(hex: self.darkerPink)
     }
     
     func getMainBlueColor() -> UIColor {

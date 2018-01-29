@@ -45,6 +45,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
     //Storyboard Outlets
 
+    @IBOutlet weak var profileContainer: UIView!
     @IBOutlet weak var linkWebView: UIWebView!
     @IBOutlet weak var profilePhotoImageView: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
@@ -275,11 +276,13 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     
                     self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.red), for: .normal)
                     self.likedByUser = true
+                    self.profileContainer.isHidden = false
                     
                 }else{
                     
                     self.likeBtn.setImage(newImage.transform(withNewColor: UIColor.white), for: .normal)
                     self.likedByUser = false
+                    self.profileContainer.isHidden = true
                 }
             }
             
@@ -839,7 +842,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         if(likedByUser){
             
             if (postId != ""){
-                
+                self.profileContainer.isHidden = true
                 self.likedByUser = false
                 self.flashThumb(liked: likedByUser)
                 //set image to normal color
@@ -853,7 +856,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             
             if (postId != ""){
-                
+                self.profileContainer.isHidden = false
                 self.likedByUser = true
                 self.flashThumb(liked: likedByUser)
                 let newImage: UIImage = UIImage.init(named: "thumbs up")!
