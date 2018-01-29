@@ -505,10 +505,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
             }
         }
         
-        self.fullnameImageView.isHighlighted = false
-        self.usernameImageView.isHighlighted = false
-        self.emailImageView.isHighlighted = false
-        self.passwordImageView.isHighlighted = false
+        self.removeIconHighlighing()
         
         if (textField == self.fullnameField){
             self.fullnameImageView.isHighlighted = true
@@ -519,18 +516,24 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         }else if (textField == self.passwordField){
             self.passwordImageView.isHighlighted = true
         }
-        
-        
-        
-        
     }
     
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        
-//        textField.resignFirstResponder()
-//        return true
-//    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        self.scrollView.scrollRectToVisible(self.fullnameField.frame, animated: true)
+        self.removeIconHighlighing()
+        
+        textField.resignFirstResponder()
+        return true
+    }
     
+    
+    func removeIconHighlighing(){
+        self.fullnameImageView.isHighlighted = false
+        self.usernameImageView.isHighlighted = false
+        self.emailImageView.isHighlighted = false
+        self.passwordImageView.isHighlighted = false
+    }
     
     /**********************************
      *
@@ -601,6 +604,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         if (scrollView.contentOffset.y == 0){
+            self.removeIconHighlighing()
              view.endEditing(true)
         }
     }

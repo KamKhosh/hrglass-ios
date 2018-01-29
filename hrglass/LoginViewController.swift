@@ -358,8 +358,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
 
-        self.emailImageView.isHighlighted = false
-        self.passwordImageView.isHighlighted = false
+        self.removeIconHighlighting()
         
        if (textField == self.usernameField){
             self.emailImageView.isHighlighted = true
@@ -380,8 +379,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
+        
+        self.removeIconHighlighting()
         self.loginAction(self)
         return true
+    }
+    
+    
+    func removeIconHighlighting(){
+        
+        self.emailImageView.isHighlighted = false
+        self.passwordImageView.isHighlighted = false
     }
     
     
@@ -413,6 +421,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         if (scrollView.contentOffset.y == 0){
+            self.removeIconHighlighting()
             view.endEditing(true)
         }
     }
