@@ -204,6 +204,10 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         }
         
         alert.addAction(ok)
+        
+        alert.popoverPresentationController?.sourceRect = self.submitBtn.frame
+        alert.popoverPresentationController?.sourceView = self.submitBtn
+        
         self.present(alert, animated: true, completion: nil)
     }
 

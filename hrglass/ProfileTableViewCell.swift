@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 
-class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource{
+class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     
     var likedDataArray = [PostData]()
     let dataManager = DataManager()
@@ -295,7 +295,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         }
         
         cell.borderView.layer.cornerRadius = cell.borderView.frame.width / 2
-        cell.borderView.layer.borderWidth = 5.0
+        cell.borderView.layer.borderWidth = 3.0
         cell.imageButton.imageView?.contentMode = .scaleAspectFill
         cell.imageButton.layer.cornerRadius = cell.imageButton.frame.width / 2
         cell.imageButton.clipsToBounds = true
@@ -322,6 +322,11 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
         }
         return items
     }
+    
+    @nonobjc func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
+        return CGSize(width: self.likedCollectionView.frame.height, height: self.likedCollectionView.frame.height);
+    }
+    
     
     
     

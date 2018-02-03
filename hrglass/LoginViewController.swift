@@ -290,6 +290,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
         
         alert.addAction(defaultAction)
         
+        alert.popoverPresentationController?.sourceRect = self.loginBtn.frame
+        alert.popoverPresentationController?.sourceView = self.loginBtn
+        
         self.present(alert, animated: true, completion: nil)
         
     }

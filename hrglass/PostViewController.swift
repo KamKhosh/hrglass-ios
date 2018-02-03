@@ -201,7 +201,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.songImageView.contentMode = .scaleAspectFill
         
         //profile photo image view
-        self.profilePhotoImageView.layer.cornerRadius = self.profilePhotoImageView.frame.width/2
+        self.profilePhotoImageView.layer.cornerRadius = self.view.frame.height * 0.08 / 2
         self.profilePhotoImageView.clipsToBounds = true
         self.profilePhotoImageView.contentMode = .scaleAspectFill
         
@@ -513,7 +513,10 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 
                 //pause actions
                 self.playPauseSongAction(self)
-                self.applicationMusicPlayer.stop()
+                if (applicationMusicPlayer.isPreparedToPlay){
+                   self.applicationMusicPlayer.stop()
+                }
+                
             }
             
         }else if(avMusicPlayer != nil){
@@ -531,7 +534,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     //sets and plays the parameter array with the application music player
     func appleMusicPlayTrackId(ids:[String]) {
         
-        applicationMusicPlayer.setQueue(with: ids)
+        if applicationMusicPlayer.isPreparedToPlay{
+            applicationMusicPlayer.setQueue(with: ids)
+        }
         self.playPauseSongAction(self)
         
     }
@@ -804,7 +809,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             }){ (success) in
                 if success{
 
-                    self.applicationMusicPlayer.pause()
+                    if self.applicationMusicPlayer.isPreparedToPlay{
+                        self.applicationMusicPlayer.pause()
+                    }
 
                     if self.songTimer != nil{
                         self.songTimer.invalidate()
@@ -1017,7 +1024,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             if avMusicPlayer != nil{
                 avMusicPlayer.pause()
             }else{
-                self.applicationMusicPlayer.pause()
+                if applicationMusicPlayer.isPreparedToPlay{
+                    self.applicationMusicPlayer.pause()
+                }
             }
             self.stopSongProgressTimer()
             
@@ -1030,7 +1039,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             if avMusicPlayer != nil{
                 avMusicPlayer.play()
             }else{
-                self.applicationMusicPlayer.play()
+                if applicationMusicPlayer.isPreparedToPlay{
+                    self.applicationMusicPlayer.play()
+                }
             }
             self.songProgressTimerStart()
             
@@ -1100,7 +1111,10 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                         
                         if self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused{
                             self.playPauseSongAction(self)
-                            self.applicationMusicPlayer.stop()
+                            if (self.applicationMusicPlayer.isPreparedToPlay){
+                                self.applicationMusicPlayer.stop()
+                            }
+                            
                         }
                         self.willMove(toParentViewController: nil)
                         self.view.removeFromSuperview()

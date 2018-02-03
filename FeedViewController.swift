@@ -41,7 +41,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
      // More Menu data
     var moreMenuPostData: PostData!
-    
+    var postPopupView: PostViewController!
     
     //custom refresh control 
     var refreshControl: UIRefreshControl!
@@ -104,6 +104,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var profileView: UIView!
     
     var cornerRadius:CGFloat = 0.0
+    var profileCornerRadius: CGFloat = 0.0
     
     /*********************************
      *
@@ -131,7 +132,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         self.setupRefreshControl()
         
-        initialLoadIndicator = BreathingAnimation(frame: CGRect(x: self.logoImageView.frame.midX - 20, y: self.logoImageView.frame.maxY + 60, width: 40, height: 40), image: UIImage(named: "logoGlassOnlyVertical")!)
+        initialLoadIndicator = BreathingAnimation(frame: CGRect(x: self.view.frame.midX - 20, y: self.logoImageView.frame.maxY + 80, width: 40, height: 40), image: UIImage(named: "logoGlassOnlyVertical")!)
+        self.refreshControl.isEnabled = false
         self.view.addSubview(self.initialLoadIndicator)
         self.initialLoadIndicator.startAnimating()
         
@@ -180,6 +182,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 self.getFeedData()
                 self.initialLoadIndicator.stopAnimating()
+                self.refreshControl.isEnabled = true
                 self.noPostsLbl.isHidden = false
             }
             
@@ -401,6 +404,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             if (self.initialLoadIndicator.isAnimating){
                 self.initialLoadIndicator.stopAnimating()
+                self.refreshControl.isEnabled = true
             }
         })
     }
@@ -947,7 +951,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         
         //rounded Profile Image
-        cell.profileImageBtn.layer.cornerRadius = cell.profileImageBtn.frame.height / 2
+        cell.profileImageBtn.layer.cornerRadius = self.profileCornerRadius / 2
         cell.profileImageBtn.clipsToBounds = true
         cell.moreBtn.setImage(UIImage(named:"more")?.transform(withNewColor: UIColor.white), for: .normal)
         cell.viewsBtn.setImage(UIImage(named:"eye")?.transform(withNewColor: UIColor.white), for: .normal)
@@ -956,7 +960,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //Hide the mood lbl if none is selected
         if (feedData[indexPath.row].mood == "🚫"){
             cell.moodLbl.isHidden = true
-            
         }else{
             cell.moodLbl.isHidden = false
             cell.moodLbl.text = feedData[indexPath.row].mood
@@ -968,8 +971,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        self.cornerRadius = 175.0 * 0.75
-        return 175.0
+        let frameHeight = self.view.frame.height / 5
+        
+        self.cornerRadius = frameHeight * 0.75
+        self.profileCornerRadius = frameHeight * 0.2
+        
+        return frameHeight
     }
     
     
@@ -1080,21 +1087,21 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         
         // add child view controller view to container
-        let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
-        postVC.delegate = self
-        postVC.imageCache = self.imageCache
-        postVC.postData = postData
-        postVC.videoCache = self.videoStore
-        postVC.selectedIndexPath = indexPath
+        self.postPopupView = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
+        self.postPopupView.delegate = self
+        self.postPopupView.imageCache = self.imageCache
+        self.postPopupView.postData = postData
+        self.postPopupView.videoCache = self.videoStore
+        self.postPopupView.selectedIndexPath = indexPath
         
-        addChildViewController(postVC)
+        addChildViewController(self.postPopupView)
         
-        postVC.view.frame = view.bounds
+        self.postPopupView.view.frame = view.bounds
         
         UIView.transition(with: self.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
-            self.view.addSubview(postVC.view)
+            self.view.addSubview(self.postPopupView.view)
         }) { (success) in
-            postVC.didMove(toParentViewController: self)
+            self.postPopupView.didMove(toParentViewController: self)
         }
     }
     
@@ -1211,6 +1218,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             flagAlert.addAction(mature)
             flagAlert.addAction(inappropriate)
             
+            alert.popoverPresentationController?.sourceRect = self.postPopupView.moreBtn.frame
+            alert.popoverPresentationController?.sourceView = self.postPopupView.view
+            
             self.present(flagAlert, animated: true, completion: nil)
         }
         
@@ -1255,6 +1265,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         alert.addAction(cancel)
+        
+        alert.popoverPresentationController?.sourceRect = self.postPopupView.moreBtn.frame
+        alert.popoverPresentationController?.sourceView = self.postPopupView.view
         
         self.present(alert, animated: true, completion: nil)
         
@@ -1314,6 +1327,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 alert.addAction(view)
                 alert.addAction(delete)
                 alert.addAction(cancel)
+                
+                alert.popoverPresentationController?.sourceRect = self.addPostButton.frame
+                alert.popoverPresentationController?.sourceView = self.addPostButton
                 
                 self.present(alert, animated: true, completion: nil)
             }
@@ -1393,11 +1409,11 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         else if (segue.identifier == "toPostView"){
             
-            let postVC = segue.destination as! PostViewController
+            self.postPopupView = segue.destination as! PostViewController
             
-            postVC.imageCache = self.imageCache
-            postVC.postData = self.selectedPostData
-            postVC.videoCache = self.videoStore
+            self.postPopupView.imageCache = self.imageCache
+            self.postPopupView.postData = self.selectedPostData
+            self.postPopupView.videoCache = self.videoStore
 
         }else if (segue.identifier == "toInboxSegue"){
             

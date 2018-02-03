@@ -17,7 +17,7 @@ target 'hrglass' do
     pod 'AWSCognito', '~> 2.6.2'
     pod 'AWSS3', '~> 2.6.2'
     pod 'RKNotificationHub', '~> 2.0.4'
-    pod 'iOSPhotoEditor', '~> 0.5'
+    pod 'iOSPhotoEditor', '0.5'
     pod 'Fabric', '~> 1.7.2'
     pod 'Crashlytics', '~> 3.9.3'
     pod 'Clarifai', '~> 2.3.2'

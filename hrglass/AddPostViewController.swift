@@ -193,6 +193,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         }
         
         if self.photoCollectionView == nil{
+            
             //if the mood menu is nil, so are the rest of the content subviews, configure them
             self.currentTabView.frame = CGRect(x: 0,y: self.topContainerView.frame.maxY,width: self.view.frame.width, height:self.view.frame.maxY - self.topContainerView.frame.maxY)
             //setting static frames here since larger screens cause unwanted behviour
@@ -383,7 +384,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.postPhotoView = UIImageView(frame: self.postContentView.frame)
         self.postPhotoView.layer.cornerRadius = self.postContentView.frame.width / 2
         self.postPhotoView.layer.borderColor = UIColor.white.cgColor
-        self.postPhotoView.layer.borderWidth = 5.0
+        self.postPhotoView.layer.borderWidth = 3.0
         self.postPhotoView.clipsToBounds = true
         self.postPhotoView.contentMode = .scaleAspectFill
         
@@ -645,7 +646,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.selectedShape = "circle"
         self.playBtn.setImage(UIImage(named:"cropClear"), for: .normal)
 
-        self.postPhotoView.layer.borderWidth = 5.0
+        self.postPhotoView.layer.borderWidth = 3.0
         self.postPhotoView.layer.cornerRadius = self.postPhotoView.frame.width/2
         
     }
@@ -870,7 +871,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 if avMusicPlayer != nil{
                     avMusicPlayer.pause()
                 }else{
-                    self.applicationMusicPlayer.play()
+                    if applicationMusicPlayer.isPreparedToPlay{
+                        self.applicationMusicPlayer.play()
+                    }
                 }
                 
             }else{
@@ -880,7 +883,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 if avMusicPlayer != nil{
                     avMusicPlayer.play()
                 }else{
-                    self.applicationMusicPlayer.pause()
+                    if applicationMusicPlayer.isPreparedToPlay{
+                        self.applicationMusicPlayer.pause()
+                    }
                 }
             }
         }
@@ -891,7 +896,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func appleMusicPlayTrackId() {
         
         let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
-        applicationMusicPlayer.setQueue(with: collection)
+        if applicationMusicPlayer.isPreparedToPlay{
+            applicationMusicPlayer.setQueue(with: collection)
+        }
     }
     
     
@@ -1155,10 +1162,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func getMedia(){
         
         let fetchOptions = PHFetchOptions()
-
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending:false)]
         self.photosAsset = PHAsset.fetchAssets(with: .image, options: fetchOptions) as! PHFetchResult<AnyObject>
-        
         
         print("Found \(self.photosAsset.count) images")
         
@@ -1168,11 +1173,11 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         
         print("Found \(self.videosAsset.count) videos")
         
-        DispatchQueue.main.async {
-            
+//        DispatchQueue.main.async {
+//
             self.photoCollectionView.reloadData()
             self.videoCollectionView.reloadData()
-        }
+//        }
     }
 
     
@@ -2120,6 +2125,10 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                         
                         ac.addAction(trimAction)
                         ac.addAction(cancel)
+                        
+                        ac.popoverPresentationController?.sourceRect = self.tabBar.frame
+                        ac.popoverPresentationController?.sourceView = self.tabBar
+                        
                         self.present(ac, animated: true)
                         
                     }
@@ -2127,8 +2136,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             })
         }
         //reload collection data
-        self.photoCollectionView.reloadData()
-        self.videoCollectionView.reloadData()
+//        self.photoCollectionView.reloadData()
+//        self.videoCollectionView.reloadData()
     }
     
     
@@ -2613,8 +2622,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
             }
         }
-        
-        self.applicationMusicPlayer.stop()
+        if applicationMusicPlayer.isPreparedToPlay{
+            self.applicationMusicPlayer.stop()
+        }
     }
     
     

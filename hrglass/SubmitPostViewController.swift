@@ -99,10 +99,6 @@ class SubmitPostViewController: UIViewController {
         self.ref = Database.database().reference()
         self.postRef = self.ref.child("Posts").child(currentUserId!)
 
-        self.postImagePreview.layer.cornerRadius = self.postImagePreview.frame.width/2
-        self.postImagePreview.layer.borderWidth = 5.0
-        self.postImagePreview.frame.size = CGSize(width: self.postImagePreview.frame.width, height:self.postImagePreview.frame.width)
-
         self.postImagePreview.clipsToBounds = true
         self.postImagePreview.contentMode = .scaleAspectFill
         
@@ -144,7 +140,7 @@ class SubmitPostViewController: UIViewController {
 //            self.postLabel.text = "Ready to post!"
 //        }
         
-        self.setPreviewImageViewFor(primaryPost: true)
+        
         
         self.postImagePreview.layer.borderColor = dataManager.getUIColorForCategory(category: self.selectedCategory).cgColor
         
@@ -161,11 +157,20 @@ class SubmitPostViewController: UIViewController {
             self.moodLbl.text = self.selectedMood.rawValue
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.setPreviewImageViewFor(primaryPost: true)
+        self.postImagePreview.layer.cornerRadius = self.postImagePreview.frame.height/2
+        self.postImagePreview.layer.borderWidth = 3.0
+    }
 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+//        self.postImagePreview.frame.size = CGSize(width: self.postImagePreview.frame.width, height:self.postImagePreview.frame.width)
+
 //        if (self.hasSecondaryPost){
         
 //            self.setSecondaryPostButtons(hidden: true)
@@ -395,7 +400,7 @@ class SubmitPostViewController: UIViewController {
             self.stackView.addArrangedSubview(button as! UIView)
         }
         
-        self.view.addSubview(self.stackView)
+//        self.view.addSubview(self.stackView)
 
     }
     
@@ -443,7 +448,19 @@ class SubmitPostViewController: UIViewController {
      *
      *
      **************************************************************************************************/
-    
+    func nsfwCheckAlert(message:String, title: String){
+        
+        let alert: UIAlertController = UIAlertController(title:  title, message: message, preferredStyle: .alert)
+        let cancel: UIAlertAction = UIAlertAction(title: "Ok", style: .cancel) { (action) in
+            
+            alert.dismiss(animated: true, completion: nil)
+            
+        }
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+        
+        
+    }
     
     @IBAction func postAction(_ sender: Any) {
         
@@ -454,472 +471,503 @@ class SubmitPostViewController: UIViewController {
         let postID: String = currentUserId! + String(Int(Date().millisecondsSince1970))
         let userDictionary: NSDictionary = ["uid": Auth.auth().currentUser!.uid, "profilePhoto": self.loggedInUser.profilePhoto, "name": self.loggedInUser.name]
         
-        self.postCanBePosted(completion: { (success, remainingTime) in
+        
+        
+        //check for objectionable content with clarifai and mark as nsfw if it meets the bar
+        self.postLabel.text = "Checking for NSFW content..."
+        self.checkForNSFWContent(completion: { isNsfw in
             
-            if (success){
+            if (isNsfw == ""){
+                //if is NSFW, change data dictionary nsfw key to value 1
+                self.nsfwCheckAlert(message: "Problem checking post for nsfw content", title: "Error")
                 
-                self.transferring = true
-                self.progressView = ProgressView(frame: self.postBtn.bounds)
-                self.progressView.backgroundColor = UIColor.clear
-                self.postBtn.addSubview(self.progressView)
-                self.postLabel.text = "Uploading content..."
+            }else if (isNsfw == "previewphoto"){
+                self.nsfwCheckAlert(message: "Post Contains NSFW Content", title: "Rejected")
                 
-                switch self.selectedCategory {
+            }else{
+                print("Can post content")
+                
+                self.postCanBePosted(completion: { (success, remainingTime) in
                     
-                    
-                /********************
-                * PHOTO
-                ********************/
-                    
-                case .Photo:
-                    print("Photo Selected")
-                    
-                    let uploadImage: UIImage = self.selectedObject as! UIImage
-                    
-                    //convert uiimage to JPG
-                    let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-                    self.dataManager.saveImageForPath(imageData: data, name: "post")
-                    let path = self.dataManager.documentsPathForFileName(name: "post.jpg")
-                    
-                    self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "post", type:"jpg", completion:{ success in
+                    if (success){
                         
-                        if success{
+                        self.transferring = true
+                        self.progressView = ProgressView(frame: self.postBtn.bounds)
+                        self.progressView.backgroundColor = UIColor.clear
+                        self.postBtn.addSubview(self.progressView)
+                        self.postLabel.text = "Uploading content..."
+                        
+                        switch self.selectedCategory {
                             
-                            print("Success")
                             
-                            let songString: String = ""
-                            let downloadURL: String = String(format:"%@/%@/images/post.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Photo", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                            /********************
+                             * PHOTO
+                             ********************/
                             
-                            if (self.selectedMusicItem != nil){
-                                //music added, set songString in dataDictionary and submit
+                        case .Photo:
+                            print("Photo Selected")
+                            
+                            let uploadImage: UIImage = self.selectedObject as! UIImage
+                            
+                            //convert uiimage to JPG
+                            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+                            self.dataManager.saveImageForPath(imageData: data, name: "post")
+                            let path = self.dataManager.documentsPathForFileName(name: "post.jpg")
+                            
+                            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "post", type:"jpg", completion:{ success in
                                 
-                                self.uploadSongThumbnail(image:self.selectedThumbnail)
-                                self.getSongStringWith(completion: { (string) in
+                                if success{
                                     
-                                    dataDictionary.setValue(string, forKey: "songString")
-                                    self.submitPost(dataDictionary: dataDictionary)
-//                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                                })
-
-                            }else{
-                                //else no music, submit the post and unwind
+                                    print("Success")
+                                    
+                                    let songString: String = ""
+                                    let downloadURL: String = String(format:"%@/%@/images/post.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Photo", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                    
+                                    if (self.selectedMusicItem != nil){
+                                        //music added, set songString in dataDictionary and submit
+                                        
+                                        self.uploadSongThumbnail(image:self.selectedThumbnail)
+                                        self.getSongStringWith(completion: { (string) in
+                                            
+                                            dataDictionary.setValue(string, forKey: "songString")
+                                            self.submitPost(dataDictionary: dataDictionary)
+                                            //                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                        })
+                                        
+                                    }else{
+                                        //else no music, submit the post and unwind
+                                        
+                                        self.submitPost(dataDictionary: dataDictionary)
+                                        //                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                        
+                                    }
+                                    
+                                }else{
+                                    
+                                    print("Failure, try again?")
+                                    
+                                    self.postFailedAlert(title: "Post Failed", message: "try again")
+                                }
+                            })
                             
-                                self.submitPost(dataDictionary: dataDictionary)
-//                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-
+                            self.progressUpdateTimer(category: .Photo)
+                            
+                            
+                            
+                            /********************
+                             * VIDEO
+                             ********************/
+                        case .Video:
+                            
+                            print("Video Selected")
+                            
+                            let uploadImage: UIImage = self.postImagePreview.image!
+                            
+                            //convert uiimage to JPG
+                            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+                            self.dataManager.saveImageForPath(imageData: data, name: "thumbnail")
+                            let path = self.dataManager.documentsPathForFileName(name: "thumbnail.jpg")
+                            
+                            
+                            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "thumbnail", type: "jpg", completion: { (success) in
+                                
+                                if success{
+                                    
+                                    print("Success thumbnail uploaded")
+                                }else{
+                                    
+                                    print("Failure, try again?")
+                                }
+                            })
+                            
+                            
+                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Video", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"]
+                            
+                            
+                            //selectedVideoPath is only avaiable from a saved post that has a video
+                            if(self.selectedVideoPath != ""){
+                                
+                                self.uploadVideo(url: URL(string:self.selectedVideoPath)!, postID: postID, dataDict: dataDictionary, primary: true)
+                                
+                            }else{
+                                
+                                let asset: PHAsset = self.selectedObject as! PHAsset
+                                
+                                self.dataManager.getURLForPHAsset(videoAsset: asset, name: "savedPostData.mp4", completion: { url in
+                                    
+                                    self.uploadVideo(url: url, postID: postID, dataDict: dataDictionary, primary: true)
+                                })
                             }
                             
-                        }else{
+                            self.progressUpdateTimer(category: .Video)
                             
-                            print("Failure, try again?")
                             
-                            self.postFailedAlert(title: "Post Failed", message: "try again")
-                        }
-                    })
-                    
-                    self.progressUpdateTimer(category: .Photo)
-                    
-                    
-                    
-                /********************
-                * VIDEO
-                ********************/
-                case .Video:
-                    
-                    print("Video Selected")
-                    
-                    let uploadImage: UIImage = self.postImagePreview.image!
-                    
-                    //convert uiimage to JPG
-                    let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-                    self.dataManager.saveImageForPath(imageData: data, name: "thumbnail")
-                    let path = self.dataManager.documentsPathForFileName(name: "thumbnail.jpg")
-                    
-                    
-                    self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "thumbnail", type: "jpg", completion: { (success) in
-                        
-                        if success{
                             
-                            print("Success thumbnail uploaded")
-                        }else{
                             
-                            print("Failure, try again?")
-                        }
-                    })
-                    
-                    
-                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Video", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"]
-                    
-                    
-                    //selectedVideoPath is only avaiable from a saved post that has a video
-                    if(self.selectedVideoPath != ""){
-
-                            self.uploadVideo(url: URL(string:self.selectedVideoPath)!, postID: postID, dataDict: dataDictionary, primary: true)
-                        
-                    }else{
-                        
-                        let asset: PHAsset = self.selectedObject as! PHAsset
-                        
-                        self.dataManager.getURLForPHAsset(videoAsset: asset, name: "savedPostData.mp4", completion: { url in
-                        
-                            self.uploadVideo(url: url, postID: postID, dataDict: dataDictionary, primary: true)
-                        })
-                    }
-                    
-                    self.progressUpdateTimer(category: .Video)
-                    
-                    
-                    
-                    
-                /********************
-                * LINK
-                ********************/
-
-                case .Link:
-                    
-                    print("Link Selected")
-                    
-                    let linkString: String = self.selectedObject as! String
-                    
-                    self.selectedObject = linkString as AnyObject
-                    
-                    if(linkString != ""){
-                        
-                        
-//                        if self.hasSecondaryPost{
-//                            self.postSecondaryData(primaryData: dataDictionary)
-//                        }else{
-                        
-                        
-                        let songString: String = ""
-                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": linkString, "category":"Link", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
-                        
-                        if (self.selectedMusicItem != nil){
+                            /********************
+                             * LINK
+                             ********************/
                             
-                            self.uploadSongThumbnail(image:self.selectedThumbnail)
-                            self.getSongStringWith(completion: { (string) in
+                        case .Link:
+                            
+                            print("Link Selected")
+                            
+                            let linkString: String = self.selectedObject as! String
+                            
+                            self.selectedObject = linkString as AnyObject
+                            
+                            if(linkString != ""){
                                 
-                                dataDictionary.setValue(string, forKey: "songString")
-                                self.submitPost(dataDictionary: dataDictionary)
-//                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                            })
-                        }else{
-                            self.submitPost(dataDictionary: dataDictionary)
-//                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                        }
-
-                    }else{
-                        
-                        self.postFailedAlert(title: "Empty Link", message: "")
-                    }
-                    
-                    
-                    
-                    
-                    
-                /********************
-                * MUSIC
-                ********************/
-                case .Music:
-                    
-                    print("Music Selected")
-                    
-                    let item: MPMediaItem = self.selectedObject as! MPMediaItem
-                    var title: String = ""
-                    var artist: String = ""
-                    var album: String = ""
-                    
-                    if let t: String = item.title {
-                        print("no title")
-                        title = t
-                    }
-                    if let a: String = item.artist{
-                        print("no artist")
-                        artist = a
-                    }
-                    if let at: String = item.albumTitle{
-                        print("no title")
-                        album = at
-                    }
-                    
-                    var songString = String(format: "%@:%@:%@", title, artist, album)
-                    
-                    let uploadImage: UIImage = self.postImagePreview.image!
-                    
-                    self.uploadSongThumbnail(image:uploadImage)
-                    
-                    var toExport: URL!
-                    if let temp: URL = item.assetURL {
-                        toExport = temp
-                    }
-
-                    //if an assetURL exists
-                    if toExport != nil{
-                        
-                        self.dataManager.export(toExport, completionHandler: { (url, error) in
-                            
-                            if error == nil{
                                 
-                                if (url != nil){
-                                    //if URL is not nil, upload the audio and save the url
-                                    self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
-                                        if success{
+                                //                        if self.hasSecondaryPost{
+                                //                            self.postSecondaryData(primaryData: dataDictionary)
+                                //                        }else{
+                                
+                                
+                                let songString: String = ""
+                                let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": linkString, "category":"Link", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                
+                                if (self.selectedMusicItem != nil){
+                                    
+                                    self.uploadSongThumbnail(image:self.selectedThumbnail)
+                                    self.getSongStringWith(completion: { (string) in
+                                        
+                                        dataDictionary.setValue(string, forKey: "songString")
+                                        self.submitPost(dataDictionary: dataDictionary)
+                                        //                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                    })
+                                }else{
+                                    self.submitPost(dataDictionary: dataDictionary)
+                                    //                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                }
+                                
+                            }else{
+                                
+                                self.postFailedAlert(title: "Empty Link", message: "")
+                            }
+                            
+                            
+                            
+                            
+                            
+                            /********************
+                             * MUSIC
+                             ********************/
+                        case .Music:
+                            
+                            print("Music Selected")
+                            
+                            let item: MPMediaItem = self.selectedObject as! MPMediaItem
+                            var title: String = ""
+                            var artist: String = ""
+                            var album: String = ""
+                            
+                            if let t: String = item.title {
+                                print("no title")
+                                title = t
+                            }
+                            if let a: String = item.artist{
+                                print("no artist")
+                                artist = a
+                            }
+                            if let at: String = item.albumTitle{
+                                print("no title")
+                                album = at
+                            }
+                            
+                            var songString = String(format: "%@:%@:%@", title, artist, album)
+                            
+                            let uploadImage: UIImage = self.postImagePreview.image!
+                            
+                            self.uploadSongThumbnail(image:uploadImage)
+                            
+                            var toExport: URL!
+                            if let temp: URL = item.assetURL {
+                                toExport = temp
+                            }
+                            
+                            //if an assetURL exists
+                            if toExport != nil{
+                                
+                                self.dataManager.export(toExport, completionHandler: { (url, error) in
+                                    
+                                    if error == nil{
+                                        
+                                        if (url != nil){
+                                            //if URL is not nil, upload the audio and save the url
+                                            self.awsManager.uploadAudioAction(resourceURL: url!, fileName: "music", type:"m4a", completion:{ success in
+                                                if success{
+                                                    
+                                                    songString = songString + ":local"
+                                                    let downloadURL: String = String(format:"%@/%@/audio/music.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+                                                    
+                                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                                    
+                                                    //                            if self.hasSecondaryPost{
+                                                    //                                self.postSecondaryData(primaryData: dataDictionary)
+                                                    //                            }else{
+                                                    self.submitPost(dataDictionary: dataDictionary)
+                                                    //                            }
+                                                    //                                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                                    
+                                                }else{
+                                                    
+                                                    print("Failure, try again?")
+                                                    self.postFailedAlert(title: "Post Failed", message: "try again")
+                                                }
+                                            })
                                             
-                                            songString = songString + ":local"
-                                            let downloadURL: String = String(format:"%@/%@/audio/music.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+                                            self.progressUpdateTimer(category: .Recording)
                                             
-                                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                        }else {
+                                            //if URL is nil, the song is not exportable and we just need to write the itunes search criteria
+                                            
+                                            songString = songString + ":apple"
+                                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
                                             
                                             //                            if self.hasSecondaryPost{
                                             //                                self.postSecondaryData(primaryData: dataDictionary)
                                             //                            }else{
                                             self.submitPost(dataDictionary: dataDictionary)
+                                            
+                                            self.progressUpdateTimer(category: .Recording)
                                             //                            }
-//                                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                            //                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                                             
-                                        }else{
                                             
-                                            print("Failure, try again?")
-                                            self.postFailedAlert(title: "Post Failed", message: "try again")
                                         }
-                                    })
+                                        
+                                    }else{
+                                        
+                                        print(error?.localizedDescription ?? "error exporting")
+                                        
+                                    }
                                     
-                                    self.progressUpdateTimer(category: .Recording)
+                                })
+                                
+                            }else{
+                                //assetRUL doesn't exists, set source as apple by default so we can get a preview later
+                                songString = songString + ":apple"
+                                let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                
+                                //                            if self.hasSecondaryPost{
+                                //                                self.postSecondaryData(primaryData: dataDictionary)
+                                //                            }else{
+                                self.submitPost(dataDictionary: dataDictionary)
+                                //                            }
+                                
+                                self.progressUpdateTimer(category: .Recording)
+                                //                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                
+                            }
+                            
+                            
+                            
+                            
+                            /********************
+                             * RECORDING
+                             ********************/
+                        case .Recording:
+                            
+                            //selected object will be of type NSDATA
+                            
+                            let url = self.dataManager.documentsPathForFileName(name: "recording.m4a")
+                            
+                            self.awsManager.uploadAudioAction(resourceURL: url, fileName: "post", type:"m4a", completion:{ success in
+                                
+                                if success{
                                     
-                                }else {
-                                    //if URL is nil, the song is not exportable and we just need to write the itunes search criteria
+                                    let downloadURL: String = String(format:"%@/%@/audio/post.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
                                     
-                                    songString = songString + ":apple"
-                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Recording", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"]
                                     
                                     //                            if self.hasSecondaryPost{
                                     //                                self.postSecondaryData(primaryData: dataDictionary)
                                     //                            }else{
                                     self.submitPost(dataDictionary: dataDictionary)
-                                    
-                                    self.progressUpdateTimer(category: .Recording)
                                     //                            }
-//                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                    //                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                                     
+                                }else{
                                     
+                                    print("Failure, try again?")
+                                    self.postFailedAlert(title: "Post Failed", message: "try again")
                                 }
+                            })
+                            
+                            self.progressUpdateTimer(category: .Recording)
+                            
+                            
+                            
+                            
+                            /********************
+                             * TEXT
+                             ********************/
+                        case .Text:
+                            
+                            print("Text Selected")
+                            
+                            let uploadImage: UIImage = self.selectedObject as! UIImage
+                            
+                            //convert uiimage to JPG
+                            let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+                            self.dataManager.saveImageForPath(imageData: data, name: "post")
+                            let path = self.dataManager.documentsPathForFileName(name: "post.jpg")
+                            
+                            
+                            self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "post", type:"jpg", completion:{ success in
                                 
-                            }else{
-                                
-                                print(error?.localizedDescription ?? "error exporting")
-                                
-                            }
+                                if success{
+                                    
+                                    print("Success")
+                                    
+                                    let downloadURL: String = String(format:"%@/%@/images/post.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+                                    
+                                    
+                                    //check for song to add
+                                    let songString: String = ""
+                                    
+                                    let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Text", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
+                                    
+                                    if (self.selectedMusicItem != nil){
+                                        
+                                        self.uploadSongThumbnail(image:self.selectedThumbnail)
+                                        self.getSongStringWith(completion: { (string) in
+                                            
+                                            dataDictionary.setValue(string, forKey: "songString")
+                                            self.submitPost(dataDictionary: dataDictionary)
+                                            //                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                        })
+                                        
+                                    }else{
+                                        
+                                        self.submitPost(dataDictionary: dataDictionary)
+                                        //                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                                    }
+                                    
+                                    
+                                }else{
+                                    
+                                    print("Failure, try again?")
+                                    self.postFailedAlert(title: "Post Failed", message: "try again")
+                                }
+                            })
                             
-                        })
-
-                    }else{
-                        //assetRUL doesn't exists, set source as apple by default so we can get a preview later
-                        songString = songString + ":apple"
-                        let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": "", "category":"Music", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
-                        
-                        //                            if self.hasSecondaryPost{
-                        //                                self.postSecondaryData(primaryData: dataDictionary)
-                        //                            }else{
-                        self.submitPost(dataDictionary: dataDictionary)
-                        //                            }
-                        
-                        self.progressUpdateTimer(category: .Recording)
-//                        self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                        
-                    }
-                    
-                    
-                    
-
-                /********************
-                * RECORDING
-                ********************/
-                case .Recording:
-                    
-                    //selected object will be of type NSDATA
-                    
-                    let url = self.dataManager.documentsPathForFileName(name: "recording.m4a")
-                    
-                    self.awsManager.uploadAudioAction(resourceURL: url, fileName: "post", type:"m4a", completion:{ success in
-                        
-                        if success{
+                            self.progressUpdateTimer(category: .Photo)
                             
-                            let downloadURL: String = String(format:"%@/%@/audio/post.m4a", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
-                            
-                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Recording", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"]
-                            
-//                            if self.hasSecondaryPost{
-//                                self.postSecondaryData(primaryData: dataDictionary)
-//                            }else{
-                                self.submitPost(dataDictionary: dataDictionary)
-//                            }
-//                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                            
-                        }else{
-                            
-                            print("Failure, try again?")
-                            self.postFailedAlert(title: "Post Failed", message: "try again")
+                        default:
+                            print("None, do nothing")
                         }
-                    })
-                    
-                    self.progressUpdateTimer(category: .Recording)
-                    
-                    
-                    
-                    
-                /********************
-                * TEXT
-                ********************/
-                case .Text:
-                    
-                    print("Text Selected")
-                    
-                    let uploadImage: UIImage = self.selectedObject as! UIImage
-                    
-                    //convert uiimage to JPG
-                    let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
-                    self.dataManager.saveImageForPath(imageData: data, name: "post")
-                    let path = self.dataManager.documentsPathForFileName(name: "post.jpg")
-                    
-                    
-                    self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "post", type:"jpg", completion:{ success in
                         
-                        if success{
+                    }else{
+                        
+                        
+                        //Calculate and Set Time Remaining Lbl
+                        let timeRemaining: Int = Int(remainingTime)
+                        var timeString: String = ""
+                        var timelbl: String = ""
+                        
+                        if(((timeRemaining / 1000) % 60) >= 2){
+                            timeString = String(format: "%d", timeRemaining / (60*60*1000))
+                            timelbl = "hours"
                             
-                            print("Success")
+                        }else if(((timeRemaining / 1000) % 60) >= 1){
                             
-                            let downloadURL: String = String(format:"%@/%@/images/post.jpg", self.awsManager.getS3Prefix(), (Auth.auth().currentUser?.uid)!)
+                            timeString = "1"
+                            timelbl = "hour"
+                            
+                        }else if(((timeRemaining / (1000*60)) % 60) > 0){
+                            
+                            timeString = String(format:"%d", ((timeRemaining / (1000*60)) % 60))
+                            timelbl = "mins"
+                            
+                        }
+                        
+                        
+                        
+                        let alert: UIAlertController = UIAlertController(title: String(format: "%@ %@ until you can post", timeString, timelbl), message: "", preferredStyle: .actionSheet)
+                        
+                        let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
+                            
+                            alert.dismiss(animated: true, completion: nil)
+                            self.activityIndicator.stopAnimating()
+                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                            
+                        }
+                        
+                        
+                        let savePost: UIAlertAction = UIAlertAction(title: "Save Post for Later", style: .default){(_) -> Void in
+                            
+                            alert.dismiss(animated: true, completion: nil)
+                            
+                            let dataDictionary: NSMutableDictionary = NSMutableDictionary(dictionary: ["postID":postID,"likes":0, "user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": self.selectedObject, "category":self.selectedCategory.rawValue, "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"])
                             
                             
-                            //check for song to add
-                            let songString: String = ""
-
-                            let dataDictionary: NSMutableDictionary = ["postID":postID,"likes":0,"user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": downloadURL, "category":"Text", "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":songString,"nsfw":"0"]
-                            
+                            //if music, save thumbnail and set songString in dataDictionary
                             if (self.selectedMusicItem != nil){
                                 
-                                self.uploadSongThumbnail(image:self.selectedThumbnail)
-                                self.getSongStringWith(completion: { (string) in
-                                    
-                                    dataDictionary.setValue(string, forKey: "songString")
-                                    self.submitPost(dataDictionary: dataDictionary)
-//                                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                                })
+                                //set the persitentId as the song string, this way we can easily retrieve the MPMediaItem
+                                let persistentID = self.selectedMusicItem.persistentID
                                 
-                            }else{
+                                dataDictionary.setValue(persistentID, forKey: "songString")
                                 
-                                self.submitPost(dataDictionary: dataDictionary)
-//                                self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
                             }
-
                             
-                        }else{
+                            self.savePostForLater(primary: true, postData: dataDictionary)
                             
-                            print("Failure, try again?")
-                            self.postFailedAlert(title: "Post Failed", message: "try again")
+                            self.postBtn.setTitle("Post", for: .normal)
+                            self.activityIndicator.stopAnimating()
+                            self.postBtn.isUserInteractionEnabled = true
+                            
+                            self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            //                    if (self.hasSecondaryPost){
+                            //
+                            //
+                            //                        let secondary: NSMutableDictionary = NSMutableDictionary()
+                            //                        secondary.setValue(self.secondarySelectedCategory.rawValue, forKey: "secondaryCategory")
+                            //                        secondary.setValue(self.secondarySelectedObject, forKey: "secondaryData")
+                            //
+                            //
+                            //
+                            //                        dataDictionary.setValue(secondary, forKey: "secondaryPost")
+                            //
+                            //                    }
+                            
+                            
+                            
+                            
                         }
-                    })
-
-                    self.progressUpdateTimer(category: .Photo)
-                    
-                default:
-                    print("None, do nothing")
-                }
-                
-            }else{
-                
-                
-                //Calculate and Set Time Remaining Lbl
-                let timeRemaining: Int = Int(remainingTime)
-                var timeString: String = ""
-                var timelbl: String = ""
-                
-                if(((timeRemaining / 1000) % 60) >= 2){
-                    timeString = String(format: "%d", timeRemaining / (60*60*1000))
-                    timelbl = "hours"
-                    
-                }else if(((timeRemaining / 1000) % 60) >= 1){
-                    
-                    timeString = "1"
-                    timelbl = "hour"
-                    
-                }else if(((timeRemaining / (1000*60)) % 60) > 0){
-                    
-                    timeString = String(format:"%d", ((timeRemaining / (1000*60)) % 60))
-                    timelbl = "mins"
-                    
-                }
-                
-                
-                
-                let alert: UIAlertController = UIAlertController(title: String(format: "%@ %@ until you can post", timeString, timelbl), message: "", preferredStyle: .actionSheet)
-                
-                let cancel: UIAlertAction = UIAlertAction(title: "Cancel" , style: .cancel) {(_) -> Void in
-                    
-                    alert.dismiss(animated: true, completion: nil)
-                    self.activityIndicator.stopAnimating()
-                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                    
-                }
-                
-                
-                let savePost: UIAlertAction = UIAlertAction(title: "Save Post for Later", style: .default){(_) -> Void in
-                    
-                    alert.dismiss(animated: true, completion: nil)
-                    
-                    let dataDictionary: NSMutableDictionary = NSMutableDictionary(dictionary: ["postID":postID,"likes":0, "user":userDictionary, "mood": self.selectedMood.rawValue, "views":0, "data": self.selectedObject, "category":self.selectedCategory.rawValue, "creation_date":String(Int(Date().millisecondsSince1970)), "expire_time":String(Int(Date().oneDayFromNowInMillis)), "songString":"","nsfw":"0"])
                         
-                    
-                    //if music, save thumbnail and set songString in dataDictionary
-                    if (self.selectedMusicItem != nil){
+                        alert.addAction(savePost)
+                        alert.addAction(cancel)
                         
-                        //set the persitentId as the song string, this way we can easily retrieve the MPMediaItem
-                        let persistentID = self.selectedMusicItem.persistentID
-
-                        dataDictionary.setValue(persistentID, forKey: "songString")
-
+                        alert.popoverPresentationController?.sourceRect = self.postBtn.frame
+                        alert.popoverPresentationController?.sourceView = self.postBtn
+                        
+                        self.present(alert, animated: true, completion: nil)
+                        
                     }
-                    
-                    self.savePostForLater(primary: true, postData: dataDictionary)
-                    
-                    self.postBtn.setTitle("Post", for: .normal)
-                    self.activityIndicator.stopAnimating()
-                    self.postBtn.isUserInteractionEnabled = true
-                    
-                    self.performSegue(withIdentifier: "unwindToFeed", sender: nil)
-                    
-                    
-                    
-                    
+                })
                 
-                    
-                    
-//                    if (self.hasSecondaryPost){
-//                        
-//                        
-//                        let secondary: NSMutableDictionary = NSMutableDictionary()
-//                        secondary.setValue(self.secondarySelectedCategory.rawValue, forKey: "secondaryCategory")
-//                        secondary.setValue(self.secondarySelectedObject, forKey: "secondaryData")
-//                        
-//                        
-//                        
-//                        dataDictionary.setValue(secondary, forKey: "secondaryPost")
-//                        
-//                    }
-                    
-                    
-                    
-                    
-                }
                 
-                alert.addAction(savePost)
-                alert.addAction(cancel)
                 
-                self.present(alert, animated: true, completion: nil)
-
+                
+                
+                
+                
             }
-        })
+            
+        });
+        
+        
     }
     
     
@@ -947,7 +995,6 @@ class SubmitPostViewController: UIViewController {
                 print("Failure, try again?")
             }
         })
-        
         
     }
     
@@ -1327,16 +1374,14 @@ class SubmitPostViewController: UIViewController {
     
     
     //Uses Clarifai to determine image content is not nsfw
-    func checkForNSFWContent(postData: NSDictionary, completion:@escaping (String) -> ()){
+    func checkForNSFWContent(completion:@escaping (String) -> ()){
+        
         //Uses Clarifai API to return a confidence value of NSFW content
         var image: ClarifaiImage = ClarifaiImage()
         let category = self.selectedCategory
         
-        if (category == .Photo || category == .Text){
-            image = ClarifaiImage.init(url: postData.value(forKey: "data") as! String)
+        if (category == .Photo || category == .Text || category == .Video || category == .Music){
             
-        }else if (category == .Video || category == .Music){
-            //video api for objective c not yet documented or available
             image = ClarifaiImage(image: self.postImagePreview.image)
             
         }else{
@@ -1366,7 +1411,7 @@ class SubmitPostViewController: UIViewController {
                                     sfw = item.value(forKey: "value") as! Double
                                 }
                             }
-                            if (sfw > 0.6){
+                            if (sfw > 0.7){
                                 //not nsfw
                                 DispatchQueue.main.async(execute: {() -> Void in
                                     self.postLabel.text = ""
@@ -1403,15 +1448,7 @@ class SubmitPostViewController: UIViewController {
 //            dataDictionary.setValue(self.primaryVideoURL, forKey: "data")
 //        }
         
-        
-        //check for objectionable content with clarifai and mark as nsfw if it meets the bar
-        self.postLabel.text = "Checking for NSFW content..."
-        self.checkForNSFWContent(postData: dataDictionary, completion: { isNsfw in
-            
-            if (isNsfw != ""){
-                //if is NSFW, change data dictionary nsfw key to value 1
-                dataDictionary.setValue(isNsfw, forKey: "nsfw")
-                
+
                 self.postRef.setValue(dataDictionary)
                 
                 //reset comments
@@ -1443,11 +1480,7 @@ class SubmitPostViewController: UIViewController {
                     UserDefaults.standard.synchronize()
                     
                 }
-            }else{
-                print("error getting clarafai model")
-            }
-
-        });
+        
     }
 
 

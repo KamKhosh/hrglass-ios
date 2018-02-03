@@ -499,6 +499,9 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         
+        alert.popoverPresentationController?.sourceRect = self.createAccountBtn.frame
+        alert.popoverPresentationController?.sourceView = self.createAccountBtn
+        
         alert.addAction(defaultAction)
         
         self.present(alert, animated: true, completion: nil)

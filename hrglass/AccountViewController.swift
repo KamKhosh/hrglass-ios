@@ -45,6 +45,7 @@ class AccountViewController: UIViewController {
     var currentUserRef: DatabaseReference!
     var newUsername: String = ""
     
+    
     /*********************************
      *
      * ---------- LIFECYCLE ---------
@@ -68,10 +69,15 @@ class AccountViewController: UIViewController {
         let blockedUsersTap = UITapGestureRecognizer(target: self, action:  #selector (self.blockedUsersAction))
         self.blockedUsersView.addGestureRecognizer(blockedUsersTap)
         
-        self.setupView()
-
+    
     }
     
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.setupView()
+        
+    }
     
     
     
@@ -91,14 +97,11 @@ class AccountViewController: UIViewController {
             self.emailLbl.text = email
             self.usernameBtn.setTitle(username, for: .normal)
             self.privacySwitch.isOn = isPrivate!
-            
         }
         
         if self.newUsername != ""{
             self.nameLbl.text = newUsername
         }
-        
-        
     }
     
     
@@ -119,14 +122,7 @@ class AccountViewController: UIViewController {
     
     
     
-    @IBAction func usernameBtnAction(_ sender: Any) {
-        
-        
-        
-        
-    }
-    
-    
+    @IBAction func usernameBtnAction(_ sender: Any) {}
     
     
     @IBAction func privacySwitchAction(_ sender: Any) {
@@ -219,7 +215,7 @@ class AccountViewController: UIViewController {
         self.blockedChevron.image = UIImage(named: "chevron")?.transform(withNewColor: UIColor.white)
         self.changePasswordChevron.image = UIImage(named: "chevron")?.transform(withNewColor: UIColor.white)
         
-        self.nameLbl.text = self.user?.displayName
+//        self.nameLbl.text = self.user?.displayName
 
     }
     
@@ -231,7 +227,6 @@ class AccountViewController: UIViewController {
         view.layer.borderWidth = 1.0
         
         self.contentView.addSubview(view)
-        
     }
 
     

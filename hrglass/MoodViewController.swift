@@ -286,9 +286,7 @@ class MoodViewController: UIViewController {
     
     
     
-    
-    
-    
+
     func showMoodMenu(){
         
         self.moodMenuIsOpen = true
@@ -296,7 +294,6 @@ class MoodViewController: UIViewController {
             
             button.isHidden = false
         }
-        
         
         UIView.animate(withDuration: 0.2) {
             

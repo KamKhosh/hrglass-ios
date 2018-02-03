@@ -42,6 +42,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     var moreMenuPostData: PostData!
     var clarifaiApp: ClarifaiApp!
     
+    @IBOutlet weak var actionSheetSourceView: UIView!
+    var postPopupView: PostViewController!
+    
     //table view with one cell
     @IBOutlet weak var profileTableView: UITableView!
     @IBOutlet weak var editBtn: UIButton!
@@ -135,7 +138,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             if (currentlyViewingUID != "")
             {
                 let userRef = ref.child("Users").child(currentlyViewingUID)
-                self.editBtn.isHidden = true
+                
+                self.editBtn.setTitle("Block", for: .normal)
+                
+                
                 awsManager = AWSManager(uid: currentlyViewingUID)
                 
                 userRef.observeSingleEvent(of: .value, with: { snapshot in
@@ -167,8 +173,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 })
             }
         }
-        
-        
     }
     
     
@@ -202,56 +206,83 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     @IBAction func editAction(_ sender: Any) {
         
-        let editAlert: UIAlertController = UIAlertController(title: "Edit Profile Pictures", message: "", preferredStyle: .actionSheet)
         
-        //action to edit profile photo
-        let profilePhotoAction: UIAlertAction = UIAlertAction(title: "Change Profile Photo", style: .default) { (success) in
+        if (self.editBtn.title(for: .normal) == "Edit"){
             
-            print("chose to edit profile picture")
-            self.isChoosingProfile = true
-            self.imagePicker.allowsEditing = false
-            self.imagePicker.sourceType = .photoLibrary
+            let editAlert: UIAlertController = UIAlertController(title: "Edit Profile Pictures", message: "", preferredStyle: .actionSheet)
             
-            self.presentImagePicker()
+            //action to edit profile photo
+            let profilePhotoAction: UIAlertAction = UIAlertAction(title: "Change Profile Photo", style: .default) { (success) in
+                
+                print("chose to edit profile picture")
+                self.isChoosingProfile = true
+                self.imagePicker.allowsEditing = false
+                self.imagePicker.sourceType = .photoLibrary
+                
+                self.presentImagePicker()
+            }
+            
+            //action to edit cover photo
+            let coverPhotoAction: UIAlertAction = UIAlertAction(title: "Change Cover Photo", style: .default) { (success) in
+                
+                print("chose to edit profile picture")
+                
+                self.isChoosingProfile = false
+                self.imagePicker.allowsEditing = false
+                self.imagePicker.sourceType = .photoLibrary
+                
+                self.presentImagePicker()
+            }
+            
+            //action to edit bio
+            let editBioAction: UIAlertAction = UIAlertAction(title: "Edit Bio", style: .default) { (success) in
+                
+                print("chose to bio")
+                let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+                let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+                cell.bioTextView.becomeFirstResponder();
+                editAlert.dismiss(animated: true, completion: nil)
+                
+            }
+            
+            //cancel action
+            let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { (success) in
+                
+                print("chose to edit profile picture")
+                editAlert.dismiss(animated: true, completion: nil)
+            }
+            
+            editAlert.addAction(profilePhotoAction)
+            editAlert.addAction(coverPhotoAction)
+            editAlert.addAction(editBioAction)
+            editAlert.addAction(cancel)
+            
+            editAlert.popoverPresentationController?.sourceRect = self.actionSheetSourceView.frame
+            editAlert.popoverPresentationController?.sourceView = self.actionSheetSourceView
+            
+            self.present(editAlert, animated: true, completion: nil)
+            
+            
+        }else if (self.editBtn.title(for: .normal) == "Block"){
+            
+            
+            let fullname: String = self.currentlyViewingUser.name!
+            let alert: UIAlertController = UIAlertController(title: String(format:"Block %@", self.dataManager.getFirstName(name: fullname)), message: nil, preferredStyle: .alert)
+            
+            let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+                self.blockUserAction()
+            })
+            
+            let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            })
+            
+            alert.addAction(ok)
+            alert.addAction(cancel)
+            self.present(alert, animated: true, completion: nil)
         }
-        
-        //action to edit cover photo
-        let coverPhotoAction: UIAlertAction = UIAlertAction(title: "Change Cover Photo", style: .default) { (success) in
-            
-            print("chose to edit profile picture")
-            
-            self.isChoosingProfile = false
-            self.imagePicker.allowsEditing = false
-            self.imagePicker.sourceType = .photoLibrary
-            
-            self.presentImagePicker()
-        }
-        
-        //action to edit bio
-        let editBioAction: UIAlertAction = UIAlertAction(title: "Edit Bio", style: .default) { (success) in
-            
-            print("chose to bio")
-            let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-            let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-            cell.bioTextView.becomeFirstResponder();
-            editAlert.dismiss(animated: true, completion: nil)
-            
-        }
-        
-        //cancel action
-        let cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { (success) in
-            
-            print("chose to edit profile picture")
-            editAlert.dismiss(animated: true, completion: nil)
-        }
-        
-        editAlert.addAction(profilePhotoAction)
-        editAlert.addAction(coverPhotoAction)
-        editAlert.addAction(editBioAction)
-        editAlert.addAction(cancel)
-        
-        self.present(editAlert, animated: true, completion: nil)
-        
+    
     }
     
     
@@ -643,7 +674,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.followBtn.layer.borderWidth = 1
         cell.latestPostBackground.layer.cornerRadius = cell.latestPostBackground.frame.width / 2
         cell.latestPostImageButton.layer.cornerRadius = cell.latestPostImageButton.frame.width / 2
-        cell.latestPostBackground.layer.borderWidth = 5.0
+        cell.latestPostBackground.layer.borderWidth = 3.0
         cell.latestPostImageButton.clipsToBounds = true
         cell.latestPostImageButton.setBackgroundImage(dataManager.clearImage, for: .normal)
         cell.postIndicator.startAnimating()
@@ -817,42 +848,43 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             let collCellData: PostData = self.likedDataArray[cell.selectedCellRow]
             
-            let postVC: PostViewController = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
+            self.postPopupView = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
             
-            postVC.delegate = self
-            postVC.imageCache = self.imageCache
-            postVC.postData = collCellData
-            postVC.source = "Profile"
+
+            self.postPopupView.delegate = self
+            self.postPopupView.imageCache = self.imageCache
+            self.postPopupView.postData = collCellData
+            self.postPopupView.source = "Profile"
             
             //just pass a selected IndexPath so it isn't empty
-            postVC.selectedIndexPath = IndexPath(row: 0, section: 0)
+            self.postPopupView.selectedIndexPath = IndexPath(row: 0, section: 0)
             
-            self.addChildViewController(postVC)
+            self.addChildViewController(self.postPopupView)
             
-            postVC.view.frame = self.view.bounds
+            self.postPopupView.view.frame = self.view.bounds
 //            postVC.topGradientView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
             
-            self.view.addSubview(postVC.view)
-            postVC.didMove(toParentViewController: self)
+            self.view.addSubview(self.postPopupView.view)
+            self.postPopupView.didMove(toParentViewController: self)
         }
         
         
         //Action that is called when the latest post is selected
         cell.latestContentSelected = {
             
-            let postVC: PostViewController = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
-            postVC.selectedIndexPath = IndexPath(row: 0, section: 0)
-            postVC.delegate = self
-            postVC.imageCache = self.imageCache
-            postVC.postData = self.latestPostData
-            postVC.source = "Profile"
+            self.postPopupView = self.storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
+            self.postPopupView.selectedIndexPath = IndexPath(row: 0, section: 0)
+            self.postPopupView.delegate = self
+            self.postPopupView.imageCache = self.imageCache
+            self.postPopupView.postData = self.latestPostData
+            self.postPopupView.source = "Profile"
             
-            self.addChildViewController(postVC)
+            self.addChildViewController(self.postPopupView)
             
-            postVC.view.frame = self.view.bounds
+            self.postPopupView.view.frame = self.view.bounds
             
-            self.view.addSubview(postVC.view)
-            postVC.didMove(toParentViewController: self)
+            self.view.addSubview(self.postPopupView.view)
+            self.postPopupView.didMove(toParentViewController: self)
         }
         
         //action when the message button is selected
@@ -870,6 +902,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return 1
+    }
+    
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.view.frame.height
     }
     
     
@@ -1015,6 +1052,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             flagAlert.addAction(mature)
             flagAlert.addAction(inappropriate)
             
+            flagAlert.popoverPresentationController?.sourceRect = self.postPopupView.moreBtn.frame
+            flagAlert.popoverPresentationController?.sourceView = self.postPopupView.view
             
             self.present(flagAlert, animated: true, completion: nil)
         }
@@ -1055,6 +1094,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         alert.addAction(cancel)
+        
+        alert.popoverPresentationController?.sourceRect = self.postPopupView.moreBtn.frame
+        alert.popoverPresentationController?.sourceView = self.postPopupView.view
         
         self.present(alert, animated: true, completion: nil)
         
@@ -1205,7 +1247,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                                     sfw = item.value(forKey: "value") as! Double
                                 }
                             }
-                            if (sfw > 0.6){
+                            if (sfw > 0.7){
                                 //not nsfw
                                 DispatchQueue.main.async(execute: {() -> Void in
                                     
@@ -1246,6 +1288,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         alert.addAction(ok)
+        
+        alert.popoverPresentationController?.sourceRect = self.actionSheetSourceView.frame
+        alert.popoverPresentationController?.sourceView = self.actionSheetSourceView
+        
         self.present(alert, animated: true, completion: nil)
         
         

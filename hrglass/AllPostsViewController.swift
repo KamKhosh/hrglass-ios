@@ -24,6 +24,8 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     var moreMenuPostData: PostData!
     var loggedInUser: User!
     
+    var postPopupView: PostViewController!
+    
     @IBOutlet weak var playImageView: UIImageView!
     
     
@@ -184,19 +186,19 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //Do things
         
-        let postVC: PostViewController = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
+        self.postPopupView = storyboard!.instantiateViewController(withIdentifier: "postViewController") as! PostViewController
         
-        postVC.delegate = self
-        postVC.imageCache = self.imageCache
-        postVC.postData = postsArray[indexPath.row]
-        postVC.source = "Profile"
-        addChildViewController(postVC)
+        self.postPopupView.delegate = self
+        self.postPopupView.imageCache = self.imageCache
+        self.postPopupView.postData = postsArray[indexPath.row]
+        self.postPopupView.source = "Profile"
+        addChildViewController(self.postPopupView)
         
-        postVC.view.frame = view.bounds
+        self.postPopupView.view.frame = view.bounds
 //        postVC.topGradientView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         
-        view.addSubview(postVC.view)
-        postVC.didMove(toParentViewController: self)
+        view.addSubview(self.postPopupView.view)
+        self.postPopupView.didMove(toParentViewController: self)
         
     }
     
@@ -265,6 +267,8 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
             flagAlert.addAction(mature)
             flagAlert.addAction(inappropriate)
             
+            flagAlert.popoverPresentationController?.sourceRect = self.postPopupView.moreBtn.frame
+            flagAlert.popoverPresentationController?.sourceView = self.postPopupView.moreBtn
             
             self.present(flagAlert, animated: true, completion: nil)
         }
@@ -302,6 +306,8 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         
         alert.addAction(cancel)
+        alert.popoverPresentationController?.sourceRect = self.postPopupView.moreBtn.frame
+        alert.popoverPresentationController?.sourceView = self.postPopupView.moreBtn
         
         self.present(alert, animated: true, completion: nil)
     }
