@@ -195,8 +195,6 @@ class AppleMusicManager {
     
     
     
-    
-    
     //creates an itunes query based on the song data the user has selected
     func createItunesQuery(songData: String, completion: @escaping (_ storeId: String) -> ()){
         //song data is in format title:artist:album so we just separate by : and use those terms in our itunes search query
@@ -226,7 +224,6 @@ class AppleMusicManager {
         }
 
         let termString: String = "term=" + title + artist + album
-        
         
         
         //if the storefront id is saved locally use it

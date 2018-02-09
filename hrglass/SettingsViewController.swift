@@ -187,13 +187,14 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 loginManager.logOut()
             }
             
+            self.performSegue(withIdentifier: "unwindToWelcome", sender: nil)
+            
             //Delete Local domain data
             self.dataManager.deleteLocalDocuments()
+            self.dataManager.resetLocalUserPhotos()
+            
             let appDomain = Bundle.main.bundleIdentifier!
             UserDefaults.standard.removePersistentDomain(forName: appDomain)
-            
-            
-            self.performSegue(withIdentifier: "unwindToWelcome", sender: nil)
             
         } catch let signOutError as NSError {
             

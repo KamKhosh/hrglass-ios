@@ -204,15 +204,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
                                 
                                 self.stopLoginIndicator(success: true)
                                 
-                                self.resetLocalUserPhotos()
+                                self.dataManager.resetLocalUserPhotos()
                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                                 
                             }else{
                                 
                                 self.getFBData(uid: (user?.uid)!, completion: { data in
                                     
-                                    //
-                                    self.resetLocalUserPhotos()
+                                    self.dataManager.resetLocalUserPhotos()
                                     
                                     //setup initial following -- auto follow hr.glass
                                     let newFollowing: NSDictionary = ["sL7fW1Qa3LOnK3FCUqvr5cl3Mft1":0]
@@ -239,16 +238,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     
     
-    func resetLocalUserPhotos(){
-        
-        //sync profile photos
-        self.dataManager.syncProfilePhotosToDevice(urlString: "", path: "coverPhoto", completion: { (image) in
-            print("local cover photo removed")
-        })
-        self.dataManager.syncProfilePhotosToDevice(urlString: "", path: "profilePhoto", completion: { (image) in
-            print("local profile photo removed")
-        })
-    }
+    
     
     
     
@@ -285,11 +275,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIScrollViewDe
     
     func showActionSheetWithTitle(title:String, message: String){
         let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
-        
         let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         
         alert.addAction(defaultAction)
-        
         alert.popoverPresentationController?.sourceRect = self.loginBtn.frame
         alert.popoverPresentationController?.sourceView = self.loginBtn
         

@@ -97,13 +97,9 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         
         if(self.usernameField.text != ""){
             
-            
-            
             let validUsername = self.isValidUsername(testStr: self.usernameField.text!)
             
             if validUsername{
-                
-            }else{
                 
                 self.dataManager.existingUsernameCheck(desiredUsername: self.usernameField.text!, completion: { (valid) in
                     
@@ -125,8 +121,8 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
                         UserDefaults.standard.synchronize()
                         
                         let usernameRef = self.ref.child("Users").child(self.currentUserId!).child("username")
-                        let usernames = self.ref.child("Usernames").child(self.currentUserId!)
-                        usernames.setValue(self.usernameField.text!)
+                        let usernames = self.ref.child("Usernames").child(username)
+                        usernames.setValue(0)
                         usernameRef.setValue(self.usernameField.text!)
                         
                         if self.parentView == "feedView"{
@@ -137,9 +133,14 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
                         
                     }
                 })
+            }else{
+                
+                //characters are invalid
+                 self.invalidCharactersAlert()
             }
             
         }else{
+            
             let views: [UIView] = self.view.subviews
             for view in views {
                 if view.tag == 1{
@@ -200,7 +201,7 @@ class UsernameViewController: UIViewController, UITextFieldDelegate, UIGestureRe
         let ok: UIAlertAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
             self.usernameField.text = ""
-            self.dismiss(animated: true, completion: nil)
+            alert.dismiss(animated: true, completion: nil)
         }
         
         alert.addAction(ok)

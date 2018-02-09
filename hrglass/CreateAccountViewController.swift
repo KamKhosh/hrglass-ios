@@ -13,7 +13,9 @@ import FacebookCore
 
 
 
-class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScrollViewDelegate, LoginButtonDelegate{
+class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScrollViewDelegate, LoginButtonDelegate, CheckBoxDelegate{
+
+    
 
     @IBOutlet weak var fullnameField: UITextField!
     @IBOutlet weak var usernameField: UITextField!
@@ -43,8 +45,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     let dataManager: DataManager = DataManager()
     var usernameFlag: Bool = false;
     var currentUser: User!
-//    var usernames: NSDictionary!
     var validUsername: Bool = false;
+    var fbLoginBtn: LoginButton = LoginButton.init(readPermissions: [.publicProfile, .email])
     
     @IBOutlet weak var loginIndicatorView: UIActivityIndicatorView!
     
@@ -54,7 +56,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         
         //Firebase Reference
         ref = Database.database().reference()
-        
+        self.termsCheckbox.delegate = self
         //Delegate Setup
         self.textFieldDelegateSetup()
         self.scrollView.delegate = self
@@ -96,10 +98,11 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
         super.viewDidAppear(animated)
         
         //init fb login button
-        let fbLoginBtn = LoginButton.init(readPermissions: [.publicProfile, .email])
+//        fbLoginBtn = LoginButton.init(readPermissions: [.publicProfile, .email])
         fbLoginBtn.delegate = self
         fbLoginBtn.frame.size = self.createAccountBtn.frame.size
         fbLoginBtn.center = CGPoint(x: self.createAccountBtn.frame.midX, y: self.createAccountBtn.frame.maxY + 40)
+        fbLoginBtn.isUserInteractionEnabled = false
         
         self.scrollContentView.addSubview(fbLoginBtn)
         
@@ -116,9 +119,34 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
     
     
     
+    
+    
+    /**************************
+     *   Checkbox Delegate
+     **************************/
+    
+    
+    func didPress(sender: CheckBox) {
+        if self.termsCheckbox.isChecked{
+            self.fbLoginBtn.isUserInteractionEnabled = true
+        }else{
+            self.fbLoginBtn.isUserInteractionEnabled = false
+        }
+    }
+    
+    
+    
+    
+    
     /**************
      *   ACTIONS
      **************/
+    
+    
+    
+    
+    
+    
     
     @IBAction func createAccountAction(_ sender: Any) {
         
@@ -219,7 +247,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                             print(user?.uid ?? "")
                             
                             if(error == nil){
-                                //on login success, check if username is taken
+                                
+                                
                                 
                                         userRef.setValue(userData, withCompletionBlock: { (error, ref) in
                                             
@@ -231,13 +260,15 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                                             let followingCount = self.ref.child("Following").child((user?.uid)!).child("following_count")
                                             followingCount.setValue(1)
                                             
+                                            //set username
+                                            let usernameRef = Database.database().reference().child("Usernames").child(username)
+                                            usernameRef.setValue(0)
+                                            
                                             
                                             if(error == nil){
                                                 self.performSegue(withIdentifier: "toFeedSegue", sender: nil)
                                             }
                                         })
-//                                    }
-//                                })
                             }
                         }
                     }
@@ -245,8 +276,11 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate, UIScro
                 
             }else{
                 
-                self.showToast(message: "Accept the Terms and Conditions to continue")
-                
+                if(!termsCheckbox.isChecked){
+                    self.showToast(message: "Accept the Terms and Conditions to continue")
+                }else if(!validUsername){
+                    self.chooseDifferentUsernameAlert()
+                }
             }
         }
     }

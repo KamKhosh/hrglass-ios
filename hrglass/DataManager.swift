@@ -1292,44 +1292,45 @@ class DataManager {
         
         let imageCache: ImageCache = ImageCache()
         let imagePathString: String = urlString
+        var image: UIImage = UIImage()
         
-//        let defaults: UserDefaults = UserDefaults.standard
-//        let previousUid = defaults.value(forKey:"currentUid") as! String
-        
-        
-//        if !(localPhotoExists(atPath: path)){
-//
-//            if (imagePathString != ""){
-//
-//                imageCache.getImage(urlString: imagePathString, completion: { image in
-//
-//                    let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
-//                    self.saveImageForPath(imageData: data, name: path)
-//
-//                    DispatchQueue.main.async(execute: { () -> Void in
-//                        completion(image)
-//                    })
-//                })
-//            }
-//        }else if !(uid == previousUid){
-        
-            if (imagePathString != ""){
+        if (imagePathString != ""){
+            
+            imageCache.getImage(urlString: imagePathString, completion: { img in
                 
-                imageCache.getImage(urlString: imagePathString, completion: { image in
-                    
-                    let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
+                if let data: Data = UIImageJPEGRepresentation(img, 0.8){
                     self.saveImageForPath(imageData: data, name: path)
+                    image = img
                     
                     DispatchQueue.main.async(execute: { () -> Void in
                         completion(image)
                     })
-                })
-            }
-//        }
-        
+                }else{
+                    
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        completion(image)
+                    })
+                }
+            })
+            
+        }else{
+            DispatchQueue.main.async(execute: { () -> Void in
+                completion(image)
+            })
+        }
     }
     
     
+    func resetLocalUserPhotos(){
+        
+        //sync profile photos
+        self.syncProfilePhotosToDevice(urlString: "", path: "coverPhoto", completion: { (image) in
+            print("local cover photo removed")
+        })
+        self.syncProfilePhotosToDevice(urlString: "", path: "profilePhoto", completion: { (image) in
+            print("local profile photo removed")
+        })
+    }
     
     
     /*********************************************

@@ -195,8 +195,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 self.setupAddPostMenu()
             }
             
-            //set menu photo
-            self.setMenuPhoto(profPhoto: self.loggedInUser.profilePhoto)
         
             
         }) { (error) in
@@ -545,19 +543,22 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func setMenuPhoto(profPhoto: String){
         
-        if (profPhoto != ""){
-            if dataManager.localPhotoExists(atPath: "profilePhoto"){
-                
-                self.profileBtn.setImage(self.dataManager.getImageForPath(path: "profilePhoto"), for: .normal)
-            }else{
-                
-                dataManager.syncProfilePhotosToDevice(urlString: self.loggedInUser.profilePhoto, path: "profilePhoto", completion: { image in
         
-                    self.profileBtn.setImage(image, for: .normal)
-                })
-            }
+        if dataManager.localPhotoExists(atPath: "profilePhoto"){
+            
+            self.profileBtn.setImage(self.dataManager.getImageForPath(path: "profilePhoto"), for: .normal)
         }else{
+            
+            //first set the default photo
             self.profileBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
+            dataManager.syncProfilePhotosToDevice(urlString: self.loggedInUser.profilePhoto, path: "profilePhoto", completion: { image in
+                
+                if image.size.width > 0.0{
+                    self.profileBtn.setImage(image, for: .normal)
+                }else{
+                    self.profileBtn.setImage(self.dataManager.defaultsUserPhoto, for: .normal)
+                }
+            })
         }
     }
     
@@ -572,7 +573,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
      
      Returns: NA
      
-     confures the collection view for when there are no active posts, sets noPostsCollectionView hidden
+     conigures the collection view for when there are no active posts, sets noPostsCollectionView hidden
      
      ***************************************************************************************************/
     

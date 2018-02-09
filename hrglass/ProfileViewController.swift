@@ -206,7 +206,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     @IBAction func editAction(_ sender: Any) {
         
-        
         if (self.editBtn.title(for: .normal) == "Edit"){
             
             let editAlert: UIAlertController = UIAlertController(title: "Edit Profile Pictures", message: "", preferredStyle: .actionSheet)
@@ -322,53 +321,31 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let coverRef = self.ref.child("Users").child(currentlyViewingUser.userID as String)
         
         //image to upload
-        let uploadImage: UIImage = self.coverPhoto.image!
+        let path = self.dataManager.documentsPathForFileName(name: "coverPhoto.jpg")
         
-        
-        
-        self.checkForNSFWContent(image: uploadImage) { (isNsfw) in
+        //upload to AWS S3
+        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "coverPhoto", type:"jpg", completion:{ success in
             
-            if (isNsfw == "0"){
-                //not nsfw
-                //image as data representation
-                let data: Data = UIImageJPEGRepresentation(uploadImage, 0.8)! as Data
+            if success{
                 
-                //Save photo to local documents dir
-                self.dataManager.saveImageForPath(imageData: data, name: "coverPhoto")
-                let path = self.dataManager.documentsPathForFileName(name: "coverPhoto.jpg")
+                print("Success, upload complete")
                 
-                
-                //upload to AWS S3
-                self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "coverPhoto", type:"jpg", completion:{ success in
-                    
-                    if success{
-                        
-                        print("Success, upload complete")
-                        
-                        //set download url on upload
-                        let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
-                        self.currentlyViewingUser.coverPhoto = downloadURL as String
-                        coverRef.child("coverPhoto").setValue(downloadURL)
-                        completion(downloadURL)
-                        
-                    }else{
-                        
-                        print("Failure, try again?")
-                        self.postFailedAlert(title: "Post Failed", message: "try again")
-                        
-                        return
-                    }
-                })
-                
-                
+                //set download url on upload
+                let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
+                self.currentlyViewingUser.coverPhoto = downloadURL as String
+                coverRef.child("coverPhoto").setValue(downloadURL)
+                completion(downloadURL)
                 
             }else{
                 
-                self.nsfwImageAlert()
+                print("Failure, try again?")
+                self.postFailedAlert(title: "Post Failed", message: "try again")
                 
+                return
             }
-            
-        }
+        })
+        
+        
 
     }
     
@@ -386,64 +363,42 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         //for profilePhotos, the imagePicker delegate already saves the profile Image to documents. We just need to get the path here
         let path = dataManager.documentsPathForFileName(name: "profilePhoto.jpg")
         
-        
-        let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-        let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-        
-        cell.profilePhoto.contentMode = .scaleAspectFill
-        let image:UIImage = cell.profilePhoto.image!
-        
-        self.checkForNSFWContent(image: image) { (isNsfw) in
+
+        //upload
+        self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "profilePhoto", type:"jpg", completion:{ success in
             
-            if (isNsfw == "0"){
+            if success{
                 
-                //upload
-                self.awsManager.uploadPhotoAction(resourceURL: path, fileName: "profilePhoto", type:"jpg", completion:{ success in
-                    
-                    if success{
-                        
-                        print("Success, profile photo upload complete")
-                        
-                        //store downloadURL
-                        let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
-                        
-                        
-                        //if the current user has an active post, set the profile photo
-                        let postRef = self.ref.child("Posts").child(self.currentlyViewingUser.userID as String)
-                        postRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                            if(snapshot.exists()){
-                                postRef.child("user").child("profilePhoto").setValue(downloadURL)
-                            }
-                        })
-                        
-                        
-                        self.currentlyViewingUser.profilePhoto = downloadURL as String
-                        profileRef.child("profilePhoto").setValue(downloadURL)
-                        completion(downloadURL)
-                        
-                    }else{
-                        
-                        print("Failure, try again?")
-                        self.postFailedAlert(title: "Post Failed", message: "try again")
-                        
-                        return
+                print("Success, profile photo upload complete")
+                
+                //store downloadURL
+                let downloadURL: String = String(format:"%@/%@/images/\(imageName)", self.awsManager.getS3Prefix(), self.currentlyViewingUID)
+                
+                
+                //if the current user has an active post, set the profile photo
+                let postRef = self.ref.child("Posts").child(self.currentlyViewingUser.userID as String)
+                postRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if(snapshot.exists()){
+                        postRef.child("user").child("profilePhoto").setValue(downloadURL)
                     }
                 })
                 
+                self.currentlyViewingUser.profilePhoto = downloadURL as String
+                profileRef.child("profilePhoto").setValue(downloadURL)
+                completion(downloadURL)
                 
             }else{
                 
-                self.nsfwImageAlert()
+                print("Failure, try again?")
+                self.postFailedAlert(title: "Post Failed", message: "try again")
                 
+                return
             }
-            
-        }
-
+        })
     }
     
     
-    
-    
+
     /************************
      *
      * IMAGE PICKER DELEGATE
@@ -463,31 +418,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
-    
-    
-    
-    
-    
-    //    func progressUpdateTimer(){
-    //
-    //        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.photoTimer), userInfo: nil, repeats: true)
-    //    }
-    //
-    //
-    //    func photoTimer(){
-    //
-    //        if (self.progressView.percentageComplete <= 1.0){
-    //
-    //            self.awsManager.photoUploadProgressCheck()
-    //            self.progressView.percentageComplete = CGFloat(self.awsManager.photoUploadProgress)
-    //
-    //            self.progressView.updateProgress()
-    //
-    //        }else{
-    //
-    //            self.timer.invalidate()
-    //        }
-    //    }
     
     
     
@@ -518,36 +448,55 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     func cropViewController(_ controller: CropViewController, didFinishCroppingImage image: UIImage, transform: CGAffineTransform, cropRect: CGRect) {
-        if (isChoosingProfile){
+        
+        self.checkForNSFWContent(image: image) { (isNsfw) in
             
-            let indexPath: IndexPath = IndexPath(row: 0, section: 0)
-            let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
-            
-            cell.profilePhoto.contentMode = .scaleAspectFill
-            cell.profilePhoto.image = image
-            let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
-            dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
-            
-            self.uploadProfilePhoto(completion: { (url) in
-                print(url)
-                self.imageCache.replacePhotoForKey(url: url, image: image)
-            })
-            
-        }else{
-            
-            coverPhoto.contentMode = .scaleAspectFill
-            coverPhoto.image = image
-            self.uploadCoverPhoto(completion: { (url) in
-                print(url)
-                self.imageCache.replacePhotoForKey(url: url, image: image)
-            })
+            if (isNsfw == "0"){
+                //not nsfw
+                if (self.isChoosingProfile){
+                    
+                    let indexPath: IndexPath = IndexPath(row: 0, section: 0)
+                    let cell: ProfileTableViewCell = self.profileTableView.cellForRow(at: indexPath) as! ProfileTableViewCell
+                    
+                    cell.profilePhoto.contentMode = .scaleAspectFit
+                    cell.profilePhoto.image = image
+                    
+                    let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
+                    self.dataManager.saveImageForPath(imageData: data, name: "profilePhoto")
+                    
+                    
+                    self.uploadProfilePhoto(completion: { (url) in
+                        print(url)
+                        
+                        cell.profilePhoto.image = image
+                        self.imageCache.replacePhotoForKey(url: url, image: image)
+                    })
+                    
+                }else{
+                    
+                    self.coverPhoto.contentMode = .scaleAspectFill
+                    self.coverPhoto.image = image
+                    
+                    let data: Data = UIImageJPEGRepresentation(image, 0.8)! as Data
+                    self.dataManager.saveImageForPath(imageData: data, name: "coverPhoto")
+                    
+                    self.uploadCoverPhoto(completion: { (url) in
+                        print(url)
+                         self.coverPhoto.image = image
+                        self.imageCache.replacePhotoForKey(url: url, image: image)
+                    })
+                }
+            }else{
+                
+                self.nsfwImageAlert()
+            }
         }
         
         cropNavController.dismiss(animated: true, completion: nil)
     }
     
     func cropViewControllerDidCancel(_ controller: CropViewController) {
-        print("Canceled")
+        print("Cancelled")
         cropNavController.dismiss(animated: true, completion: nil)
     }
     
@@ -572,7 +521,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 if let postData: NSDictionary = snapshot.value as? NSDictionary {
                     
                     if let _: NSMutableDictionary = postData.value(forKey: "liked_by_list") as? NSMutableDictionary{
-                        
                         
                         self.latestPostData = self.dataManager.getPostDataFromDictionary(postDict: postData, uid: uid)
                         if (Double(self.latestPostData.expireTime)! < Date().millisecondsSince1970) {
