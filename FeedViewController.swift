@@ -753,7 +753,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             if(cell.postData.usersWhoViewed.value(forKey:myUid) == nil){
                 
                 cell.viewCountLbl.text = String(cell.postData.views + 1)
-                cell.postData.usersWhoViewed.setValue(true, forKey: myUid)
+                
+                if (cell.postData.usersWhoViewed.count == 0){
+                    cell.postData.usersWhoViewed = [myUid:true]
+                }else{
+                    cell.postData.usersWhoViewed.setValue(true, forKey: myUid)
+                }
+                
             }
             
             cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor

@@ -51,7 +51,7 @@ class ProgressView: UIView {
     
     func updateProgress(){
         
-        if (self.percentageComplete < 1.0){
+        if (self.percentageComplete <= 1.0){
 
             DispatchQueue.main.async(execute: {() -> Void in
                 

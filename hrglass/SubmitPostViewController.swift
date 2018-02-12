@@ -1461,6 +1461,8 @@ class SubmitPostViewController: UIViewController {
                 })
                 
                 self.progressView.percentageComplete = 1.0;
+                self.progressView.updateProgress()
+        
                 let alert: UIAlertController = UIAlertController(title: "Success", message: "", preferredStyle: .alert)
                 
                 let ok: UIAlertAction = UIAlertAction(title: "Ok", style: .default) {(_) -> Void in

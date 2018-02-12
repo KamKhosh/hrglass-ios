@@ -422,8 +422,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             switch self.postData.category {
             
             case .Photo:
-                
-                imageCache.getImage(urlString: self.postData.value(forKey: "data") as! String, completion: { (image) in
+                imageCache.getImage(urlString: self.postData.data, completion: { (image) in
                     self.contentImageView.image = image
                 })
             case .Video:
@@ -448,7 +447,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             case .Text:
                 
                 print("")
-                imageCache.getImage(urlString: self.postData.value(forKey: "data") as! String, completion: { (image) in
+                imageCache.getImage(urlString: self.postData.data, completion: { (image) in
                     self.contentImageView.image = image
                 })
                 
