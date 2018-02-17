@@ -871,9 +871,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 if avMusicPlayer != nil{
                     avMusicPlayer.pause()
                 }else{
-                    if applicationMusicPlayer.isPreparedToPlay{
+//                    if applicationMusicPlayer.isPreparedToPlay{
                         self.applicationMusicPlayer.play()
-                    }
+//                    }
                 }
                 
             }else{
@@ -883,9 +883,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 if avMusicPlayer != nil{
                     avMusicPlayer.play()
                 }else{
-                    if applicationMusicPlayer.isPreparedToPlay{
+//                    if applicationMusicPlayer.isPreparedToPlay{
                         self.applicationMusicPlayer.pause()
-                    }
+//                    }
                 }
             }
         }
@@ -896,9 +896,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func appleMusicPlayTrackId() {
         
         let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
-        if applicationMusicPlayer.isPreparedToPlay{
+//        if applicationMusicPlayer.isPreparedToPlay{
             applicationMusicPlayer.setQueue(with: collection)
-        }
+//        }
     }
     
     
@@ -2622,9 +2622,9 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                 
             }
         }
-        if applicationMusicPlayer.isPreparedToPlay{
+//        if applicationMusicPlayer.isPreparedToPlay{
             self.applicationMusicPlayer.stop()
-        }
+//        }
     }
     
     

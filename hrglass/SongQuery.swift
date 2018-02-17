@@ -78,7 +78,6 @@ class SongQuery {
                 } else if songCategory == "Album" {
                     albumTitle = song.value( forProperty: MPMediaItemPropertyAlbumTitle ) as! String
                     
-                    
                 } else {
                     albumTitle = song.value( forProperty: MPMediaItemPropertyAlbumTitle ) as! String
                 }
