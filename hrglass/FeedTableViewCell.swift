@@ -30,7 +30,7 @@ class FeedTableViewCell: UITableViewCell {
     
     @IBOutlet weak var profileImageBtn: UIButton!
     
-    @IBOutlet weak var posterNameLbl: UILabel!
+    @IBOutlet weak var posterUsernameLbl: UILabel!
     
     @IBOutlet weak var timeRemainingLbl: UILabel!
 

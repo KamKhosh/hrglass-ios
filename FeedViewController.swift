@@ -717,12 +717,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             self.feedData[indexPath.row] = cell.postData
         }
-        let fullname: String = (user.value(forKey: "name") as? String)!
+        
+        let username: String = (user.value(forKey: "username") as? String)!
         
         /*****************************
          //CELL BUTTON CALLBACKS
          ****************************/
         cell.userProfile = {
+            
             if let userPostDict: NSDictionary = self.feedData[indexPath.row].user{
                 self.selectedUserUID = userPostDict.value(forKey: "uid") as! String
             }
@@ -732,9 +734,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             self.performSegue(withIdentifier: "toUserProfileSegue", sender: self)
         }
-        
-        
-
         
         cell.contentSelected = {
             
@@ -787,7 +786,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.loadingIndication.startAnimating()
         cell.postUserId = user.value(forKey: "uid") as! String
         cell.postData.creationDate = feedData[indexPath.row].creationDate
-        cell.posterNameLbl.text = fullname
+        cell.posterUsernameLbl.text = username
         cell.playImageView.isHidden = true
         cell.timeRemainingLbl.text = dataManager.getTimeString(expireTime: feedData[indexPath.row].expireTime)
         
@@ -828,7 +827,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.previewContentView.layer.borderColor = UIColor.black.cgColor
             dataManager.setURLView(urlString: feedData[indexPath.row].data as String, completion: { (image, label) in
                 
-                cell.contentImageBtn.setImage(image, for:.normal)
+                if image.size.width > 0  {
+                    cell.contentImageBtn.setImage(image, for:.normal)
+                }else{
+                    cell.contentImageBtn.setImage(UIImage.init(named: "default_web_image"), for: .normal)
+                }
+                
                 cell.linkLbl.adjustsFontSizeToFitWidth = true
                 cell.linkLbl.numberOfLines = 3
                 cell.linkLbl.backgroundColor = UIColor.darkGray
@@ -842,7 +846,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         case .Video:
             
             cell.previewContentView.layer.borderColor = colors.getPurpleColor().cgColor
-            
+            cell.contentImageBtn.imageView?.contentMode = .scaleAspectFill
             //thumbnail URL
             let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
             

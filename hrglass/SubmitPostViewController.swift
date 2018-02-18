@@ -469,7 +469,7 @@ class SubmitPostViewController: UIViewController {
         self.postBtn.setTitle("", for: .normal)
         
         let postID: String = currentUserId! + String(Int(Date().millisecondsSince1970))
-        let userDictionary: NSDictionary = ["uid": Auth.auth().currentUser!.uid, "profilePhoto": self.loggedInUser.profilePhoto, "name": self.loggedInUser.name]
+        let userDictionary: NSDictionary = ["uid": Auth.auth().currentUser!.uid, "profilePhoto": self.loggedInUser.profilePhoto, "name": self.loggedInUser.name, "username":self.loggedInUser.username]
         
         
         
