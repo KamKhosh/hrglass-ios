@@ -718,7 +718,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.feedData[indexPath.row] = cell.postData
         }
         
-        let username: String = (user.value(forKey: "username") as? String)!
+        let username: String = (user.value(forKey: "name") as? String)!
+        
         
         /*****************************
          //CELL BUTTON CALLBACKS
@@ -762,7 +763,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
             
             cell.previewContentView.layer.borderColor = colors.getSeenPostColor().cgColor
-
         }
         
         
@@ -770,6 +770,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             self.moreButtonPressed(data: cell.postData, indexPath: indexPath)
         }
+        
         
         //setting cell content layout/appearance
         cell.contentImageBtn.layer.cornerRadius = self.cornerRadius/2

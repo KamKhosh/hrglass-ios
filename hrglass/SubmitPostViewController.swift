@@ -458,9 +458,8 @@ class SubmitPostViewController: UIViewController {
         }
         alert.addAction(cancel)
         self.present(alert, animated: true, completion: nil)
-        
-        
     }
+    
     
     @IBAction func postAction(_ sender: Any) {
         
@@ -469,8 +468,7 @@ class SubmitPostViewController: UIViewController {
         self.postBtn.setTitle("", for: .normal)
         
         let postID: String = currentUserId! + String(Int(Date().millisecondsSince1970))
-        let userDictionary: NSDictionary = ["uid": Auth.auth().currentUser!.uid, "profilePhoto": self.loggedInUser.profilePhoto, "name": self.loggedInUser.name, "username":self.loggedInUser.username]
-        
+        let userDictionary: NSDictionary = ["uid": Auth.auth().currentUser!.uid, "profilePhoto": self.loggedInUser.profilePhoto, "name": self.loggedInUser.username]
         
         
         //check for objectionable content with clarifai and mark as nsfw if it meets the bar
