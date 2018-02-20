@@ -35,6 +35,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     var hub: RKNotificationHub!
     var selectedUser: User!
     var loggedInUser: User!
+    var loggedInUserFollowingDictionary: NSDictionary!
     
     @IBOutlet weak var requestsBtn: UIButton!
 
@@ -61,7 +62,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        self.noReqLbl = UILabel(frame: CGRect(x: 0, y:self.navigationBar.frame.maxY + 20 , width: self.view.frame.width, height: 30))
+        self.noReqLbl = UILabel(frame: CGRect(x: 0, y:self.searchBar.frame.maxY + 20 , width: self.view.frame.width, height: 30))
         self.noReqLbl.text = "No Requests"
         self.noReqLbl.textAlignment = .center
         self.noReqLbl.textColor = UIColor.lightGray
@@ -108,7 +109,6 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             self.tableView.reloadData()
         }
     }
-    
     
     
     
@@ -166,53 +166,32 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
         usersRef.observeSingleEvent(of: .value, with: { snapshot in
             
             let data: NSDictionary = snapshot.value as! NSDictionary
-            print(data)
+            
+            for key in data.allKeys{
+                let keyString = key as! String
+            
+                if (keyString != self.currentUserId){
+            
+                    self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+                    self.masterUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
+            
+                }
+            }
+            
             let followingRef: DatabaseReference = self.ref.child("Following")
-
+            
             followingRef.child((Auth.auth().currentUser?.uid)!).child("following_list").observeSingleEvent(of: .value, with: { snapshot in
                 
                 if let followingDict: NSDictionary = snapshot.value as? NSDictionary {
                     
-                    for key in data.allKeys{
-                        
-                        let keyString = key as! String
-                        
-                        //if the user is not current user add them to datasourse
-                        
-                        //TODO: REMOVE EXISTING USERS followed by the logged in User
-                        if (keyString != self.currentUserId && followingDict.value(forKey: keyString) == nil){
-                            
-                            
-                            self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
-                            self.masterUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
-                        }
-                    }
+                    self.loggedInUserFollowingDictionary = followingDict
                     
                     self.loadingAnimation.stopAnimating()
                     self.tableView.reloadData()
                     
-                }else{
-                    
-                    for key in data.allKeys{
-                        
-                        let keyString = key as! String
-
-                        //TODO: Removed the logged in User
-                        if (keyString != self.currentUserId){
-                            
-                            self.discoverUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
-                            self.masterUserData.add(self.dataManager.setupUserData(data: data.value(forKey: keyString) as! NSMutableDictionary, uid: keyString))
-//                            self.userIdArray.add(keyString)
-                            
-                        }
-                    }
-                    
-                    self.loadingAnimation.stopAnimating()
-                    self.tableView.reloadData()
                 }
-                
             })
-            
+        
         })
     }
     
@@ -269,9 +248,6 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             if (userObj.name.localizedCaseInsensitiveContains(searchText)){
                 discoverUserData.add(userObj)
             }
-//            if (user.name.localizedCaseInsensitiveContainsString:searchBar.text) {
-//                discoverUserData.add(user);
-//            }
         }
         self.tableView.reloadData()
         
@@ -373,13 +349,18 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             
             let userdata:User = self.discoverUserData[indexPath.row] as! User
             let userId: String = userdata.userID
-//            let _: User = self.dataManager.setupUserData(data: userdata.mutableCopy() as! NSMutableDictionary, uid: userId)
             
             cell.activityInd.hidesWhenStopped = true
             cell.activityInd.startAnimating()
             
             cell.userdata = userdata
             cell.userId = userId
+            
+            if loggedInUserFollowingDictionary.value(forKey: userId) != nil{
+                cell.setFollowBtnUnfollow()
+            }else{
+                cell.setFollowBtnFollow()
+            }
             
             
             cell.countObj = {
@@ -398,6 +379,7 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                 }
             }
             
+            cell.profilePhotoImageView.image = UIImage(named: "defaultUser")
             
             if (userdata.profilePhoto != ""){
                 
@@ -406,10 +388,8 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
                     cell.profilePhotoImageView.image = image
                     cell.activityInd.stopAnimating()
                 })
-                
             }else{
                 
-                cell.profilePhotoImageView.image = UIImage(named: "defaultUser")
                 cell.activityInd.stopAnimating()
             }
             
@@ -433,8 +413,6 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     
     
     
-    
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Show User Profile")
         
@@ -448,17 +426,14 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     
+    
     /************************
      *
      *      NAVIGATION
      *
      ************************/
     
-    @IBAction func unwindToDiscover(unwindSegue: UIStoryboardSegue) {
-        
-        
-        
-    }
+    @IBAction func unwindToDiscover(unwindSegue: UIStoryboardSegue) {}
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -484,8 +459,4 @@ class DiscoverViewController: UIViewController, UITableViewDelegate, UITableView
             profileVC.follwBtnIsUnfollow = false
         }
     }
-
-    
-
-
 }

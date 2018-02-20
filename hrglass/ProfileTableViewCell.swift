@@ -20,7 +20,7 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
     let colors: Colors = Colors()
     
-    @IBOutlet weak var nameLbl: UILabel!
+    @IBOutlet weak var usernameLbl: UILabel!
     
     @IBOutlet weak var bioTextView: UITextView!
     
@@ -55,6 +55,9 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
     @IBOutlet weak var playImageView: UIImageView!
     
     @IBOutlet weak var messageBtn: UIButton!
+    
+    @IBOutlet weak var nameLbl: UILabel!
+    
     
     var currentlikedIndex: IndexPath = IndexPath(row: 0, section: 0)
     

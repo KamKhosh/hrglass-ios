@@ -50,15 +50,7 @@ class DiscoverTableViewCell: UITableViewCell {
             
             dataManager.addToFollowerList(userId: self.userdata.userID, privateAccount: self.userdata.isPrivate)
             
-            if (self.userdata.isPrivate){
-                followBtn.setTitle("Unrequest", for: .normal)
-            }else{
-                
-                followBtn.setTitle("Unfollow", for: .normal)
-            }
-            
-            followBtn.setTitleColor(colors.getSearchBarColor(), for: .normal)
-            followBtn.backgroundColor = UIColor.clear
+            self.setFollowBtnUnfollow()
             
             if let followAction = self.countObj{
                 followAction()
@@ -70,16 +62,34 @@ class DiscoverTableViewCell: UITableViewCell {
             
             dataManager.removeFromFollowerList(userId: self.userdata.userID)
 
-            followBtn.setTitle("Follow", for: .normal)
-            
-            followBtn.setTitleColor(UIColor.white, for: .normal)
-            followBtn.backgroundColor = colors.getSearchBarColor()
+            self.setFollowBtnFollow()
             
             if let followAction = self.countObj{
                 followAction()
             }
             
         }
+    }
+    
+    
+    func setFollowBtnUnfollow(){
+        if (self.userdata.isPrivate){
+            followBtn.setTitle("Unrequest", for: .normal)
+        }else{
+            
+            followBtn.setTitle("Unfollow", for: .normal)
+        }
+        
+        followBtn.setTitleColor(colors.getSearchBarColor(), for: .normal)
+        followBtn.backgroundColor = UIColor.clear
+    }
+    
+    func setFollowBtnFollow(){
+        followBtn.setTitle("Follow", for: .normal)
+        
+        followBtn.setTitleColor(UIColor.white, for: .normal)
+        followBtn.backgroundColor = colors.getSearchBarColor()
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

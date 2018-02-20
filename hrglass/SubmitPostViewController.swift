@@ -102,14 +102,14 @@ class SubmitPostViewController: UIViewController {
         self.postImagePreview.clipsToBounds = true
         self.postImagePreview.contentMode = .scaleAspectFill
         
-        self.linkContentView = UILabel(frame:  CGRect(x: self.postImagePreview.bounds.minX, y: self.postImagePreview.bounds.midX, width: self.postImagePreview.frame.width, height: self.postImagePreview.frame.height/4))
-        
-        self.linkContentView.textAlignment = .center
-        self.linkContentView.backgroundColor = UIColor.darkGray
-        self.linkContentView.alpha = 0.7
-        self.linkContentView.textColor = UIColor.white
-        self.linkContentView.adjustsFontSizeToFitWidth = true
-        self.linkContentView.isHidden = true
+//        self.linkContentView = UILabel(frame:  CGRect(x: self.postImagePreview.bounds.minX, y: self.postImagePreview.bounds.midX, width: self.postImagePreview.frame.width, height: self.postImagePreview.frame.height/4))
+//
+//        self.linkContentView.textAlignment = .center
+//        self.linkContentView.backgroundColor = UIColor.darkGray
+//        self.linkContentView.alpha = 0.7
+//        self.linkContentView.textColor = UIColor.white
+//        self.linkContentView.adjustsFontSizeToFitWidth = true
+//        self.linkContentView.isHidden = true
         
         self.photoBtn = UIButton(type: .custom)
         self.photoBtn.setImage(UIImage(named: "gallery"), for: .normal)
@@ -384,6 +384,8 @@ class SubmitPostViewController: UIViewController {
             if primaryPost{
                self.buttonArray.add(self.linkBtn)
                 setURLView(urlString: self.selectedObject as! String, primary: primaryPost)
+                
+                
             }
 //            
 //            else{
@@ -1270,14 +1272,20 @@ class SubmitPostViewController: UIViewController {
                 
                 
                 if primary{
-                    self.postImagePreview.image = image
                     
-                    self.linkContentView.text = label
-                    self.linkContentView.numberOfLines = 3
+                    if image.size.width > 0{
+                        self.postImagePreview.image = image
+                    }else{
+                        self.postImagePreview.image = UIImage(named: "default_web_image")
+                    }
+                    
+                    
+//                    self.linkContentView.text = label
+//                    self.linkContentView.numberOfLines = 3
                     
                     self.postImagePreview.isHidden = false
-                    self.linkContentView.isHidden = false
-                    self.postImagePreview.addSubview(self.linkContentView)
+//                    self.linkContentView.isHidden = false
+//                    self.postImagePreview.addSubview(self.linkContentView)
                     
                 }
                 

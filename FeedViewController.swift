@@ -826,6 +826,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             print("link")
             
             cell.previewContentView.layer.borderColor = UIColor.black.cgColor
+            cell.contentImageBtn.imageView?.contentMode = .scaleAspectFill
+            
             dataManager.setURLView(urlString: feedData[indexPath.row].data as String, completion: { (image, label) in
                 
                 if image.size.width > 0  {
@@ -833,15 +835,15 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }else{
                     cell.contentImageBtn.setImage(UIImage.init(named: "default_web_image"), for: .normal)
                 }
-                
+                cell.loadingIndication.stopAnimating()
                 cell.linkLbl.adjustsFontSizeToFitWidth = true
                 cell.linkLbl.numberOfLines = 3
                 cell.linkLbl.backgroundColor = UIColor.darkGray
                 cell.linkLbl.alpha = 0.7
-                cell.linkLbl.text = label
+//                cell.linkLbl.text = label
                 cell.linkLbl.textAlignment = .center
                 cell.linkLbl.textColor = UIColor.white
-                cell.linkLbl.isHidden = false
+//                cell.linkLbl.isHidden = false
             })
             
         case .Video:
@@ -898,6 +900,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.contentImageBtn.setImage(UIImage(named: "audioWave"), for:.normal)
             cell.playImageView.isHidden = false
             cell.previewContentView.layer.borderColor = colors.getAudioColor().cgColor
+            cell.loadingIndication.stopAnimating()
             
         case .Text:
             
@@ -926,6 +929,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         case .None:
             
             print("No Category")
+            cell.loadingIndication.stopAnimating()
         }
         
         
@@ -1046,6 +1050,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.imageView.layer.cornerRadius = cell.frame.width/2
         cell.imageView.backgroundColor = colors.getBlackishColor()
         
+        cell.imageView.image = dataManager.defaultsUserPhoto
         if user.profilePhoto != ""{
             self.imageCache.getImage(urlString: user.profilePhoto, completion: { (image) in
                 
@@ -1053,7 +1058,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 loadingInd.stopAnimating()
             })
         }else{
-            cell.imageView.image = dataManager.defaultsUserPhoto
+            loadingInd.stopAnimating()
         }
         
         cell.nameLbl.text = user.name

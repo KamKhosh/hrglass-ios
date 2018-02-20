@@ -579,6 +579,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         if currentlyViewingUser != nil{
             
+            cell.usernameLbl.text = currentlyViewingUser.username as String
             cell.nameLbl.text = currentlyViewingUser.name as String
             
             if(currentlyViewingUser.bio as String == ""){
@@ -624,6 +625,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.latestPostImageButton.layer.cornerRadius = cell.latestPostImageButton.frame.width / 2
         cell.latestPostBackground.layer.borderWidth = 3.0
         cell.latestPostImageButton.clipsToBounds = true
+        cell.latestPostImageButton.contentMode = .scaleAspectFill
         cell.latestPostImageButton.setBackgroundImage(dataManager.clearImage, for: .normal)
         cell.postIndicator.startAnimating()
         cell.profilePictureIndicator.startAnimating()
@@ -942,6 +944,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func moreButtonPressed(data: PostData, indexPath: IndexPath) {
         
         let fullname: String = data.user.value(forKey: "name") as! String
+
         
         let alert: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         

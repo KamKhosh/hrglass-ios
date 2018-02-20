@@ -941,15 +941,18 @@ class DataManager {
                         }else{
                             //image nil
                             print("Website Preview Cannot be retrieved")
+                            completion(UIImage(), "")
                         }
                     }else{
                         //error retrieving image
                         print(error?.localizedDescription ?? "")
+                        completion(UIImage(), "")
                     }
                 })
             }else{
                 //error retrieving OGData
                 print(error?.localizedDescription ?? "")
+                completion(UIImage(), "")
             }
         })
         

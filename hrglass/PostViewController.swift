@@ -149,6 +149,8 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         } catch _ {
         }
         
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: .UIApplicationWillResignActive, object: nil)
+        
 //        let gradient: CAGradientLayer  = CAGradientLayer()
 //        gradient.frame = self.topGradientView.bounds;
 //        gradient.colors = NSArray.init(array: [UIColor.black, UIColor.clear]) as? [Any]
@@ -166,9 +168,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        
-
-
+    
         self.musicViewMinCenter = self.songView.center
 
         //Auto play if content is of the following categories
@@ -183,6 +183,24 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             self.playContentBtn(self)
         }
+    }
+    
+    
+    //stop playing things on app send to background
+    @objc func willResignActive(_ notification: Notification) {
+        if self.songTimer != nil{
+            self.songTimer.invalidate()
+        }
+        
+        if (self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused){
+            self.playPauseSongAction(self)
+            self.applicationMusicPlayer.stop()
+        }
+        
+        if self.avPlayerViewController != nil{
+            self.avPlayerViewController.player?.pause()
+        }
+        
     }
     
     
@@ -201,7 +219,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         self.songImageView.contentMode = .scaleAspectFill
         
         //profile photo image view
-        self.profilePhotoImageView.layer.cornerRadius = self.view.frame.height * 0.08 / 2
+        self.profilePhotoImageView.layer.cornerRadius = self.view.frame.height * 0.06 / 2
         self.profilePhotoImageView.clipsToBounds = true
         self.profilePhotoImageView.contentMode = .scaleAspectFill
         
@@ -233,15 +251,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         if (self.postData != nil) {
             
             let user: NSDictionary = postData.user
-            
-            //setup secondary data if applicable
-//            if self.postData.secondaryPost != nil{
-//                
-//                self.postCurrentlyViewingStackView.isHidden = false
-//                self.setupViewingStackView()
-//                self.setupSecondaryPostView(user: user, secondaryPostData: self.postData.secondaryPost)
-//            }
-
+        
             let name: String = user.value(forKey: "name") as! String
             self.nameLbl.text = name
             self.timeRemainingLbl.text = dataManager.getTimeString(expireTime: postData.expireTime)
@@ -335,7 +345,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                                     //play song
                                     self.appleMusicPlayTrackId(ids: [String(trackId)])
                                     
-                                    
                                 }else{
                                     //play preview -- 30 seconds in millis
                                     self.songLength = 30 * 1000
@@ -369,9 +378,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 }
                 
 
-                
                 //set the song art as the background image adding a blur and gradient layer
-                
                 //Note: This code could be very helpful for future blurs
                 imageCache.getImage(urlString: thumbnailURL, completion: { (image) in
                     
@@ -417,7 +424,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
             
             
             
-            
             //Confgiure the main content view based on category
             switch self.postData.category {
             
@@ -456,20 +462,6 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 print("")
                 self.linkLbl.isHidden = false
                 self.playContentBtn.setImage(self.dataManager.clearImage, for: .normal)
-                
-//                self.dataManager.setURLView(urlString: self.postData.data as String, completion: { (image, label) in
-//
-//                    self.contentImageView.image = image
-//                    self.linkLbl.adjustsFontSizeToFitWidth = true
-//                    self.linkLbl.numberOfLines = 3
-//                    self.linkLbl.backgroundColor = UIColor.darkGray
-//                    self.linkLbl.alpha = 0.7
-//                    self.linkLbl.text = label
-//                    self.linkLbl.textAlignment = .center
-//                    self.linkLbl.textColor = UIColor.white
-//                    self.linkLbl.isHidden = false
-//                })
-                
                 self.linkWebView.isHidden = false
                 let url = URL (string: self.postData.data)
                 let requestObj = URLRequest(url: url!)
@@ -513,7 +505,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                 //pause actions
                 self.playPauseSongAction(self)
 //                if (applicationMusicPlayer.isPreparedToPlay){
-                   self.applicationMusicPlayer.stop()
+                self.applicationMusicPlayer.stop()
 //                }
                 
             }
@@ -599,7 +591,7 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         
         self.blurredMusicImageView.alpha = 0.0
 //        let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.minimizeBtn.frame.maxY + 20 + self.songView.frame.height/2)
-         let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.postContainerPlaceholder.frame.midY + 10)
+         let SongViewCenter = CGPoint(x: self.postContainerPlaceholder.frame.midX, y: self.postContainerPlaceholder.frame.midY)
         
         self.musicViewMinimized = false
         self.blurredMusicImageView.isHidden = false
@@ -660,9 +652,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
         UIView.animate(withDuration: 0.3){
             
             //calculate distance between bottom of song view and bottom of view
-            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.postContainerPlaceholder.frame.maxY - 20)
-            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.postContainerPlaceholder.frame.maxY - 20)
-            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.postContainerPlaceholder.frame.maxY - 20)
+            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y:self.bottomGradientView.frame.minY + 30)
+            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.bottomGradientView.frame.minY + 30)
+            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.bottomGradientView.frame.minY + 30)
         }
     }
     
@@ -672,9 +664,9 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
     
         UIView.animate(withDuration: 0.3){
     
-            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y: self.bottomGradientView.frame.minY + 10)
-            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.bottomGradientView.frame.minY + 10)
-            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.bottomGradientView.frame.minY + 10)
+            self.likeBtn.center = CGPoint(x: self.likeBtn.center.x,y: self.bottomGradientView.frame.minY + 15)
+            self.commentBtn.center = CGPoint(x: self.commentBtn.center.x,y:self.bottomGradientView.frame.minY + 15)
+            self.moreBtn.center = CGPoint(x: self.moreBtn.center.x,y:self.bottomGradientView.frame.minY + 15)
         }
     }
     
@@ -823,6 +815,10 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
                     if (self.applicationMusicPlayer.playbackState == .playing || self.applicationMusicPlayer.playbackState == .paused){
                         self.playPauseSongAction(self)
                         self.applicationMusicPlayer.stop()
+                    }
+                    
+                    if self.avPlayerViewController != nil{
+                        self.avPlayerViewController.player?.pause()
                     }
                     
 //                    UIView.transition(with: self.view, duration: 0.5, options: .transitionCurlDown, animations: {
@@ -1118,6 +1114,12 @@ class PostViewController: UIViewController, UIGestureRecognizerDelegate, AVPlaye
 //                            }
                             
                         }
+                        
+                        if self.avPlayerViewController != nil{
+                            self.avPlayerViewController.player?.pause()
+                        }
+                        
+                        
                         self.willMove(toParentViewController: nil)
                         self.view.removeFromSuperview()
                         self.removeFromParentViewController()

@@ -1307,15 +1307,20 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func setURLView(urlString: String){
         
         dataManager.setURLView(urlString: urlString, completion: { (image, label) in
+            
             DispatchQueue.main.async {
                 
+                if image.size.width > 0{
+                    self.setPhotoView(image: image)
+                }else{
+                    self.setPhotoView(image: UIImage(named:"default_web_image")!)
+                }
                 
-                self.setPhotoView(image: image)
                 self.hideResizeButtons()
                 
-                self.linkContentView.text = label
+//                self.linkContentView.text = label
                 self.linkContentView.numberOfLines = 3
-                self.linkContentView.isHidden = false
+//                self.linkContentView.isHidden = false
 
             }
         })
@@ -2627,11 +2632,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
 //        }
     }
     
-    
-    
     @IBAction func unwindToAddPost(unwindSegue: UIStoryboardSegue) {}
-    
-    
     
 }
 
@@ -2645,5 +2646,4 @@ extension UITextView {
         let positiveTopOffset = max(1, topOffset)
         contentOffset.y = -positiveTopOffset
     }
-    
 }
