@@ -586,7 +586,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         layout.minimumLineSpacing = 0
         layout.scrollDirection = .horizontal
         
-        //set thumbnail sizes (applicible to both photos and videos collection views)
         assetThumbnailSize = CGSize(width:90, height:110)
         layout.itemSize = assetThumbnailSize
         
@@ -794,6 +793,32 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         //configuring data view based on post category
         switch feedData[indexPath.row].category {
+            
+        case .Youtube:
+            
+            print("Music")
+            cell.previewContentView.layer.borderColor = colors.getPurpleColor().cgColor
+            
+            let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), user.value(forKey: "uid") as! String)
+            
+            //just set the photo for now until we get AWS setup
+            cell.profileImageBtn.setImage(self.dataManager.clearImage, for: .normal)
+            cell.playImageView.isHidden = false
+            cell.contentView.bringSubview(toFront: cell.playImageView)
+            
+            self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
+                
+                if self.feedData[indexPath.row].nsfw == "previewphoto"{
+                    
+                    self.applyBlurEffect(image: image, completionHandler: { (blurredImage) in
+                        cell.contentImageBtn.setImage(blurredImage, for: .normal)
+                    })
+                    cell.nsfwLbl.isHidden = false
+                }else{
+                    cell.contentImageBtn.setImage(image, for:.normal)
+                }
+                cell.loadingIndication.stopAnimating()
+            })
             
         case .Music:
             
@@ -1047,7 +1072,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         loadingInd.center = cell.imageView.center
         loadingInd.startAnimating()
         
-        cell.imageView.layer.cornerRadius = cell.frame.width/2
+        cell.imageView.layer.cornerRadius = (cell.frame.width - 10)/2
         cell.imageView.backgroundColor = colors.getBlackishColor()
         
         cell.imageView.image = dataManager.defaultsUserPhoto
@@ -1456,12 +1481,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             
             //setting music objects if necessary
-            let musicId = self.savedPost.value(forKey: "songString") as! MPMediaEntityPersistentID
+//            let musicId = self.savedPost.value(forKey: "songString") as! MPMediaEntityPersistentID
+            let musicId = self.savedPost.value(forKey: "songString") as! String
             if (String(musicId) != ""){
                 
-                let musicItem: MPMediaItem = self.getMPMediaItemWith(persistentId: musicId)
+//                let musicItem: MPMediaItem = self.getMPMediaItemWith(persistentId: musicId)
                 
-                addPostVC.selectedMusicItem = musicItem
+                addPostVC.selectedMusicItem = musicId
                 
             }
             
@@ -1486,7 +1512,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
                 addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
             }else if (cat == .Music){
-                addPostVC.selectedObject = self.getMPMediaItemWith(persistentId: musicId)
+                addPostVC.selectedObject = musicId as! AnyObject
+//                addPostVC.selectedObject = self.getMPMediaItemWith(persistentId: musicId)
             }else{
                 addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
             }

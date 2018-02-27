@@ -15,6 +15,10 @@ class AddPostTableViewCell: UITableViewCell {
     @IBOutlet weak var songNameLbl: UILabel!
     @IBOutlet weak var artistLbl: UILabel!
     
+    var videoId: String!
+    var thumbnailUrl: String!
+    
+    var videoDictionary: YoutubeVideoData = YoutubeVideoData.init()
     
     override func awakeFromNib() {
         super.awakeFromNib()

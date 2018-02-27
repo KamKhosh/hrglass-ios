@@ -66,6 +66,7 @@
 		5E815E6F1F2A97C800F7A975 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E815E6E1F2A97C800F7A975 /* PhotoView.swift */; };
 		5E88ED53200291F000CC04DE /* SupportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E88ED52200291F000CC04DE /* SupportViewController.swift */; };
 		5E8CDA701FE5AFE40008AC25 /* MoodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */; };
+		5E97C7A32040A2FB0006D514 /* YoutubeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E97C7A22040A2FB0006D514 /* YoutubeManager.swift */; };
 		5EB0ED50201E63CF000472A8 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB0ED4F201E63CF000472A8 /* ForgotPasswordViewController.swift */; };
 		5EB1A7701FD1C4CD008F625E /* BreathingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */; };
 		5ECA1E1A201AAD410077140B /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECA1E19201AAD410077140B /* CheckBox.swift */; };
@@ -151,6 +152,7 @@
 		5E815E6E1F2A97C800F7A975 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
 		5E88ED52200291F000CC04DE /* SupportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViewController.swift; sourceTree = "<group>"; };
 		5E8CDA6F1FE5AFE40008AC25 /* MoodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodViewController.swift; sourceTree = "<group>"; };
+		5E97C7A22040A2FB0006D514 /* YoutubeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YoutubeManager.swift; sourceTree = "<group>"; };
 		5EB0ED4F201E63CF000472A8 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		5EB1A76F1FD1C4CD008F625E /* BreathingAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreathingAnimation.swift; sourceTree = "<group>"; };
 		5ECA1E19201AAD410077140B /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 				5E32DCB41F5365F4004E6AA1 /* SongQuery.swift */,
 				5EF85DFA1F953AE6008887F9 /* AppleMusicManager.swift */,
 				5E24BDAF1EB280C90047ED50 /* PostData.swift */,
+				5E97C7A22040A2FB0006D514 /* YoutubeManager.swift */,
 			);
 			name = DataManagers;
 			sourceTree = "<group>";
@@ -530,6 +533,7 @@
 				"${BUILT_PRODUCTS_DIR}/iOSPhotoEditor/iOSPhotoEditor.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+				"${BUILT_PRODUCTS_DIR}/youtube-ios-player-helper/youtube_ios_player_helper.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -551,6 +555,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/iOSPhotoEditor.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/youtube_ios_player_helper.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -668,6 +673,7 @@
 				5E23089D1EF07D3A00A69E46 /* AddPostCollectionViewCell.swift in Sources */,
 				5E3BAC4A1F00450B0007197A /* DiscoverTableViewCell.swift in Sources */,
 				5E638FCB1EC2452B008F8441 /* BlockedUserCell.swift in Sources */,
+				5E97C7A32040A2FB0006D514 /* YoutubeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

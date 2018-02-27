@@ -12,14 +12,15 @@ class MoodViewController: UIViewController {
     //mood menu options
     var moodMenuIsOpen: Bool = false
     var moodArray: [UIButton] = [UIButton]()
-    
+    var imageCache: ImageCache = ImageCache()
     
     var selectedObject: AnyObject!
     var selectedCategory: Category = .None
     var selectedMood: Mood = .None
     var selectedThumbnail: UIImage!
     var selectedVideoPath: String = ""
-    var selectedMusicItem: AnyObject!
+    var selectedMusicItem: String!
+    
     
     //set when music is the primary and as an embellishement
     var loggedInUser: User!
@@ -67,6 +68,7 @@ class MoodViewController: UIViewController {
             vc.selectedThumbnail = self.selectedThumbnail
             vc.postWasSaved = self.postWasSaved
             vc.selectedMusicItem = self.selectedMusicItem
+            vc.imageCache = self.imageCache
         }
     }
  

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0920"
+   LastUpgradeVersion = "0700"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D817BABA1F8BE477B1FCD1ACFEA7C785"
+               BlueprintIdentifier = "3F369F7FB8073AB671B94DCBEC90B2EA"
                BuildableName = "Pods_hrglass.framework"
                BlueprintName = "Pods-hrglass"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -47,7 +47,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D817BABA1F8BE477B1FCD1ACFEA7C785"
+            BlueprintIdentifier = "3F369F7FB8073AB671B94DCBEC90B2EA"
             BuildableName = "Pods_hrglass.framework"
             BlueprintName = "Pods-hrglass"
             ReferencedContainer = "container:Pods.xcodeproj">

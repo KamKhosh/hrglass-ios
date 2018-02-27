@@ -20,7 +20,7 @@ class NoPostsCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
         // Initialization code
         self.backgroundColor = colors.getBlackishColor()
-        self.imageView.layer.cornerRadius = self.frame.width/2
+        self.imageView.layer.cornerRadius = (self.frame.width - 10.0) / 2
         self.imageView.clipsToBounds = true
         self.imageView.layer.borderColor = UIColor.lightGray.cgColor
         self.imageView.layer.borderWidth = 2.0

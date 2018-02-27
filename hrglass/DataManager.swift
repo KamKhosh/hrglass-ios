@@ -1220,6 +1220,10 @@ class DataManager {
             
             completion("")
             
+        case .Youtube:
+            
+            print("Youtube")
+            
         case .None:
             print("None, no saved Data")
             completion("")
@@ -1244,6 +1248,7 @@ class DataManager {
         //        }
         
         switch category{
+            
         case .Photo:
             object = getImageForPath(path: dataKey)
             
@@ -1268,7 +1273,20 @@ class DataManager {
             
             object = text as AnyObject
         case .Music:
-            print("Music, no saved Data")
+            print("Music, return song string (also stored in data)")
+            
+            let postDict: NSDictionary = UserDefaults.standard.dictionary(forKey: postKey)! as NSDictionary
+            let text: String = postDict.value(forKey: "data") as! String
+            
+            object = text as AnyObject
+            
+        case .Youtube:
+            print("Youtube, return video string")
+            
+            let postDict: NSDictionary = UserDefaults.standard.dictionary(forKey: postKey)! as NSDictionary
+            let text: String = postDict.value(forKey: "data") as! String
+            
+            object = text as AnyObject
             
         case .None:
             print("None, no saved Data")

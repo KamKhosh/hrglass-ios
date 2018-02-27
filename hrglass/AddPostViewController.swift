@@ -15,19 +15,23 @@ import MediaPlayer
 import AVKit
 import AWSS3
 import iOSPhotoEditor
+import youtube_ios_player_helper
 
 
-class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, MPMediaPickerControllerDelegate, PhotoEditorDelegate, UITextViewDelegate{
 
+class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIVideoEditorControllerDelegate, MPMediaPickerControllerDelegate, PhotoEditorDelegate, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, YTPlayerViewDelegate{
     
-    //DEMO COLOR
+    
+    
+    
     let ourColors: Colors = Colors()
-    let orangishRed: UIColor = UIColor.init(red: 255.0/255.0, green: 95.0/255.0, blue: 69.0/255.0, alpha: 1.0)
+    let youtubeManager: YoutubeManager = YoutubeManager()
+    let imageCache: ImageCache = ImageCache()
+    let dataManager: DataManager = DataManager()
     
     //POST DATA
     var postData: PostData!
     var videoStore: VideoStore = VideoStore()
-    var dataManager = DataManager()
     var ref: DatabaseReference!
     var currentUserID = Auth.auth().currentUser?.uid
     var postRef: DatabaseReference!
@@ -42,7 +46,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var linkTextField: UITextField!
     var videoCollectionView: UICollectionView!
     var photoCollectionView: UICollectionView!
-//    var musicTableView: UITableView!
+    var musicTableView: UITableView!
     var recordingView: UIView!
     var textPostView: UITextView!
     var cameraView: UIImageView!
@@ -60,15 +64,17 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var assetThumbnailSize: CGSize!
     
     //tableView data (Music)
-//    var musicItemsArray: NSMutableArray!
+    var musicItemsArray: Array<YoutubeVideoData> = []
 //    var masterMusicArray: NSMutableArray!
-//    var musicSearch: UISearchBar!
+    var musicSearch: UISearchBar!
     
     
     //music views/players
     var musicView: UIView!
     var applicationMusicPlayer = MPMusicPlayerController.applicationMusicPlayer
     var avMusicPlayer: AVAudioPlayer!
+    var embedView: YTPlayerView!
+    var closeEmbedBtn: UIButton!
     
     //photo and video selected cells
     var selectedPhotoCell: Int = -1
@@ -93,7 +99,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     var selectedThumbnail: UIImage!
     
     //set when music is the primary and as an embellishement
-    var selectedMusicItem: AnyObject!
+    var selectedMusicItem: String!
     
     //secondary post data, not currently used
 //    var secondarySelectedObject: AnyObject!
@@ -224,6 +230,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             print("Selected Tab Value")
             print(self.selectedTab)
             self.tabPassedFromParent = 0
+            
         }else{
             self.tabBar.selectedItem = self.tabBar.items?[0]
         }
@@ -287,7 +294,20 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             case .Music:
                 
                 print("Music")
-                self.setMusicItemData(mpMediaItem: self.selectedObject as! MPMediaItem)
+            
+                self.setYouTubeData(data: youtubeManager.parseYoutubeSongString(songData: self.selectedObject as! String))
+                
+//                youtubeManager.videoSnippetFrom(Id: self.selectedObject as! String, completion: { (success, data) in
+//
+//                    if success{
+//                       self.setYouTubeData(data: data)
+//                    }
+//                })
+//                self.setMusicItemData(mpMediaItem: self.selectedObject as! MPMediaItem)
+            case .Youtube:
+                print("Youtube")
+                
+                self.setYouTubeData(data: youtubeManager.parseYoutubeSongString(songData: self.selectedObject as! String))
                 
             case .Link:
                 
@@ -300,7 +320,18 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             
             //add Music Data
             if self.selectedCategory != .Music{
-                self.setMusicItemData(mpMediaItem: self.selectedMusicItem as! MPMediaItem)
+                
+                self.setYouTubeData(data: youtubeManager.parseYoutubeSongString(songData: self.selectedObject as! String))
+                
+//                youtubeManager.videoSnippetFrom(Id: self.selectedObject as! String, completion: { (success, data) in
+//
+//                    if success{
+//                        self.setYouTubeData(data: data)
+//                    }
+//                })
+//                TODO: Get and Set Dictionary For youtube song video
+//                self.setYouTubeData(data: <#T##Dictionary<String, Any>#>)
+//                self.setMusicItemData(mpMediaItem: self.selectedMusicItem as! MPMediaItem)
             }
             
         }
@@ -708,6 +739,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             self.view.bringSubview(toFront: self.playBtn)
 
             self.selectedObject = NSData(contentsOf: self.audioURL)
+            self.clearMusicAddition()
             self.selectedCategory = .Recording
             self.postPhotoView.layer.borderColor = self.ourColors.getAudioColor().cgColor
             self.setPhotoView(image: UIImage(named: "audioWave")!)
@@ -861,45 +893,85 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             //show photo editor
             self.presentImageEditorWithImage(image: self.selectedObject as! UIImage)
             
-        }else if self.selectedCategory == .Music{
-            //play with avMusicPlayer
+        }else if self.selectedCategory == .Music || self.selectedCategory == .Youtube{
             
-            if (playBtn.image(for: .normal) != UIImage(named: "pause")){
-                //play the song and set image to pause
-                self.playBtn.setImage(UIImage(named: "pause"), for: .normal)
-                
-                if avMusicPlayer != nil{
-                    avMusicPlayer.pause()
-                }else{
-//                    if applicationMusicPlayer.isPreparedToPlay{
-                        self.applicationMusicPlayer.play()
-//                    }
-                }
-                
-            }else{
-                //pause the song and set the image to play
-                self.playBtn.setImage(UIImage(named: "play"), for: .normal)
-                
-                if avMusicPlayer != nil{
-                    avMusicPlayer.play()
-                }else{
-//                    if applicationMusicPlayer.isPreparedToPlay{
-                        self.applicationMusicPlayer.pause()
-//                    }
-                }
-            }
+            let width = self.view.frame.width
+            let frame: CGRect = CGRect(x: 0, y: 0, width: width, height: width * 9/16)
+            
+            embedView = YTPlayerView.init(frame: frame)
+            embedView.center = self.postContentView.center
+            
+            let closeFrame: CGRect = CGRect(x: embedView.frame.maxX - 55, y:embedView.frame.maxY, width: 60, height: 50)
+            closeEmbedBtn = UIButton.init(frame: closeFrame)
+            closeEmbedBtn.setTitle("Close", for: .normal)
+            closeEmbedBtn.backgroundColor = UIColor.clear
+            closeEmbedBtn.setTitleColor(UIColor.white, for: .normal)
+            closeEmbedBtn.addTarget(self, action: #selector(closWebViewAction), for: .touchUpInside)
+            
+            embedView.setPlaybackQuality(.medium)
+            embedView.delegate = self
+            let playerVars:  Dictionary<AnyHashable, Any> =  ["playsinline" : 1, "origin" : "http://www.youtube.com", "autoplay" : 1, "modestbranding" :1, "autohide" : 1, "showinfo" : 0]
+            
+            let item: YoutubeVideoData = youtubeManager.parseYoutubeSongString(songData: self.selectedObject as! String)
+
+            embedView.load(withVideoId: item.id, playerVars: playerVars)
+            
+            self.view.addSubview(closeEmbedBtn)
+            self.view.addSubview(embedView)
+            
+//            if (playBtn.image(for: .normal) != UIImage(named: "pause")){
+//                //play the song and set image to pause
+//                self.playBtn.setImage(UIImage(named: "pause"), for: .normal)
+//
+//                if avMusicPlayer != nil{
+//                    avMusicPlayer.pause()
+//                }else{
+////                    if applicationMusicPlayer.isPreparedToPlay{
+//                        self.applicationMusicPlayer.play()
+////                    }
+//                }
+//
+//            }else{
+//                //pause the song and set the image to play
+//                self.playBtn.setImage(UIImage(named: "play"), for: .normal)
+//
+//                if avMusicPlayer != nil{
+//                    avMusicPlayer.play()
+//                }else{
+////                    if applicationMusicPlayer.isPreparedToPlay{
+//                        self.applicationMusicPlayer.pause()
+////                    }
+//                }
+//            }
         }
     }
     
     
-    //play song with apple track ID
-    func appleMusicPlayTrackId() {
-        
-        let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
-//        if applicationMusicPlayer.isPreparedToPlay{
-            applicationMusicPlayer.setQueue(with: collection)
-//        }
+    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        embedView.playVideo()
     }
+
+    
+    
+    @objc func closWebViewAction(){
+        
+        if self.embedView != nil{
+            self.embedView.pauseVideo()
+        }
+        self.embedView.removeFromSuperview()
+        self.closeEmbedBtn.removeFromSuperview()
+        
+    }
+    
+    
+    //play song with apple track ID
+//    func appleMusicPlayTrackId() {
+//
+//        let collection: MPMediaItemCollection = MPMediaItemCollection(items: [self.selectedMusicItem as! MPMediaItem])
+////        if applicationMusicPlayer.isPreparedToPlay{
+//            applicationMusicPlayer.setQueue(with: collection)
+////        }
+//    }
     
     
     
@@ -1350,6 +1422,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         let rightCenter = CGPoint(x: self.currentTabView.center.x + self.view.frame.width, y: self.currentTabView.center.y)
         let nib = UINib(nibName: "AddPostCollectionViewCell", bundle:nil)
         
+        
         setupPhotosCollectionView(center: self.currentTabView.center, cellNib: nib)
         setupVideosCollectionView(center: rightCenter, cellNib: nib)
         setupMusicView(center: rightCenter)
@@ -1638,56 +1711,58 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.musicView.center = center
         self.musicView.tag = 5
         
-        //choose music lable setup
-        let label: UILabel = UILabel(frame: CGRect(x: self.musicView.frame.width / 2 - 100,y: 10 ,width: 200, height:30))
-        label.text = "Choose a music library"
-        label.textColor = UIColor.white
-        label.adjustsFontSizeToFitWidth = true
-        label.textAlignment = .center
-        
-        let appleLibraryBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 - self.musicView.frame.width / 4  - 10,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
-        appleLibraryBtn.setImage(UIImage(named:"appleMusicIcon")?.transform(withNewColor: UIColor.white), for: .normal)
-        appleLibraryBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
-        appleLibraryBtn.contentMode = .scaleAspectFill
-        
-        let localMusicBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 - self.musicView.frame.width / 8,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
-        localMusicBtn.setImage(UIImage(named:"musicFolder"), for: .normal)
-        
-        localMusicBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
-        localMusicBtn.contentMode = .scaleAspectFill
+        //choose music label setup
+//        let label: UILabel = UILabel(frame: CGRect(x: self.musicView.frame.width / 2 - 100,y: 10 ,width: 200, height:30))
+//        label.text = "Choose a music library"
+//        label.textColor = UIColor.white
+//        label.adjustsFontSizeToFitWidth = true
+//        label.textAlignment = .center
+//
+//        let appleLibraryBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 - self.musicView.frame.width / 4  - 10,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
+//        appleLibraryBtn.setImage(UIImage(named:"appleMusicIcon")?.transform(withNewColor: UIColor.white), for: .normal)
+//        appleLibraryBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
+//        appleLibraryBtn.contentMode = .scaleAspectFill
+//
+//        let localMusicBtn: UIButton = UIButton(frame: CGRect(x: self.musicView.frame.width / 2 - self.musicView.frame.width / 8,y: label.frame.maxY + 20 , width: self.musicView.frame.width / 4,height: self.musicView.frame.width / 4))
+//        localMusicBtn.setImage(UIImage(named:"musicFolder"), for: .normal)
+//
+//        localMusicBtn.addTarget(self, action: #selector(self.setupMusicAccess), for: .touchUpInside)
+//        localMusicBtn.contentMode = .scaleAspectFill
         
 //        musicView.addSubview(label)
 //        musicView.addSubview(appleLibraryBtn)
         
         //only add localMusic Button for now
-        musicView.addSubview(localMusicBtn)
+//        musicView.addSubview(localMusicBtn)
         
         
         //music search bar setup, not currently used
-//        self.musicSearch = UISearchBar(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicView.bounds.minY, width:self.musicView.bounds.width, height: 44))
-//        self.musicSearch.showsCancelButton = true;
-//        self.musicSearch.barStyle = .default
-//        self.musicSearch.returnKeyType = .done
-//        self.musicSearch.delegate = self
-//        self.musicSearch.tintColor = UIColor.black
-//        
-//        self.musicTableView = UITableView(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicSearch.bounds.maxY, width:self.musicView.bounds.width, height: self.musicView.bounds.height - 44))
-//        self.musicTableView.rowHeight = 44.0
-//        self.musicTableView.backgroundColor = UIColor.white
+        self.musicSearch = UISearchBar(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicView.bounds.minY, width:self.musicView.bounds.width, height: 44))
+        self.musicSearch.showsCancelButton = true;
+        self.musicSearch.barStyle = .black
+        self.musicSearch.returnKeyType = .done
+        self.musicSearch.delegate = self
+        self.musicSearch.tintColor = UIColor.white
+        self.musicSearch.placeholder = "Search Youtube"
+        self.musicSearch.returnKeyType = .search
 //
-//        self.musicTableView.allowsSelection = true
-//        self.musicTableView.allowsMultipleSelection = false
-//        self.musicTableView.separatorStyle = .singleLine
-//        self.musicTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: self.musicTableView.frame.size.width, height: 1))
-//        
-//        let nib = UINib(nibName: "AddPostTableViewCell", bundle:nil)
-//        self.musicTableView.register(nib, forCellReuseIdentifier: "addPostTableCell")
-//        self.musicTableView.dataSource = self
-//        self.musicTableView.delegate = self
-//        
-//
-//        self.musicView.addSubview(self.musicSearch)
-//        self.musicView.addSubview(self.musicTableView)
+        self.musicTableView = UITableView(frame: CGRect(x: self.musicView.bounds.minX, y: self.musicSearch.bounds.maxY, width:self.musicView.bounds.width, height: self.musicView.bounds.height - 44))
+        self.musicTableView.rowHeight = 44.0
+        self.musicTableView.backgroundColor = ourColors.getBlackishColor()
+
+        self.musicTableView.allowsSelection = true
+        self.musicTableView.allowsMultipleSelection = false
+        self.musicTableView.separatorStyle = .singleLine
+        self.musicTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: self.musicTableView.frame.size.width, height: 1))
+        
+        let nib = UINib(nibName: "AddPostTableViewCell", bundle:nil)
+        self.musicTableView.register(nib, forCellReuseIdentifier: "addPostTableCell")
+        self.musicTableView.dataSource = self
+        self.musicTableView.delegate = self
+        
+
+        self.musicView.addSubview(self.musicSearch)
+        self.musicView.addSubview(self.musicTableView)
     }
     
     
@@ -1788,7 +1863,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             case 5:
                 print("Music Chosen")
                 moveViews(newView: self.musicView)
-                self.setupMusicAccess()
+//                self.setupMusicAccess()
                 
             case 6:
                 print("Link Chosen")
@@ -1867,54 +1942,55 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *
      ************************************/
 
-//    
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print("Did Select Row")
-//        
-//    }
-//    
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        
-//        var count = 0;
-//        if (self.musicItemsArray != nil){
-//           count = self.musicItemsArray.count;
-//        }
-//        return count;
-//        
-//    }
-//    
-//    
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        return 1
-//    }
-//    
-//    
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        
-//        let cell: AddPostTableViewCell = tableView.dequeueReusableCell(withIdentifier: "addPostTableCell", for: indexPath) as! AddPostTableViewCell
-//        
-//        let item: MPMediaItem = self.musicItemsArray[indexPath.row] as! MPMediaItem
-//        
-//        if let artist: String =  item.value(forProperty:MPMediaItemPropertyArtist) as? String {
-//            // Add it to the array of valid songs
-//            cell.artistLbl.text = artist
-//        }
-//        
-//        if let title: String = item.value(forProperty:MPMediaItemPropertyTitle) as? String{
-//            // Add it to the array of valid songs
-//            cell.songNameLbl.text = title
-//        }
-//        
-//        if let artwork: MPMediaItemArtwork = item.value(forProperty:MPMediaItemPropertyArtwork) as? MPMediaItemArtwork{
-//            cell.songImageView.image = artwork.image(at: CGSize(width: 44, height: 44))
-//        }else{
-//            
-//            cell.songImageView.image = UIImage(named: "musicpink")
-//        }
-//        
-//        return cell
-//        
-//    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        print(String(format: "Selected Row At: %d", indexPath.row))
+        
+        if self.embedView != nil{
+            self.closWebViewAction()
+        }
+        
+        setYouTubeData(data: self.musicItemsArray[indexPath.row])
+        
+    }
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        let count = self.musicItemsArray.count;
+        return count;
+        
+    }
+    
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell: AddPostTableViewCell = tableView.dequeueReusableCell(withIdentifier: "addPostTableCell", for: indexPath) as! AddPostTableViewCell
+    
+        
+        let item: YoutubeVideoData = self.musicItemsArray[indexPath.row]
+        
+        cell.videoDictionary = item
+
+        cell.videoId = item.id
+        cell.thumbnailUrl = item.thumbnail
+        cell.songNameLbl.text = item.title
+        cell.artistLbl.text = item.channel
+        
+        cell.songImageView.image = UIImage(named: "default_music")
+        self.imageCache.getImage(urlString: cell.thumbnailUrl) { (image) in
+            cell.songImageView.image = image
+        }
+        
+        return cell
+        
+    }
     
     
     
@@ -1933,6 +2009,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
         //get item count for necessary collection view
         var count: Int = 0
         
@@ -2047,7 +2124,6 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-
         let options: PHImageRequestOptions = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
         //PHOTO COLLECTION
@@ -2099,8 +2175,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
                     //sets default result as thumbnail image
                     self.setPhotoView(image: result!)
                     self.postPhotoView.layer.borderColor = self.ourColors.getPurpleColor().cgColor
-                    self.musicLbl.isHidden = true
-                    self.selectedMusicItem = nil
+                    
+                    self.clearMusicAddition()
                     self.playBtn.setImage(UIImage(named: "play"), for: .normal)
                     
                     self.hideResizeButtons()
@@ -2154,82 +2230,145 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *
      ****************************/
     
-//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-//        
-//        print("Ended Editing")
-////        self.musicTableView.scrollsToTop = true
-//        
-//        UIView.animate(withDuration: 0.4) {
-//            self.tabBar.alpha = 1.0
-//            self.tabBar.isHidden = false
-//            
-//           self.musicView.center = self.currentTabView.center
-//        }
-//    }
-//    
-//    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-//        
-//        print("Began Editing")
-////        self.musicTableView.scrollsToTop = true
-//        
-//        UIView.animate(withDuration: 0.4) {
-//            self.tabBar.alpha = 0.0
-//            self.tabBar.isHidden = true
-//            
-//            if(self.keyboardHeight == 0.0){
-//            
-//                self.musicView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.currentTabView.frame.height/4 + 300))
-//            
-//            }else{
-//            
-//                self.musicView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.musicTableView.frame.height/4 + self.keyboardHeight))
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if musicItemsArray.count > 0{
+            self.musicItemsArray.removeAll()
+        }
+        if ((searchBar.text?.localizedCaseInsensitiveCompare("youtube.com")) != nil){
+            
+            let youtubeString = searchBar.text!
+            self.youtubeManager.videoSnippetFrom(Id: youtubeManager.getIdFromUrlString(string: youtubeString), completion: { (success, data) in
+                
+                if success{
+                    let string: String =  (data.id + "::" + data.title + "::" + data.channel + "::" + data.thumbnail)
+                    let data: YoutubeVideoData = YoutubeVideoData.init(title: data.title, id: data.id, channel: data.channel, thumbnail: data.thumbnail)
+                    
+                    self.musicItemsArray.append(data)
+                    DispatchQueue.main.async {
+                        self.musicTableView.reloadData()
+                        self.setYouTubeData(data: data)
+                    }
+                    
+                    
+                    
+//                    self.selectedObject = string as AnyObject
+//                    self.selectedCategory = .Music
 //
-//            }
-//        }
-//    }
-//    
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        print("Cancel Clicked")
-//        searchBar.endEditing(true)
-//    }
-//    
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        
-//        print(String(format:"Search String = %@",searchBar.text!))
-//        self.musicItemsArray.removeAllObjects()
-//        
+//                    self.imageCache.getImage(urlString: data.thumbnail, completion: { (image) in
+//                        self.selectedThumbnail = image
+//                        self.setPhotoView(image: image)
+//
+//                        self.postPhotoView.layer.borderColor = self.ourColors.getMusicColor().cgColor
+//                    })
+                }else{
+                    self.selectedObject = youtubeString as AnyObject
+                }
+            })
+            
+        }else{
+            youtubeManager.youtubeVideoSearch(text: searchBar.text!) { (success, videoArray) in
+                
+                
+                if success{
+                    self.musicItemsArray = videoArray
+                    print(self.musicItemsArray)
+                }
+                DispatchQueue.main.async {
+                    self.musicTableView.reloadData()
+                    
+                }
+            }
+        }
+        
+        
+        
+        searchBar.endEditing(true)
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+
+            if (self.postPhotoView.image != nil){
+                self.playBtn.isHidden = false
+            }
+        
+        
+        print("Ended Editing")
+//        self.musicTableView.scrollsToTop = true
+        
+        UIView.animate(withDuration: 0.4) {
+            self.tabBar.alpha = 1.0
+            self.tabBar.isHidden = false
+            self.musicView.center = self.currentTabView.center
+        }
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        
+        self.playBtn.isHidden = true
+        print("Began Editing")
+//        self.musicTableView.scrollsToTop = true
+        
+        UIView.animate(withDuration: 0.4) {
+            self.tabBar.alpha = 0.0
+            self.tabBar.isHidden = true
+            
+            if(self.keyboardHeight == 0.0){
+            
+                self.musicView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.currentTabView.frame.height/4 + 300))
+            
+            }else{
+            
+                self.musicView.center = CGPoint(x:self.currentTabView.center.x , y: self.view.frame.height - (self.musicTableView.frame.height/4 + self.keyboardHeight))
+            }
+        }
+    }
+    
+    
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        print("Cancel Clicked")
+        searchBar.endEditing(true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        print(String(format:"Search String = %@",searchBar.text!))
+        
+
+        
+        
 //        if (searchBar.text == "") {
 //            self.musicItemsArray.addObjects(from: self.masterMusicArray as! [MPMediaItem])
 //            self.musicTableView.reloadData()
 //            return
 //        }
-//        
+//
 //        for obj in self.masterMusicArray{
-//            
+//
 //            if let item = obj as? MPMediaItem{
-//                
-//                
+//
+//
 //                guard let artist: String =  item.value(forProperty:MPMediaItemPropertyArtist) as? String else{
 //                    //return
 //                    return
 //                }
-//                
+//
 //                guard let title: String = item.value(forProperty:MPMediaItemPropertyTitle) as? String else{
-//                    
+//
 //                    // return
 //                    return
 //                }
-//                
-//                
+//
+//
 //                if (artist.localizedCaseInsensitiveContains(searchText) || title.localizedCaseInsensitiveContains(searchText)){
-//                    
+//
 //                    self.musicItemsArray.add(item)
 //                }
 //            }
 //        }
-//
+
 //        self.musicTableView.reloadData()
-//    }
+    }
     
     
     /*****************************
@@ -2241,6 +2380,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func textViewDidBeginEditing(_ textView: UITextView) {
         
         self.textPostView.centerVertically()
+        self.playBtn.isHidden = true
+        
         textView.autocorrectionType = .yes
         
         if textView.text == "What's on your mind?"{
@@ -2293,6 +2434,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     func textViewDidEndEditing(_ textView: UITextView) {
         
+        self.playBtn.isHidden = false
+        
         if(textView == self.textPostView){
             //text post view
             //set the text field data as a photo to allow the user to edit with CLImage Editor
@@ -2335,21 +2478,48 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         self.tabBar.isHidden = false
+    
         
         if textField == self.linkTextField{
             //link text field
             if(self.linkTextField.text! != ""){
                 
                 let urlString = self.linkTextField.text!
-                setURLView(urlString: urlString)
-                self.selectedObject = urlString as AnyObject
-                self.selectedCategory = .Link
-                self.postPhotoView.layer.borderColor = ourColors.getTextPostColor().cgColor
                 
+                if (urlString.localizedStandardContains("www.youtube.com")){
+                    //youtube link
+                    self.playBtn.setImage(UIImage(named:"play"), for: .normal)
+                    self.playBtn.isHidden = false
+                    
+                    self.youtubeManager.videoSnippetFrom(Id: youtubeManager.getIdFromUrlString(string: urlString), completion: { (success, data) in
+                        
+                        if success{
+                            self.clearMusicAddition()
+                            let string: String =  (data.id + "::" + data.title + "::" + data.channel + "::" + data.thumbnail)
+                            self.selectedObject = string as AnyObject
+                            self.selectedCategory = .Youtube
+                            
+                            self.imageCache.getImage(urlString: data.thumbnail, completion: { (image) in
+                                self.selectedThumbnail = image
+                                self.setPhotoView(image: image)
+                                
+                                self.postPhotoView.layer.borderColor = self.ourColors.getPurpleColor().cgColor
+                            })
+                        }else{
+                            self.selectedObject = urlString as AnyObject
+                        }
+                    })
+                    
+                }else{
+                    setURLView(urlString: urlString)
+                    self.selectedObject = urlString as AnyObject
+                    self.selectedCategory = .Link
+                    self.postPhotoView.layer.borderColor = ourColors.getTextPostColor().cgColor
+                }
+
             }else{
                 self.postPhotoView.isHidden = true
             }
-            
             
             
             UIView.animate(withDuration: 0.3, animations: {
@@ -2367,6 +2537,8 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.tabBar.isHidden = true
         self.hideResizeButtons()
         self.hideVideoEditingBtns()
+        
+        self.playBtn.isHidden = true
             
         if textField == self.linkTextField{
             
@@ -2430,49 +2602,64 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     
     
-    //----- setMusicItemData(MPMediaItem)
-    //----- parameter: MPMediaItem
+    
+    func clearMusicAddition(){
+        self.selectedMusicItem = ""
+        self.musicLbl.text = ""
+        self.musicLbl.isHidden = true
+    }
+    
+    
+    
+    //----- setYouTubeData(Dictionary<String,Any>)
+    //----- parameter: Dictionary<String,Any>
     //----- If not the primarypost, a video, or a recording will set selectedMediaItem Only
     // ---- If primary post, will set album art as picture, and unhide play button
     // ---- NOTE: Only allows music posts with non-sound producing primary posts
-    func setMusicItemData(mpMediaItem: MPMediaItem){
-        var artist: String = "Unknown Artist"
-        var title: String = "Unknown Title"
+    func setYouTubeData(data: YoutubeVideoData){
         
-        if let a: String = mpMediaItem.artist{
-            artist = a
-        }
-        if let t: String = mpMediaItem.title{
-            title = t
-        }
-        
-        
-        if (self.selectedCategory != .Video && self.selectedCategory != .Recording){
+        if (self.selectedCategory != .Video && self.selectedCategory != .Recording && self.selectedCategory != .Youtube){
+
+            
+            let videoId: String = data.id
+            let thumbnailUrl: String = data.thumbnail
+            let songTitle: String = data.title
+            let channel: String = data.channel
             
             //set image
-            var image: UIImage = UIImage(named:"default_music")!
-            if mpMediaItem.artwork?.image != nil{
-                image = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
-            }
+            let dataString: String = videoId + "::" + songTitle + "::" + channel + "::" + thumbnailUrl
             
-            self.musicLbl.text = String(format:"%@ by: %@", title, artist)
+            
+            self.musicLbl.text = String(format:"%@", songTitle)
             self.musicLbl.isHidden = false
-            self.selectedMusicItem = mpMediaItem
-            self.appleMusicPlayTrackId()
+            self.selectedMusicItem = dataString
             
             
-            if self.selectedCategory == .None || self.selectedCategory == .Music{
+            if self.selectedCategory == .None || self.selectedCategory == .Music || self.selectedCategory == .Video{
                 //set image as main preview image
                 self.postPhotoView.layer.borderColor = self.ourColors.getMusicColor().cgColor
                 
-                self.setPhotoView(image: image)
-                self.selectedObject = mpMediaItem
-                self.selectedCategory = .Music
+                //set the photo view
+                self.imageCache.getImage(urlString: thumbnailUrl) { (image) in
+                    self.setPhotoView(image: image)
+                    self.selectedThumbnail = image
+                }
+                
+                self.selectedObject = dataString as AnyObject
+                
+                if self.selectedCategory != .Youtube{
+                    self.selectedCategory = .Music
+                }
+                
+                
                 self.playBtn.setImage(UIImage(named:"play"), for: .normal)
                 self.playBtn.isHidden = false
             }else{
+                
                 //set image as thumnail image to be used later
-                self.selectedThumbnail = image
+                self.imageCache.getImage(urlString: thumbnailUrl) { (image) in
+                    self.selectedThumbnail = image
+                }
             }
             
         }else{
@@ -2483,6 +2670,61 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         self.hideVideoEditingBtns()
         
     }
+    
+    
+    //----- setMusicItemData(MPMediaItem)
+    //----- parameter: MPMediaItem
+    //----- If not the primarypost, a video, or a recording will set selectedMediaItem Only
+    // ---- If primary post, will set album art as picture, and unhide play button
+    // ---- NOTE: Only allows music posts with non-sound producing primary posts
+//    func setMusicItemData(mpMediaItem: MPMediaItem){
+//        var artist: String = "Unknown Artist"
+//        var title: String = "Unknown Title"
+//
+//        if let a: String = mpMediaItem.artist{
+//            artist = a
+//        }
+//        if let t: String = mpMediaItem.title{
+//            title = t
+//        }
+//
+//
+//        if (self.selectedCategory != .Video && self.selectedCategory != .Recording){
+//
+//            //set image
+//            var image: UIImage = UIImage(named:"default_music")!
+//            if mpMediaItem.artwork?.image != nil{
+//                image = (mpMediaItem.artwork?.image(at: self.postPhotoView.frame.size))!
+//            }
+//
+//            self.musicLbl.text = String(format:"%@ by: %@", title, artist)
+//            self.musicLbl.isHidden = false
+////            self.selectedMusicItem = mpMediaItem
+//            self.appleMusicPlayTrackId()
+//
+//
+//            if self.selectedCategory == .None || self.selectedCategory == .Music{
+//                //set image as main preview image
+//                self.postPhotoView.layer.borderColor = self.ourColors.getMusicColor().cgColor
+//
+//                self.setPhotoView(image: image)
+//                self.selectedObject = mpMediaItem
+//                self.selectedCategory = .Music
+//                self.playBtn.setImage(UIImage(named:"play"), for: .normal)
+//                self.playBtn.isHidden = false
+//            }else{
+//                //set image as thumnail image to be used later
+//                self.selectedThumbnail = image
+//            }
+//
+//        }else{
+//            self.showToast(message: "Cannot add music to video or recording at this time")
+//        }
+//
+//        self.hideResizeButtons()
+//        self.hideVideoEditingBtns()
+//
+//    }
     
     
     @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
@@ -2501,30 +2743,30 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
      *
      ******************************************************/
     
-    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
-
-        dismiss(animated: true, completion: {
-            
-           self.tabBar.selectedItem = self.tabBar.items?[4]
-        })
-        
-        
-        for mpMediaItem in mediaItemCollection.items {
-            print("Add \(mpMediaItem) to a playlist, prep the player, etc.")
-            
-            self.setMusicItemData(mpMediaItem: mpMediaItem)
-        }
-    }
-    
-    
-    
-    func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
-        print("User selected Cancel tell me what to do")
-        
-        dismiss(animated: true, completion: {
-            self.tabBar.selectedItem = self.tabBar.items?[4]
-        })
-    }
+//    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+//
+//        dismiss(animated: true, completion: {
+//
+//           self.tabBar.selectedItem = self.tabBar.items?[4]
+//        })
+//
+//
+//        for mpMediaItem in mediaItemCollection.items {
+//            print("Add \(mpMediaItem) to a playlist, prep the player, etc.")
+//
+//            self.setMusicItemData(mpMediaItem: mpMediaItem)
+//        }
+//    }
+//
+//
+//
+//    func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
+//        print("User selected Cancel tell me what to do")
+//
+//        dismiss(animated: true, completion: {
+//            self.tabBar.selectedItem = self.tabBar.items?[4]
+//        })
+//    }
     
     
     func showToast(message : String) {
@@ -2605,6 +2847,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
             vc.selectedThumbnail = self.selectedThumbnail
             vc.postWasSaved = self.postWasSaved
             vc.selectedMusicItem = self.selectedMusicItem
+            vc.imageCache = self.imageCache
             //            if self.hasSecondarySavedPost{
             //
             //                vc.secondarySelectedCategory = self.secondarySelectedCategory

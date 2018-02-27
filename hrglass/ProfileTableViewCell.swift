@@ -226,6 +226,9 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             
             switch likedDataArray[indexPath.row].category {
                 
+                
+            
+                
             case .Video:
                 
                 //just set the photo for now until we get video stuff setup
@@ -254,6 +257,18 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
                 print("Music")
                 
                 cell.borderView.layer.borderColor = colors.getMusicColor().cgColor
+                
+                let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), uid)
+                self.imageCache.getImage(urlString: thumbnailURL, completion: { image in
+                    
+                    cell.imageButton.setImage(image, for: .normal)
+                    cell.loadingIndicator.stopAnimating()
+                    cell.playImageView.isHidden = false
+                    
+                })
+                
+            case .Youtube:
+                cell.borderView.layer.borderColor = colors.getPurpleColor().cgColor
                 
                 let thumbnailURL: String = String(format:"%@/%@/images/thumbnail.jpg", self.awsManager.getS3Prefix(), uid)
                 self.imageCache.getImage(urlString: thumbnailURL, completion: { image in

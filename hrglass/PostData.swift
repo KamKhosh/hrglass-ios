@@ -26,6 +26,7 @@ enum Category: String{
     case Text = "Text"
     case Recording = "Recording"
     case None = "None"
+    case Youtube = "Youtube"
 
 }
 
