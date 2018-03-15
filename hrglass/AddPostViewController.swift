@@ -2234,13 +2234,13 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
         if musicItemsArray.count > 0{
             self.musicItemsArray.removeAll()
         }
-        if ((searchBar.text?.localizedCaseInsensitiveCompare("youtube.com")) != nil){
+        if ((searchBar.text?.localizedCaseInsensitiveContains("youtube.com")))!{
             
             let youtubeString = searchBar.text!
             self.youtubeManager.videoSnippetFrom(Id: youtubeManager.getIdFromUrlString(string: youtubeString), completion: { (success, data) in
                 
                 if success{
-                    let string: String =  (data.id + "::" + data.title + "::" + data.channel + "::" + data.thumbnail)
+//                    let string: String =  (data.id + "::" + data.title + "::" + data.channel + "::" + data.thumbnail)
                     let data: YoutubeVideoData = YoutubeVideoData.init(title: data.title, id: data.id, channel: data.channel, thumbnail: data.thumbnail)
                     
                     self.musicItemsArray.append(data)
@@ -2405,7 +2405,7 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
+//        let numLines: Int = Int(textView.contentSize.height / textView.font!.lineHeight);
         
 //        if numLines > {
 //

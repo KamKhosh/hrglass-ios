@@ -67,6 +67,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var discoverBtn: UIButton!
     var messagesBtn: UIButton!
     
+    
     /**************************
      * Add Post Menu Buttons
      *************************/
@@ -1512,7 +1513,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 addPostVC.selectedThumbnail = self.dataManager.getImageForPath(path:"thumbnail")
                 addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
             }else if (cat == .Music){
-                addPostVC.selectedObject = musicId as! AnyObject
+                addPostVC.selectedObject = musicId as AnyObject
 //                addPostVC.selectedObject = self.getMPMediaItemWith(persistentId: musicId)
             }else{
                 addPostVC.selectedObject = self.dataManager.getSavedPostData(category: cat, primary: true)
@@ -1689,6 +1690,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         spinnerFrame.origin.y = spinnerY;
         
         self.compass_spinner.frame = spinnerFrame;
+        
         // Set the encompassing view's frames
         refreshBounds.size.height = pullDistance;
         
@@ -1700,8 +1702,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if (self.refreshControl!.isRefreshing && !self.isRefreshAnimating) {
             self.animateRefreshView()
         }
-        
-//        print("pullDistance \(pullDistance), pullRatio: \(pullRatio), midX: \(midX), refreshing: \(self.refreshControl!.isRefreshing)")
         
     }
     
