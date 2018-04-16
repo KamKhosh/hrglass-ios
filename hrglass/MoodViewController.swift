@@ -11,7 +11,8 @@ class MoodViewController: UIViewController {
     
     //mood menu options
     var moodMenuIsOpen: Bool = false
-    var moodArray: [UIButton] = [UIButton]()
+    var moodArrayOutside: [UIButton] = [UIButton]()
+    var moodArrayInside: [UIButton] = [UIButton]()
     var imageCache: ImageCache = ImageCache()
     
     var selectedObject: AnyObject!
@@ -89,83 +90,185 @@ class MoodViewController: UIViewController {
         let center = self.moodBtn.center
 //        moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
         
-        let sadBtn: UIButton = UIButton(frame: CGRect.zero)
-        let funnyBtn: UIButton = UIButton(frame: CGRect.zero)
-        let angryBtn: UIButton = UIButton(frame: CGRect.zero)
-        let shockedBtn: UIButton = UIButton(frame: CGRect.zero)
-        let afraidBtn: UIButton = UIButton(frame: CGRect.zero)
-        let sillyBtn: UIButton = UIButton(frame: CGRect.zero)
-        let loveBtn: UIButton = UIButton(frame: CGRect.zero)
-        let bravoBtn: UIButton = UIButton(frame: CGRect.zero)
-        let fireBtn: UIButton = UIButton(frame: CGRect.zero)
-        let coolBtn: UIButton = UIButton(frame: CGRect.zero)
-        let okBtn: UIButton = UIButton(frame: CGRect.zero)
-        let blessedBtn: UIButton = UIButton(frame: CGRect.zero)
+        let angry1: UIButton = UIButton(frame: CGRect.zero)
+        let angry2: UIButton = UIButton(frame: CGRect.zero)
+        let confused1: UIButton = UIButton(frame: CGRect.zero)
+        let confused2: UIButton = UIButton(frame: CGRect.zero)
+        let crying1: UIButton = UIButton(frame: CGRect.zero)
+        let crying2: UIButton = UIButton(frame: CGRect.zero)
+        let happy1: UIButton = UIButton(frame: CGRect.zero)
+        let happy2: UIButton = UIButton(frame: CGRect.zero)
+        let happy3: UIButton = UIButton(frame: CGRect.zero)
+        let happy4: UIButton = UIButton(frame: CGRect.zero)
+        let ill: UIButton = UIButton(frame: CGRect.zero)
+        let inLove: UIButton = UIButton(frame: CGRect.zero)
+        let kissing: UIButton = UIButton(frame: CGRect.zero)
+        let mad: UIButton = UIButton(frame: CGRect.zero)
+        let nerd: UIButton = UIButton(frame: CGRect.zero)
+        let ninja: UIButton = UIButton(frame: CGRect.zero)
+        let quiet: UIButton = UIButton(frame: CGRect.zero)
+        let sad: UIButton = UIButton(frame: CGRect.zero)
+        let smart: UIButton = UIButton(frame: CGRect.zero)
+        let smile: UIButton = UIButton(frame: CGRect.zero)
+        let smiling: UIButton = UIButton(frame: CGRect.zero)
+        let surprised1: UIButton = UIButton(frame: CGRect.zero)
+        let surprised2: UIButton = UIButton(frame: CGRect.zero)
+        let suspicious1: UIButton = UIButton(frame: CGRect.zero)
+        let suspicious2: UIButton = UIButton(frame: CGRect.zero)
+        let tongueOut: UIButton = UIButton(frame: CGRect.zero)
+        let unhappy: UIButton = UIButton(frame: CGRect.zero)
+        let wink: UIButton = UIButton(frame: CGRect.zero)
         let noneBtn: UIButton = UIButton(frame: CGRect.zero)
         
-        afraidBtn.setTitle(Mood.Afraid.rawValue, for: .normal)
-        funnyBtn.setTitle(Mood.Funny.rawValue, for: .normal)
-        angryBtn.setTitle(Mood.Angry.rawValue, for: .normal)
-        sadBtn.setTitle(Mood.Sad.rawValue, for: .normal)
-        shockedBtn.setTitle(Mood.Shocked.rawValue, for: .normal)
-        sillyBtn.setTitle(Mood.Silly.rawValue, for: .normal)
-        loveBtn.setTitle(Mood.Love.rawValue, for: .normal)
-        bravoBtn.setTitle(Mood.Bravo.rawValue, for: .normal)
-        fireBtn.setTitle(Mood.Fire.rawValue, for: .normal)
-        coolBtn.setTitle(Mood.Cool.rawValue, for: .normal)
-        okBtn.setTitle(Mood.Ok.rawValue, for: .normal)
-        blessedBtn.setTitle(Mood.Blessed.rawValue, for: .normal)
-        noneBtn.setTitle(Mood.None.rawValue, for: .normal)
+        angry1.setImage(UIImage(named: Mood.Angry1.rawValue), for: .normal)
+        angry2.setImage(UIImage(named: Mood.Angry2.rawValue), for: .normal)
+        confused1.setImage(UIImage(named: Mood.Confused1.rawValue), for: .normal)
+        confused2.setImage(UIImage(named: Mood.Confused2.rawValue), for: .normal)
+        crying1.setImage(UIImage(named: Mood.Crying1.rawValue), for: .normal)
+        crying2.setImage(UIImage(named: Mood.Crying2.rawValue), for: .normal)
+        happy1.setImage(UIImage(named: Mood.Happy1.rawValue), for: .normal)
+        happy2.setImage(UIImage(named: Mood.Happy2.rawValue), for: .normal)
+        happy3.setImage(UIImage(named: Mood.Happy3.rawValue), for: .normal)
+        happy4.setImage(UIImage(named: Mood.Happy4.rawValue), for: .normal)
         
-        funnyBtn.center = center
-        sadBtn.center = center
-        shockedBtn.center = center
-        afraidBtn.center = center
-        angryBtn.center = center
-        sillyBtn.center = center
-        loveBtn.center = center
-        bravoBtn.center = center
-        fireBtn.center = center
-        coolBtn.center = center
+        ill.setImage(UIImage(named: Mood.Ill.rawValue), for: .normal)
+        inLove.setImage(UIImage(named: Mood.InLove.rawValue), for: .normal)
+        kissing.setImage(UIImage(named: Mood.Kissing.rawValue), for: .normal)
+        mad.setImage(UIImage(named: Mood.Mad.rawValue), for: .normal)
+        nerd.setImage(UIImage(named: Mood.Nerd.rawValue), for: .normal)
+        ninja.setImage(UIImage(named: Mood.Ninja.rawValue), for: .normal)
+        quiet.setImage(UIImage(named: Mood.Quiet.rawValue), for: .normal)
+        sad.setImage(UIImage(named: Mood.Sad.rawValue), for: .normal)
+        smart.setImage(UIImage(named: Mood.Smart.rawValue), for: .normal)
+        smile.setImage(UIImage(named: Mood.Smile.rawValue), for: .normal)
+        smiling.setImage(UIImage(named: Mood.Smiling.rawValue), for: .normal)
+        surprised1.setImage(UIImage(named: Mood.Surprised1.rawValue), for: .normal)
+        surprised2.setImage(UIImage(named: Mood.Surprised2.rawValue), for: .normal)
+        suspicious1.setImage(UIImage(named: Mood.Suspicious1.rawValue), for: .normal)
+        suspicious2.setImage(UIImage(named: Mood.Suspicious2.rawValue), for: .normal)
+        tongueOut.setImage(UIImage(named: Mood.TongueOut.rawValue), for: .normal)
+        unhappy.setImage(UIImage(named: Mood.Unhappy.rawValue), for: .normal)
+        wink.setImage(UIImage(named: Mood.Wink.rawValue), for: .normal)
+        noneBtn.setImage(UIImage(named: Mood.None.rawValue), for: .normal)
+        
+        
+        
+        angry1.center = center
+        angry2.center = center
+        confused1.center = center
+        confused2.center = center
+        crying1.center = center
+        crying2.center = center
+        happy1.center = center
+        happy2.center = center
+        happy3.center = center
+        happy4.center = center
+        ill.center = center
+        inLove.center = center
+        kissing.center = center
+        mad.center = center
+        nerd.center = center
+        ninja.center = center
+        quiet.center = center
+        sad.center = center
+        smart.center = center
+        smile.center = center
+        smiling.center = center
+        surprised1.center = center
+        surprised2.center = center
+        suspicious1.center = center
+        suspicious2.center = center
+        tongueOut.center = center
+        unhappy.center = center
+        wink.center = center
         noneBtn.center = center
-        okBtn.center = center
-        blessedBtn.center = center
+
         
         noneBtn.tag = 0
-        funnyBtn.tag = 1
-        sadBtn.tag = 2
-        angryBtn.tag = 3
-        shockedBtn.tag = 4
-        afraidBtn.tag = 5
-        sillyBtn.tag = 6
-        loveBtn.tag = 7
-        bravoBtn.tag = 8
-        fireBtn.tag = 9
-        coolBtn.tag = 10
-        okBtn.tag = 11
-        blessedBtn.tag = 12
+        angry1.tag = 1
+        angry2.tag = 2
+        confused1.tag = 3
+        confused2.tag = 4
+        crying1.tag = 5
+        crying2.tag = 6
+        happy1.tag = 7
+        happy2.tag = 8
+        happy3.tag = 9
+        happy4.tag = 10
+        surprised1.tag = 11
+        surprised2.tag = 12
+        suspicious1.tag = 13
+        suspicious2.tag = 14
+        smile.tag = 15
         
         
-        afraidBtn.addTarget(self, action: #selector(self.afraidAction), for: .touchUpInside)
-        funnyBtn.addTarget(self, action: #selector(self.funnyAction), for: .touchUpInside)
-        sadBtn.addTarget(self, action: #selector(self.sadAction), for: .touchUpInside)
-        angryBtn.addTarget(self, action: #selector(self.angryAction), for: .touchUpInside)
-        shockedBtn.addTarget(self, action: #selector(self.shockedAction), for: .touchUpInside)
-        sillyBtn.addTarget(self, action: #selector(self.sillyAction), for: .touchUpInside)
-        loveBtn.addTarget(self, action: #selector(self.loveAction), for: .touchUpInside)
-        bravoBtn.addTarget(self, action: #selector(self.bravoAction), for: .touchUpInside)
-        fireBtn.addTarget(self, action: #selector(self.fireAction), for: .touchUpInside)
-        coolBtn.addTarget(self, action: #selector(self.coolAction), for: .touchUpInside)
-        okBtn.addTarget(self, action: #selector(self.okAction), for: .touchUpInside)
-        blessedBtn.addTarget(self, action: #selector(self.blessedAction), for: .touchUpInside)
+        smiling.tag = 1
+        ill.tag = 2
+        inLove.tag = 3
+        kissing.tag = 4
+        mad.tag = 5
+        nerd.tag = 6
+        ninja.tag = 7
+        quiet.tag = 8
+        sad.tag = 9
+        smart.tag = 10
+        tongueOut.tag = 11
+        unhappy.tag = 12
+        wink.tag = 13
+        
+        
+        angry1.addTarget(self, action: #selector(self.angryAction1), for: .touchUpInside)
+        angry2.addTarget(self, action: #selector(self.angryAction2), for: .touchUpInside)
+        confused1.addTarget(self, action: #selector(self.confusedAction1), for: .touchUpInside)
+        confused2.addTarget(self, action: #selector(self.confusedAction2), for: .touchUpInside)
+        crying1.addTarget(self, action: #selector(self.cryingAction1), for: .touchUpInside)
+        crying2.addTarget(self, action: #selector(self.cryingAction2), for: .touchUpInside)
+        happy1.addTarget(self, action: #selector(self.happyAction1), for: .touchUpInside)
+        happy2.addTarget(self, action: #selector(self.happyAction2), for: .touchUpInside)
+        happy3.addTarget(self, action: #selector(self.happyAction3), for: .touchUpInside)
+        happy4.addTarget(self, action: #selector(self.happyAction4), for: .touchUpInside)
+        surprised1.addTarget(self, action: #selector(self.surprisedAction1), for: .touchUpInside)
+        surprised2.addTarget(self, action: #selector(self.surprisedAction2), for: .touchUpInside)
+        suspicious1.addTarget(self, action: #selector(self.suspiciousAction1), for: .touchUpInside)
+        suspicious2.addTarget(self, action: #selector(self.suspiciousAction2), for: .touchUpInside)
+        smile.addTarget(self, action: #selector(self.smileAction), for: .touchUpInside)
+        smiling.addTarget(self, action: #selector(self.smilingAction), for: .touchUpInside)
+        
+        ill.addTarget(self, action: #selector(self.illAction), for: .touchUpInside)
+        inLove.addTarget(self, action: #selector(self.inLoveAction), for: .touchUpInside)
+        kissing.addTarget(self, action: #selector(self.kissingAction), for: .touchUpInside)
+        mad.addTarget(self, action: #selector(self.madAction), for: .touchUpInside)
+        nerd.addTarget(self, action: #selector(self.nerdAction), for: .touchUpInside)
+        ninja.addTarget(self, action: #selector(self.ninjaAction), for: .touchUpInside)
+        quiet.addTarget(self, action: #selector(self.quietAction), for: .touchUpInside)
+        sad.addTarget(self, action: #selector(self.sadAction), for: .touchUpInside)
+        smart.addTarget(self, action: #selector(self.smartAction), for: .touchUpInside)
+        tongueOut.addTarget(self, action: #selector(self.toungueOutAction), for: .touchUpInside)
+        unhappy.addTarget(self, action: #selector(self.unhappyAction), for: .touchUpInside)
+        wink.addTarget(self, action: #selector(self.winkAction), for: .touchUpInside)
+        
         noneBtn.addTarget(self, action: #selector(self.noneAction), for: .touchUpInside)
         
-        moodArray = [noneBtn,afraidBtn,funnyBtn,sadBtn,angryBtn,shockedBtn,afraidBtn,sillyBtn,loveBtn,bravoBtn,fireBtn,coolBtn,okBtn,blessedBtn]
         
-        for button in moodArray{
-            button.frame.size = CGSize(width: self.view.frame.width/CGFloat(moodArray.count/2),height:self.view.frame.width/CGFloat(moodArray.count/2))
+        
+        moodArrayOutside = [noneBtn,angry1,angry2,confused1,confused2,crying1,crying2,happy1,happy2,happy3,happy4,surprised1,surprised2,suspicious1,suspicious2,smile,smiling]
+        
+        
+        moodArrayInside = [ill,inLove,kissing,mad,nerd,ninja,quiet,sad,smart,tongueOut,unhappy,wink]
+        
+        let buttonFrame = CGSize(width: self.view.frame.width/CGFloat(moodArrayOutside.count * 3/5),height:self.view.frame.width/CGFloat(moodArrayOutside.count * 3/5))
+        
+        
+        for button in moodArrayOutside{
+            button.frame.size = buttonFrame
             button.isHidden = true
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 30.0)
+            self.view.addSubview(button)
+        }
+        
+        for button in moodArrayInside{
+            
+            button.frame.size = buttonFrame
+            button.isHidden = true
             self.view.addSubview(button)
         }
     }
@@ -189,61 +292,147 @@ class MoodViewController: UIViewController {
     }
     
     //set mood as afraid emoji
-    @objc func afraidAction(){
+    @objc func angryAction1(){
         
-        self.onMoodChosenWith(mood: .Afraid)
+        self.onMoodChosenWith(mood: .Angry1)
     }
     
     //set mood as sad emoji
-    @objc func sadAction(){
-        self.onMoodChosenWith(mood: .Sad)
+    @objc func angryAction2(){
+        self.onMoodChosenWith(mood: .Angry2)
     }
     
     //set mood as funny emoji
-    @objc func funnyAction(){
-        self.onMoodChosenWith(mood: .Funny)
+    @objc func confusedAction1(){
+        self.onMoodChosenWith(mood: .Confused2)
     }
     
     //set mood as shocked emoji
-    @objc func shockedAction(){
-        self.onMoodChosenWith(mood: .Shocked)
+    @objc func confusedAction2(){
+        self.onMoodChosenWith(mood: .Confused2)
     }
     
     //set mood as angry emoji
-    @objc func angryAction(){
-        self.onMoodChosenWith(mood: .Angry)
+    @objc func cryingAction1(){
+        self.onMoodChosenWith(mood: .Crying1)
     }
     
-    @objc func fireAction(){
-        self.onMoodChosenWith(mood: .Fire)
+    @objc func cryingAction2(){
+        self.onMoodChosenWith(mood: .Crying2)
     }
     
-    @objc func sillyAction(){
-       self.onMoodChosenWith(mood: .Silly)
+    @objc func happyAction1(){
+       self.onMoodChosenWith(mood: .Happy1)
     }
     
-    @objc func coolAction(){
-        self.onMoodChosenWith(mood: .Cool)
+    @objc func happyAction2(){
+        self.onMoodChosenWith(mood: .Happy2)
     }
     
-    @objc func bravoAction(){
-        self.onMoodChosenWith(mood: .Bravo)
+    @objc func happyAction3(){
+        self.onMoodChosenWith(mood: .Happy3)
     }
     
-    @objc func loveAction(){
+    @objc func happyAction4(){
         
-        self.onMoodChosenWith(mood: .Love)
+        self.onMoodChosenWith(mood: .Happy4)
     }
     
-    @objc func okAction(){
+    
+    @objc func illAction(){
         
-        self.onMoodChosenWith(mood: .Ok)
+        self.onMoodChosenWith(mood: .Ill)
     }
     
-    @objc func blessedAction(){
+    @objc func inLoveAction(){
         
-        self.onMoodChosenWith(mood: .Blessed)
+        self.onMoodChosenWith(mood: .InLove)
     }
+    @objc func kissingAction(){
+        
+        self.onMoodChosenWith(mood: .Kissing)
+    }
+    
+    @objc func madAction(){
+        
+        self.onMoodChosenWith(mood: .Mad)
+    }
+    
+    @objc func nerdAction(){
+        
+        self.onMoodChosenWith(mood: .Nerd)
+    }
+    
+    
+    
+    @objc func ninjaAction(){
+        
+        self.onMoodChosenWith(mood: .Ninja)
+    }
+    
+    @objc func quietAction(){
+        
+        self.onMoodChosenWith(mood: .Quiet)
+    }
+    
+    @objc func sadAction(){
+        
+        self.onMoodChosenWith(mood: .Sad)
+    }
+    
+    @objc func smartAction(){
+        
+        self.onMoodChosenWith(mood: .Smart)
+    }
+    
+    
+    @objc func smileAction(){
+        
+        self.onMoodChosenWith(mood: .Smile)
+    }
+    
+    @objc func smilingAction(){
+        
+        self.onMoodChosenWith(mood: .Smiling)
+    }
+    
+    
+    @objc func surprisedAction1(){
+        
+        self.onMoodChosenWith(mood: .Surprised1)
+    }
+    
+    @objc func surprisedAction2(){
+        
+        self.onMoodChosenWith(mood: .Surprised2)
+    }
+    @objc func suspiciousAction1(){
+        
+        self.onMoodChosenWith(mood: .Suspicious1)
+    }
+    
+    @objc func suspiciousAction2(){
+        
+        self.onMoodChosenWith(mood: .Suspicious2)
+    }
+    
+    
+    @objc func toungueOutAction(){
+        
+        self.onMoodChosenWith(mood: .TongueOut)
+    }
+    
+    @objc func unhappyAction(){
+        
+        self.onMoodChosenWith(mood: .Unhappy)
+    }
+    @objc func winkAction(){
+        
+        self.onMoodChosenWith(mood: .Wink)
+    }
+    
+
+    
     
     
     
@@ -259,8 +448,7 @@ class MoodViewController: UIViewController {
     func onMoodChosenWith(mood: Mood){
         
         self.selectedMood = mood
-        self.moodBtn.setImage(nil, for: .normal)
-        self.moodBtn.setTitle(self.selectedMood.rawValue, for: .normal)
+        self.moodBtn.setImage(UIImage(named:self.selectedMood.rawValue), for: .normal)
         self.closeMoodMenu()
         
     }
@@ -269,7 +457,14 @@ class MoodViewController: UIViewController {
     func closeMoodMenu(){
         self.moodMenuIsOpen = false
         UIView.animate(withDuration: 0.2, animations: {
-            for button in self.moodArray{
+            
+            for button in self.moodArrayOutside{
+                
+                button.center = self.moodBtn.center
+                button.alpha = 0.0
+            }
+            
+            for button in self.moodArrayInside{
                 
                 button.center = self.moodBtn.center
                 button.alpha = 0.0
@@ -277,7 +472,11 @@ class MoodViewController: UIViewController {
             
         }) { (success) in
             if success{
-                for button in self.moodArray{
+                for button in self.moodArrayOutside{
+                    
+                    button.isHidden = true
+                }
+                for button in self.moodArrayInside{
                     
                     button.isHidden = true
                 }
@@ -292,16 +491,26 @@ class MoodViewController: UIViewController {
     func showMoodMenu(){
         
         self.moodMenuIsOpen = true
-        for button in self.moodArray{
+        for button in self.moodArrayOutside{
+            
+            button.isHidden = false
+        }
+        
+        for button in self.moodArrayInside{
             
             button.isHidden = false
         }
         
         UIView.animate(withDuration: 0.2) {
             
-            for button in self.moodArray{
+            for button in self.moodArrayOutside{
                 button.alpha = 1.0
-                button.center = self.calculateVisibleCenter(button: button)
+                button.center = self.calculateVisibleCenterForOutsideRing(button: button)
+            }
+            
+            for button in self.moodArrayInside{
+                button.alpha = 1.0
+                button.center = self.calculateVisibleCenterForInsideRing(button: button)
             }
         }
     }
@@ -310,17 +519,32 @@ class MoodViewController: UIViewController {
     
     
     
-    //calculate the button center based on the button tag
-    func calculateVisibleCenter(button: UIButton) -> CGPoint{
+    //calculate the button center based on the button tag of the outside view
+    func calculateVisibleCenterForOutsideRing(button: UIButton) -> CGPoint{
         
         let tag = CGFloat(button.tag)
-        let distance = self.moodBtn.frame.width * 2/3
+        let distance = self.moodBtn.frame.width * 4/5
         let origin = self.moodBtn.center
-        let slice = (CGFloat.pi * 2.0) / CGFloat(self.moodArray.count - 1)
+        let slice = (CGFloat.pi * 2.0) / CGFloat(self.moodArrayOutside.count - 1)
         let radians = tag * slice
         
         return pointFromPoint(origin: origin, distance: distance, rad: radians)
     }
+    
+    
+    //calculate the button center based on the button tag of the outside view
+    func calculateVisibleCenterForInsideRing(button: UIButton) -> CGPoint{
+        
+        let tag = CGFloat(button.tag)
+        let distance = self.moodBtn.frame.width * 4/9
+        let origin = self.moodBtn.center
+        let slice = (CGFloat.pi * 2.0) / CGFloat(self.moodArrayInside.count - 1)
+        let radians = tag * slice
+        
+        return pointFromPoint(origin: origin, distance: distance, rad: radians)
+    }
+    
+    
     
     
     func pointFromPoint(origin:CGPoint, distance:CGFloat, rad:CGFloat) -> CGPoint {

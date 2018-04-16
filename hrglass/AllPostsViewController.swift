@@ -141,22 +141,29 @@ class AllPostsViewController: UIViewController, UICollectionViewDelegate, UIColl
         case .Link:
             print("Link")
             
-            dataManager.setURLView(urlString: postsArray[indexPath.row].data as String, completion: { (image, label) in
+            dataManager.setURLView(urlString: postsArray[indexPath.row].data as String, completion: { (imageUrl, label) in
                 
-                cell.imageView.image = image
                 
-                let linkLabel = UILabel(frame: CGRect(x: cell.imageView.bounds.minX, y:cell.imageView.bounds.midY, width: cell.imageView.frame.width ,height: cell.imageView.frame.height/3))
+                self.imageCache.getImage(urlString: imageUrl, completion: { (image) in
+                    
+                    DispatchQueue.main.async {
+                        cell.imageView.image = image
+                    }
+                })
                 
-                linkLabel.adjustsFontSizeToFitWidth = true
-                linkLabel.numberOfLines = 2
-                linkLabel.backgroundColor = UIColor.darkGray
-                linkLabel.alpha = 0.7
-                linkLabel.text = label
-                linkLabel.textAlignment = .center
-                linkLabel.textColor = UIColor.white
-                
-                cell.imageView.addSubview(linkLabel)
-
+                DispatchQueue.main.async {
+                    let linkLabel = UILabel(frame: CGRect(x: cell.imageView.bounds.minX, y:cell.imageView.bounds.midY, width: cell.imageView.frame.width ,height: cell.imageView.frame.height/3))
+                    
+                    linkLabel.adjustsFontSizeToFitWidth = true
+                    linkLabel.numberOfLines = 2
+                    linkLabel.backgroundColor = UIColor.darkGray
+                    linkLabel.alpha = 0.7
+                    linkLabel.text = label
+                    linkLabel.textAlignment = .center
+                    linkLabel.textColor = UIColor.white
+                    
+                    cell.imageView.addSubview(linkLabel)
+                }
             })
             
         default:

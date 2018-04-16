@@ -300,11 +300,15 @@ class ProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollect
             case .Link:
                 print("Link")
                 cell.borderView.layer.borderColor = UIColor.black.cgColor
-                dataManager.setURLView(urlString: likedDataArray[indexPath.row].data as String, completion: { (image, label) in
-                    
-                    cell.imageButton.setImage(image, for:.normal)
-                    cell.loadingIndicator.stopAnimating()
                 
+                dataManager.setURLView(urlString: likedDataArray[indexPath.row].data as String, completion: { (imageUrl, label) in
+                    
+                    self.imageCache.getImage(urlString: imageUrl, completion: { (image) in
+                        DispatchQueue.main.async {
+                            cell.imageButton.setImage(image, for:.normal)
+                            cell.loadingIndicator.stopAnimating()
+                        }
+                    })
                 })
                 
             case .None:

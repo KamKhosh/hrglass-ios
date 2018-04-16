@@ -10,7 +10,6 @@
 
 import Foundation
 import UIKit
-import URLEmbeddedView
 
 
 
@@ -33,28 +32,69 @@ enum Category: String{
 
 //Post Mood ENUM
 enum Mood: String {
-    
-    case Funny = "😂"
-    case Fire = "🔥"
-    case Love = "😍"
-    case Sad = "😔"
-    case Shocked = "😱"
-    case Afraid = "😨"
-    case Cool = "😎"
-    case Bravo = "👏"
-    case Silly = "😋"
-    case Angry = "😡"
-    case Ok = "👌"
-    case Blessed = "🙏"
-    case None = "🚫"
 
+    case Angry1 = "angry-emoji-1"
+    case Angry2 = "angry-emoji-2"
+    
+    case Confused1 = "confused-emoji-1"
+    case Confused2 = "confused-emoji-2"
+    
+    case Crying1 = "crying-emoji-1"
+    case Crying2 = "crying-emoji-2"
+    
+    case Happy1 = "happy-emoji-1"
+    case Happy2 = "happy-emoji-2"
+    case Happy3 = "happy-emoji-3"
+    case Happy4 = "happy-emoji-4"
+    
+    case Ill = "ill-emoji"
+    case InLove = "in-love-emoji"
+    case Kissing = "kissing-emoji"
+    case Mad = "mad-emoji"
+    case Nerd = "nerd-emoji"
+    case Ninja = "ninja-emoji"
+    case Quiet = "quiet-emoji"
+    case Sad = "sad-emoji"
+    
+    case Smart = "smart-emoji"
+    case Smile = "smile-emoji"
+    case Smiling = "smiling-emoji"
+    
+    case Surprised1 = "surprised-emoji-1"
+    case Surprised2 = "surprised-emoji-2"
+    
+    case Suspicious1 = "suspicious-emoji-1"
+    case Suspicious2 = "suspicious-emoji-2"
+    
+    case TongueOut = "tongue-out-emoji"
+    case Unhappy = "unhappy-emoji"
+    case Wink = "wink-emoji"
+    
+    case None = "close-white"
+    
+    
+    //deprecated moods
+    case Funny_old = "😂"
+    case Fire_old = "🔥"
+    case Love_old = "😍"
+    case Sad_old = "😔"
+    case Shocked_old = "😱"
+    case Afraid_old = "😨"
+    case Cool_old = "😎"
+    case Bravo_old = "👏"
+    case Silly_old = "😋"
+    case Angry_old = "😡"
+    case Ok_old = "👌"
+    case Blessed_old = "🙏"
+    case None_old = "🚫"
+
+    
 }
 
 
 
 
 //Post Data, data object
-
 class PostData: NSObject{
     
     let postId: String

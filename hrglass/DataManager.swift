@@ -7,12 +7,11 @@
 // Class containing Firebase Methods used throughout the Class Hierarchy
 
 import Foundation
-import URLEmbeddedView
 import Firebase
 import AVFoundation
 import Photos
 import AWSS3
-
+import ReadabilityKit
 
 
 
@@ -904,58 +903,82 @@ class DataManager {
      *
      ********************************/
     
-    func setURLView(urlString: String, completion:@escaping (UIImage, String) -> ()){
+    func setURLView(urlString: String, completion:@escaping (String, String) -> ()){
         
-        OGDataProvider.shared.updateInterval = 10
         
-        OGDataProvider.shared.fetchOGData(urlString: urlString, completion: { data, error in
+        let articleUrl = URL(string: urlString)!
+        Readability.parse(url: articleUrl, completion: { data in
+            let title = data?.title
+            _ = data?.description
+            _ = data?.keywords
+            let imageUrl = data?.topImage
+            _ = data?.topVideo
             
-            let urlData: OGData = data
-            //if OGData returns data
-            if error == nil{
-                
-                _ = OGImageProvider.shared.loadImage(urlString: urlData.imageUrl, completion: { image, error in
-                    //get url preview image
-                    if error == nil{
-                        //no error
-                        if (image != nil){
-                            //image not nil
-                            
-                            //update label on main thread
-                            DispatchQueue.main.async {
-                                var label: String = ""
-                                
-                                if (urlData.pageTitle != ""){
-                                    
-                                    label = urlData.pageTitle
-                                }else if(urlData.siteName != ""){
-                                    
-                                    label = urlData.siteName
-                                }else if (urlData.url != ""){
-                                    
-                                    label = urlData.url
-                                }
-                                print("Set Image Preview")
-                                completion(image!, label)
-                            }
-                        }else{
-                            //image nil
-                            print("Website Preview Cannot be retrieved")
-                            completion(UIImage(), "")
-                        }
-                    }else{
-                        //error retrieving image
-                        print(error?.localizedDescription ?? "")
-                        completion(UIImage(), "")
-                    }
-                })
-            }else{
-                //error retrieving OGData
-                print(error?.localizedDescription ?? "")
-                completion(UIImage(), "")
-            }
+//            if (title == "" || title == nil){
+//                
+//                
+//            }
+//            
+//            
+            completion(imageUrl!, title!)
+            
+            
         })
         
+        
+        
+        
+//        OGDataProvider.shared.updateInterval = 10
+//
+//        OGDataProvider.shared.fetchOGData(urlString: urlString, completion: { data, error in
+//
+//            let urlData: OGData = data
+//            //if OGData returns data
+//            if error == nil{
+//
+//                _ = OGImageProvider.shared.loadImage(urlString: urlData.imageUrl, completion: { image, error in
+//                    //get url preview image
+//                    if error == nil{
+//                        //no error
+//                        if (image != nil){
+//                            //image not nil
+//
+//                            //update label on main thread
+//                            DispatchQueue.main.async {
+//                                var label: String = ""
+//
+//                                if (urlData.pageTitle != ""){
+//
+//                                    label = urlData.pageTitle
+//                                }else if(urlData.siteName != ""){
+//
+//                                    label = urlData.siteName
+//                                }else if (urlData.url != ""){
+//
+//                                    label = urlData.url
+//                                }
+//                                print("Set Image Preview")
+//                                completion(image!, label)
+//                            }
+//                        }else{
+//                            //image nil
+//                            print("Website Preview Cannot be retrieved")
+//                            completion(UIImage(), "")
+//                        }
+//                    }else{
+//                        //error retrieving image
+//                        print(error?.localizedDescription ?? "")
+//                        completion(UIImage(), "")
+//                    }
+//                })
+//            }else{
+//                //error retrieving OGData
+//                print(error?.localizedDescription ?? "")
+//                completion(UIImage(), "")
+//            }
+//        })
+//
+//    }
     }
     
     

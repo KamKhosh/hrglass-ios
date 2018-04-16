@@ -10,7 +10,6 @@
 import UIKit
 import Firebase
 import Photos
-import URLEmbeddedView
 import AVFoundation
 import MediaPlayer
 import AVKit
@@ -1002,20 +1001,22 @@ class AddSecondaryPostViewController: UIViewController, UICollectionViewDelegate
     
     func setURLView(urlString: String){
         
-        dataManager.setURLView(urlString: urlString, completion: { (image, label) in
-            DispatchQueue.main.async {
-                
-                self.postPhotoView.image = image
-                self.hideResizeButtons()
-                
-                self.linkContentView.text = label
-                self.linkContentView.numberOfLines = 3
-                
-                self.postPhotoView.isHidden = false
-                self.linkContentView.isHidden = false
-                
-            }
-        })
+//        dataManager.setURLView(urlString: urlString, completion: { (imageUrl, label) in
+//        
+//            
+//            DispatchQueue.main.async {
+//                
+//                self.postPhotoView.image = image
+//                self.hideResizeButtons()
+//                
+//                self.linkContentView.text = label
+//                self.linkContentView.numberOfLines = 3
+//                
+//                self.postPhotoView.isHidden = false
+//                self.linkContentView.isHidden = false
+//                
+//            }
+//        })
     }
     
     

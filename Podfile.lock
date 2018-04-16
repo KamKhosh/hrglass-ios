@@ -57,14 +57,14 @@ PODS:
   - FirebaseAnalytics (4.0.3):
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - nanopb (~> 0.3)
   - FirebaseAuth (4.2.0):
     - FirebaseAnalytics (~> 4.0)
-    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseCore (4.0.7):
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - nanopb (~> 0.3)
   - FirebaseDatabase (4.0.3):
     - FirebaseAnalytics (~> 4.0)
@@ -78,25 +78,29 @@ PODS:
   - GoogleToolboxForMac/DebugUtils (2.1.1):
     - GoogleToolboxForMac/Defines (= 2.1.1)
   - GoogleToolboxForMac/Defines (2.1.1)
-  - GoogleToolboxForMac/NSData+zlib (2.1.1):
+  - "GoogleToolboxForMac/NSData+zlib (2.1.1)":
     - GoogleToolboxForMac/Defines (= 2.1.1)
-  - GoogleToolboxForMac/NSDictionary+URLArguments (2.1.1):
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.1)":
     - GoogleToolboxForMac/DebugUtils (= 2.1.1)
     - GoogleToolboxForMac/Defines (= 2.1.1)
-    - GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)
-  - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.1.1)"
   - GTMSessionFetcher/Core (1.1.12)
   - iOSPhotoEditor (0.5)
-  - Kanna (2.1.1)
+  - Ji (2.1.0):
+    - Ji/Ji (= 2.1.0)
+  - Ji/Ji (2.1.0):
+    - Ji/Ji-libxml
+  - Ji/Ji-libxml (2.1.0)
   - leveldb-library (1.18.3)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
+  - ReadabilityKit (0.7.1):
+    - Ji
   - RKNotificationHub (2.0.4)
-  - URLEmbeddedView (0.10.0):
-    - Kanna (~> 2.1.1)
   - youtube-ios-player-helper (0.1.6)
 
 DEPENDENCIES:
@@ -113,9 +117,40 @@ DEPENDENCIES:
   - Firebase/Database (~> 4.2.0)
   - Firebase/Storage (~> 4.2.0)
   - iOSPhotoEditor (= 0.5)
+  - ReadabilityKit
   - RKNotificationHub (~> 2.0.4)
-  - URLEmbeddedView (~> 0.10.0)
   - youtube-ios-player-helper (~> 0.1.6)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AFNetworking
+    - AWSCognito
+    - AWSCore
+    - AWSS3
+    - Bolts
+    - Clarifai
+    - Crashlytics
+    - Fabric
+    - FacebookCore
+    - FacebookLogin
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseAuth
+    - FirebaseCore
+    - FirebaseDatabase
+    - FirebaseInstanceID
+    - FirebaseStorage
+    - GoogleToolboxForMac
+    - GTMSessionFetcher
+    - iOSPhotoEditor
+    - Ji
+    - leveldb-library
+    - nanopb
+    - ReadabilityKit
+    - RKNotificationHub
+    - youtube-ios-player-helper
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -140,13 +175,13 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMSessionFetcher: ebaa1f79a5366922c1735f1566901f50beba23b7
   iOSPhotoEditor: 0ddc84bcef9fe73fe8cc45ac999b89e0aa207aea
-  Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
+  Ji: 21946da4e13425485ddd424edfaeeced0d80ad28
   leveldb-library: 10fb39c39e243db4af1828441162405bbcec1404
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  ReadabilityKit: 45e79725f6d0377c555f38d9df7a6d4435898c04
   RKNotificationHub: 3765424499139c3d3885b681bb0837f072d12ae6
-  URLEmbeddedView: 0424a1f068a75574b8d5431b0add4478af5c83cb
   youtube-ios-player-helper: 21ab92db027c7ff86cb17a3843a3f6eafc8158d2
 
-PODFILE CHECKSUM: eb785b62a3319636e9a1d85d3dab537c02f55600
+PODFILE CHECKSUM: 2b196209c956bf608dc7bcdb54d23019fe18c36b
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.5.0

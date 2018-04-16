@@ -49,6 +49,24 @@ class MenuView: UIView{
      *
      *********************************/
     
+    
+//    override init(frame: CGRect) {
+//
+//        self.buttonList = [UIButton]()
+//        self.open = false
+//        self.direction = .Up
+//        self.startButton = nil
+//        self.buttonSize = CGSize.zero
+//        self.listCount = 0
+//        self.startCenter = CGPoint.zero
+//        self.spacing = 0.0
+//
+//
+//
+//        super.init(frame: frame)
+//
+//    }
+    
     //init for FeedViewController
     init(buttonList: [UIButton], feedViewController: FeedViewController, direction: Direction, startButton: UIButton, spacing: CGFloat, buttonScalor: CGFloat) {
         
@@ -64,7 +82,8 @@ class MenuView: UIView{
         self.open = false
         self.buttonScalor = buttonScalor
         
-        super.init(frame:backgroundFrameFor())
+        super.init(frame:CGRect.zero)
+        self.frame = backgroundFrameFor()
         setupViews()
         
     }
@@ -82,7 +101,8 @@ class MenuView: UIView{
         self.spacing = spacing
         self.open = false
         
-        super.init(frame:backgroundFrameFor())
+        super.init(frame:CGRect.zero)
+        self.frame = backgroundFrameFor()
         setupViews()
     }
 

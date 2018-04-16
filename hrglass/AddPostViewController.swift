@@ -9,7 +9,6 @@
 import UIKit
 import Firebase
 import Photos
-import URLEmbeddedView
 import AVFoundation
 import MediaPlayer
 import AVKit
@@ -1378,24 +1377,24 @@ class AddPostViewController: UIViewController, UITabBarDelegate, UICollectionVie
     //set the url view
     func setURLView(urlString: String){
         
-        dataManager.setURLView(urlString: urlString, completion: { (image, label) in
             
-            DispatchQueue.main.async {
+            dataManager.setURLView(urlString: urlString, completion: { (imageUrl, label) in
                 
-                if image.size.width > 0{
-                    self.setPhotoView(image: image)
-                }else{
-                    self.setPhotoView(image: UIImage(named:"default_web_image")!)
-                }
+                self.imageCache.getImage(urlString: imageUrl, completion: { (image) in
+                    
+                    DispatchQueue.main.async {
+                        if image.size.width > 0{
+                            self.setPhotoView(image: image)
+                        }else{
+                            self.setPhotoView(image: UIImage(named:"default_web_image")!)
+                        }
+                    }
+                    self.hideResizeButtons()
+                    
+                    self.linkContentView.numberOfLines = 3
+                })
                 
-                self.hideResizeButtons()
-                
-//                self.linkContentView.text = label
-                self.linkContentView.numberOfLines = 3
-//                self.linkContentView.isHidden = false
-
-            }
-        })
+            })
     }
     
     

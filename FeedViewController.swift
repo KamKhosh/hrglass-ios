@@ -8,7 +8,6 @@
 
 import UIKit
 import Firebase
-import URLEmbeddedView
 import AVKit
 import AVFoundation
 import MediaPlayer
@@ -854,22 +853,30 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.previewContentView.layer.borderColor = UIColor.black.cgColor
             cell.contentImageBtn.imageView?.contentMode = .scaleAspectFill
             
-            dataManager.setURLView(urlString: feedData[indexPath.row].data as String, completion: { (image, label) in
+            dataManager.setURLView(urlString: feedData[indexPath.row].data as String, completion: { (imageUrl, label) in
                 
-                if image.size.width > 0  {
-                    cell.contentImageBtn.setImage(image, for:.normal)
-                }else{
-                    cell.contentImageBtn.setImage(UIImage.init(named: "default_web_image"), for: .normal)
+                self.imageCache.getImage(urlString: imageUrl, completion: { (image) in
+                    DispatchQueue.main.async {
+                        if image.size.width > 0  {
+                            cell.contentImageBtn.setImage(image, for:.normal)
+                        }else{
+                            cell.contentImageBtn.setImage(UIImage.init(named: "default_web_image"), for: .normal)
+                        }
+                    }
+                })
+                
+                DispatchQueue.main.async {
+                    cell.loadingIndication.stopAnimating()
+                    cell.linkLbl.adjustsFontSizeToFitWidth = true
+                    cell.linkLbl.numberOfLines = 3
+                    cell.linkLbl.backgroundColor = UIColor.darkGray
+                    cell.linkLbl.alpha = 0.7
+                    //                cell.linkLbl.text = label
+                    cell.linkLbl.textAlignment = .center
+                    cell.linkLbl.textColor = UIColor.white
+                    //                cell.linkLbl.isHidden = false
                 }
-                cell.loadingIndication.stopAnimating()
-                cell.linkLbl.adjustsFontSizeToFitWidth = true
-                cell.linkLbl.numberOfLines = 3
-                cell.linkLbl.backgroundColor = UIColor.darkGray
-                cell.linkLbl.alpha = 0.7
-//                cell.linkLbl.text = label
-                cell.linkLbl.textAlignment = .center
-                cell.linkLbl.textColor = UIColor.white
-//                cell.linkLbl.isHidden = false
+
             })
             
         case .Video:
@@ -1001,10 +1008,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         //Hide the mood lbl if none is selected
         if (feedData[indexPath.row].mood == "🚫"){
-            cell.moodLbl.isHidden = true
+            cell.moodImageView.isHidden = true
         }else{
-            cell.moodLbl.isHidden = false
-            cell.moodLbl.text = feedData[indexPath.row].mood
+            cell.moodImageView.isHidden = false
+            cell.moodImageView.image =  UIImage(named: feedData[indexPath.row].mood)
         }
         
         return cell

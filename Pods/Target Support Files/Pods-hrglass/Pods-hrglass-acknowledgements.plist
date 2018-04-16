@@ -766,7 +766,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			<key>FooterText</key>
 			<string>The MIT License (MIT)
 
-Copyright (c) 2014 - 2015 Atsushi Kiwaki (@_tid_)
+Copyright (c) 2015 Honghao Zhang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -784,11 +784,13 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</string>
+SOFTWARE.
+
+</string>
 			<key>License</key>
 			<string>MIT</string>
 			<key>Title</key>
-			<string>Kanna</string>
+			<string>Ji</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
@@ -823,7 +825,7 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>Copyright (c) 2016 szk-atmosphere &lt;s1180183@gmail.com&gt;
+			<string>Copyright (c) 2016 Exyte http://www.exyte.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -846,7 +848,7 @@ THE SOFTWARE.
 			<key>License</key>
 			<string>MIT</string>
 			<key>Title</key>
-			<string>URLEmbeddedView</string>
+			<string>ReadabilityKit</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

@@ -64,7 +64,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Kanna.xcscheme</key>
+		<key>Ji.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -79,7 +79,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>URLEmbeddedView.xcscheme</key>
+		<key>ReadabilityKit.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

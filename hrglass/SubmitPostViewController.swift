@@ -67,7 +67,7 @@ class SubmitPostViewController: UIViewController {
     @IBOutlet weak var postPreviewWidth: NSLayoutConstraint!
     @IBOutlet weak var postPreviewHeight: NSLayoutConstraint!
     @IBOutlet weak var postLabel: UILabel!
-    @IBOutlet weak var moodLbl: UILabel!
+    @IBOutlet weak var moodImageView: UIImageView!
 
     @IBOutlet weak var accessoryImageView: UIImageView!
     
@@ -142,7 +142,7 @@ class SubmitPostViewController: UIViewController {
         
         self.postImagePreview.layer.borderColor = dataManager.getUIColorForCategory(category: self.selectedCategory).cgColor
         
-        self.stackView = UIStackView(frame: CGRect(x: 30 ,y: self.moodLbl.frame.maxY + 15,width: self.view.frame.width - 60,height: 50))
+        self.stackView = UIStackView(frame: CGRect(x: 30 ,y: self.moodImageView.frame.maxY + 15,width: self.view.frame.width - 60,height: 50))
         self.stackView.axis = .horizontal
         self.stackView.distribution = .fillEqually
         self.postBtn.layer.borderWidth = 1.0
@@ -152,7 +152,7 @@ class SubmitPostViewController: UIViewController {
         
         
         if self.selectedMood != .None{
-            self.moodLbl.text = self.selectedMood.rawValue
+            self.moodImageView.image = UIImage(named:self.selectedMood.rawValue)
         }
     }
     
@@ -1296,42 +1296,37 @@ class SubmitPostViewController: UIViewController {
     
     func setURLView(urlString: String, primary: Bool){
         
-        dataManager.setURLView(urlString: urlString, completion: { (image, label) in
-            DispatchQueue.main.async {
+        
+        
+        
+        
+        dataManager.setURLView(urlString: urlString, completion: { (imageUrl, label) in
+            
+            self.imageCache.getImage(urlString: imageUrl, completion: { (image) in
                 
-                
-                if primary{
-                    
-                    if image.size.width > 0{
-                        self.postImagePreview.image = image
-                    }else{
-                        self.postImagePreview.image = UIImage(named: "default_web_image")
+                DispatchQueue.main.async {
+                    if primary{
+                        
+                        if image.size.width > 0{
+                            self.postImagePreview.image = image
+                        }else{
+                            self.postImagePreview.image = UIImage(named: "default_web_image")
+                        }
+                        
+                        
+                        //                    self.linkContentView.text = label
+                        //                    self.linkContentView.numberOfLines = 3
+                        
+                        self.postImagePreview.isHidden = false
+                        //                    self.linkContentView.isHidden = false
+                        //                    self.postImagePreview.addSubview(self.linkContentView)
+                        
                     }
-                    
-                    
-//                    self.linkContentView.text = label
-//                    self.linkContentView.numberOfLines = 3
-                    
-                    self.postImagePreview.isHidden = false
-//                    self.linkContentView.isHidden = false
-//                    self.postImagePreview.addSubview(self.linkContentView)
-                    
                 }
-                
-//                else{
-//                    
-//                    self.secondaryPostBtn.setBackgroundImage(image, for:UIControlState.normal)
-//                    
-//                    self.linkContentView.text = label
-//                    self.linkContentView.numberOfLines = 3
-//                    
-//                    self.postImagePreview.isHidden = false
-//                    self.linkContentView.isHidden = false
-//                    self.secondaryPostBtn.addSubview(self.linkContentView)
-//                    
-//                }
-            }
+            })
+            
         })
+    
     }
     
     

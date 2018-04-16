@@ -8,7 +8,6 @@
 
 import UIKit
 import Firebase
-import URLEmbeddedView
 import AVKit
 import AVFoundation
 import iOSPhotoEditor
@@ -647,23 +646,31 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 
             case .Link:
                 
-                dataManager.setURLView(urlString: latestPostData.data as String, completion: { (image, label) in
+                dataManager.setURLView(urlString: latestPostData.data as String, completion: { (imageUrl, label) in
                     
-                    cell.latestPostImageButton.setBackgroundImage(image, for: .normal)
+                    self.imageCache.getImage(urlString: imageUrl, completion: { (image) in
+                        
+                        DispatchQueue.main.async {
+                            cell.latestPostImageButton.setBackgroundImage(image, for: .normal)
+                        }
+                        
+                        
+                    })
                     
-                    let linkLabel = UILabel(frame: CGRect(x: cell.latestPostImageButton.bounds.minX, y:cell.latestPostImageButton.bounds.midY, width: cell.latestPostImageButton.frame.width ,height: cell.latestPostImageButton.frame.height/3))
-                    
-                    linkLabel.adjustsFontSizeToFitWidth = true
-                    linkLabel.numberOfLines = 3
-                    linkLabel.backgroundColor = UIColor.darkGray
-                    linkLabel.alpha = 0.7
-                    linkLabel.text = label
-                    linkLabel.textAlignment = .center
-                    linkLabel.textColor = UIColor.white
-                    
-                    cell.latestPostImageButton.addSubview(linkLabel)
-                    cell.postIndicator.stopAnimating()
-                    
+                    DispatchQueue.main.async {
+                        let linkLabel = UILabel(frame: CGRect(x: cell.latestPostImageButton.bounds.minX, y:cell.latestPostImageButton.bounds.midY, width: cell.latestPostImageButton.frame.width ,height: cell.latestPostImageButton.frame.height/3))
+                        
+                        linkLabel.adjustsFontSizeToFitWidth = true
+                        linkLabel.numberOfLines = 3
+                        linkLabel.backgroundColor = UIColor.darkGray
+                        linkLabel.alpha = 0.7
+                        linkLabel.text = label
+                        linkLabel.textAlignment = .center
+                        linkLabel.textColor = UIColor.white
+                        
+                        cell.latestPostImageButton.addSubview(linkLabel)
+                        cell.postIndicator.stopAnimating()
+                    }
                 })
                 
                 

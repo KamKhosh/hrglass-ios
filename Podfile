@@ -13,7 +13,7 @@ target 'hrglass' do
     pod 'Firebase/Storage', '~> 4.2.0'
     pod 'FacebookCore', '~> 0.2.0'
     pod 'FacebookLogin','~> 0.2.0'
-    pod 'URLEmbeddedView', '~> 0.10.0'
+#    pod 'URLEmbeddedView', '~> 0.10.0'
     pod 'AWSCore', '~> 2.6.2'
     pod 'AWSCognito', '~> 2.6.2'
     pod 'AWSS3', '~> 2.6.2'
@@ -23,5 +23,5 @@ target 'hrglass' do
     pod 'Crashlytics', '~> 3.9.3'
     pod 'Clarifai', '~> 2.3.2'
     pod 'youtube-ios-player-helper', '~> 0.1.6'
-    
+    pod 'ReadabilityKit'
 end

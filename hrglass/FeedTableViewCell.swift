@@ -34,7 +34,7 @@ class FeedTableViewCell: UITableViewCell {
     
     @IBOutlet weak var timeRemainingLbl: UILabel!
 
-    @IBOutlet weak var moodLbl: UILabel!
+    @IBOutlet weak var moodImageView: UIImageView!
     
     @IBOutlet weak var likeBtn: UIButton!
     
